@@ -2544,7 +2544,7 @@ D.join=async code=>{
   D.sync.code=code;LS.set('dp-shop',code);D.sync.migrate=!LS.get('dp-synced');if(D.sync.migrate)D.sync.last={};
   await D.pull(true);return 'ok';
 };
-D.joinLink=()=>(D.S.baseUrl||location.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
+D.joinLink=()=>(D.pageUrl()||location.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
 D.saveError=e=>{
   if(e&&e.code==='storage')return 'The browser blocked saving (storage full or private mode). Remove photos or use a normal window.';
   const c=e&&e.code;
@@ -2563,9 +2563,9 @@ D.applyTheme=reset=>{const r=document.documentElement.style,t=D.S.theme||{};['pa
   [['ink','on-ink','#fbfbf9'],['sage','on-sage','#ffffff'],['accent','on-accent','#ffffff']].forEach(x=>{if(!reset&&t[x[0]])r.setProperty('--'+x[1],D.onColor(t[x[0]]));else r.removeProperty('--'+x[1]);});};
 D.newId=()=>'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 D.pageUrl=()=>{
-  if(D.S.baseUrl)return D.S.baseUrl.replace(/#.*$/,'');
   const h=location.href.split('#')[0];
-  return /^https?:/.test(h)?h:'';
+  if(/^https?:/.test(h))return h;
+  return D.S.baseUrl?D.S.baseUrl.replace(/#.*$/,''):'';
 };
 D.snapUrl=id=>{const s=D.S.snaps.find(x=>x.id===id)||(D.shared&&D.shared.id===id?D.shared:null);const b=D.pageUrl();return b&&s&&s.payload?b+'#s='+s.payload:'';};
 const b64=u8=>{let t='';u8.forEach(c=>t+=String.fromCharCode(c));return btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');};
@@ -2976,7 +2976,7 @@ const viewBeans=()=>{
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
    folderChips()+'<div class="grid">'+list.map(b=>'<button class="bean" data-act="pick" data-id="'+b.id+'"><img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span><span class="cap">'+esc(b.farm)+'</span></div></button>').join('')+'</div>'+
    (list.length?'':(BEANS.length?'<p class="cap">'+T('sb.none')+'</p>':'<p class="cap">'+T('sb.empty')+'</p><button class="btn" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button>'))+
-   (D.caps.canEdit?'<div class="sec" style="margin-top:28px"><h2>'+T('sb.addr.h')+'</h2><div class="f"><label class="lbl" for="base">'+T('sb.addr.l')+'</label><input id="base" type="url" value="'+esc(D.S.baseUrl||D.pageUrl())+'" placeholder="https://cafe-name.example/drip.html"></div><p class="cap">'+T('sb.addr.help')+'</p><div class="acts" style="margin-top:8px"><button class="btn ghost" data-act="savebase">'+T('sb.addr.btn')+'</button></div></div>':'');
+   '';
 };
 
 /* ---------- Add Coffee ---------- */
@@ -3121,7 +3121,7 @@ const viewResult=()=>{
   return '<div class="sec"><h2>'+T('rs.h')+'</h2><p>'+esc(s.bean.name)+(s.customer?'  · '+T('rs.brewed')+' '+esc(s.customer):'')+'</p>'+
    (url?'<div class="qrbox qr-only"><canvas id="qr" width="168" height="168" aria-label="QR"></canvas><div class="qr-cap">'+T('rs.scan')+'</div><div class="vh" id="url" aria-hidden="true">'+esc(url)+'</div></div>':'')+
    (form?'<div style="'+(url?'margin-top:16px;':'')+'border-top:1px solid var(--line);padding-top:16px"><h2>'+T('rs.qr.h')+'</h2><div class="f"><label class="lbl" for="rs-base">'+T('rs.qr.l')+'</label><input id="rs-base" type="url" inputmode="url" value="'+esc(D.S.baseUrl||D.pageUrl())+'" placeholder="https://cafe-name.example/drip.html"></div><p class="cap">'+T('rs.qr.help')+'</p><div class="acts" style="margin-top:8px"><button class="btn" data-act="mkqr">'+T('rs.qr.btn')+'</button></div></div>':'')+
-   '<div class="acts" style="margin-top:14px"><button class="btn'+(url?'':' ghost')+'" data-act="jpeg" data-id="'+s.id+'">'+T('rs.jpeg')+'</button>'+(url?'<button class="btn ghost" data-act="copy">'+T('rs.copy')+'</button>':'')+'<button class="btn ghost" data-act="open" data-id="'+s.id+'">'+T('rs.cview')+'</button>'+(url&&!form?'<button class="btn ghost" data-act="chaddr">'+T('rs.qr.change')+'</button>':'')+'<button class="btn ghost" data-act="again">'+T('rs.next')+'</button></div></div>';
+   '<div class="acts" style="margin-top:14px"><button class="btn'+(url?'':' ghost')+'" data-act="jpeg" data-id="'+s.id+'">'+T('rs.jpeg')+'</button>'+(url?'<button class="btn ghost" data-act="copy">'+T('rs.copy')+'</button>':'')+'<button class="btn ghost" data-act="open" data-id="'+s.id+'">'+T('rs.cview')+'</button>'+'<button class="btn ghost" data-act="again">'+T('rs.next')+'</button></div></div>';
 };
 const viewSnap=s=>D.profileHtml(s);
 const viewCustomer=id=>{
