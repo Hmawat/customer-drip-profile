@@ -930,6 +930,21 @@ body.cap .cv-foot{padding-bottom:56px}
 body.cap .cv-photos{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;padding-left:max(22px,env(safe-area-inset-left,0px));padding-right:max(22px,env(safe-area-inset-right,0px))}
 body.cap .cv-photos figure{aspect-ratio:1}
 body.cap .cv-photos figure:first-child:nth-last-child(2n+1){grid-column:1/-1;aspect-ratio:16/10}
+
+/* QR screen: calm, centred, one main action */
+.sec.rs{max-width:480px;margin:8px auto 40px;padding:40px 28px 28px;text-align:center}
+.rs-ok{margin:0 0 10px;font:600 13px/1.3 var(--font-d);color:#1a7f37}
+.rs-ok span{display:inline-grid;place-items:center;width:18px;height:18px;margin-right:4px;border-radius:50%;background:#e8f5ec;font-size:11px}
+.rs-name{margin:0;font:600 clamp(24px,5vw,30px)/1.15 var(--font-s);letter-spacing:-.01em;color:var(--ink)}
+.rs-sub{margin:6px 0 0;font-size:15px;color:var(--mute)}
+.rs-qr{margin:28px auto 0}
+.rs-qr canvas{display:block;width:min(300px,74vw);height:auto;aspect-ratio:1;margin:0 auto;image-rendering:pixelated;border-radius:18px;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.rs-qr figcaption{margin-top:14px;font:500 15px/1.4 var(--font-b);color:var(--mute)}
+.rs-form{margin-top:24px;text-align:left}
+.rs-next{display:flex;width:100%;max-width:320px;margin:28px auto 0;justify-content:center}
+.rs-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 20px;margin-top:16px}
+.lnk{background:none;border:0;padding:6px 2px;font:400 15px/1.3 var(--font-b);color:var(--link,#0066cc);cursor:pointer}
+.lnk:hover{text-decoration:underline}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2190,7 +2205,7 @@ QRCode.createBytes = function(buffer, rsBlocks) {
 module.exports = QRCode;
 
 })(module,module.exports,req);return module.exports;}};
-var QR=req("index");window.qrcode=function(t,lv){var q=new QR(0,lv==="M"?0:1);return{addData:function(x){q.addData(x)},make:function(){q.make()},getModuleCount:function(){return q.getModuleCount()},isDark:function(r,c){return q.isDark(r,c)}};};})();
+var QR=req("index");window.qrcode=function(t,lv){var q=new QR(0,{L:1,M:0,Q:3,H:2}[lv]!=null?{L:1,M:0,Q:3,H:2}[lv]:0);return{addData:function(x){q.addData(x)},make:function(){q.make()},getModuleCount:function(){return q.getModuleCount()},isDark:function(r,c){return q.isDark(r,c)}};};})();
 </script>
 <script>
 /* Reference data. WHEEL follows the SCA Coffee Taster's Flavor Wheel (2016). FIELDS follow the A6 Brewing Profile sheet. */
@@ -2418,7 +2433,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['rs.h','Recipe saved'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand','Coffee with Native'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -2543,7 +2558,7 @@ D.flush=async()=>{
       await D.rpc('drip_push',{p_code:s.code,p_rows:batch});
       const now=D.items(D.S);Object.keys(sent).forEach(k=>{if(sent[k]==null)delete s.last[k];else s.last[k]=sent[k];if(now[k]===sent[k])s.dirty.delete(k);});
     }
-    D.saveLocal();D.setSync(s.dirty.size?'offline':'ok');
+    D.saveLocal();D.setSync(s.dirty.size?'offline':'ok');if(D.sync.onFlush)try{D.sync.onFlush();}catch(x){}
   }catch(e){if(e.code==='bad_code'){s.code='';s.kicked=true;LS.set('dp-shop',null);D.setSync('off');}else D.setSync('offline');}
   finally{s.busy=false;}
 };
@@ -2589,6 +2604,9 @@ D.pageUrl=()=>{
   if(/^https?:/.test(h))return h;
   return D.S.baseUrl?D.S.baseUrl.replace(/#.*$/,''):'';
 };
+D.hashKey=async t=>{try{const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(h).slice(0,8),x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return '';}};
+D.shortUrl=id=>{const s=D.S.snaps.find(x=>x.id===id),b=D.pageUrl();if(!s||!s.key||!b||!D.sync.code||D.sync.dirty.has('snap|'+id)||!D.sync.last['snap|'+id])return '';return b+'#c='+s.id+'.'+s.key;};
+D.qrUrl=id=>D.shortUrl(id)||D.snapUrl(id);
 D.snapUrl=id=>{const s=D.S.snaps.find(x=>x.id===id)||(D.shared&&D.shared.id===id?D.shared:null);const b=D.pageUrl();return b&&s&&s.payload?b+'#s='+s.payload:'';};
 const b64=u8=>{let t='';u8.forEach(c=>t+=String.fromCharCode(c));return btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');};
 const unb64=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const r=atob(t),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u;};
@@ -2640,12 +2658,29 @@ D.flavorHtml=s=>{
 D.grind=v=>/^\d+(\.\d+)?$/.test(String(v))?v+' µm':String(v==null?'':v);
 D.num=v=>{const x=Math.round(v*10)/10;return String(x);};
 
-D.qr=(text,canvas,px)=>{
-  const q=qrcode(0,'M');q.addData(text);q.make();
+D.qr=(text,canvas,px,label)=>{
+  let q=null,lvl='M';
+  /* strongest protection that fits: H repairs up to 30% of the code, so the brand label in the middle cannot stop it scanning */
+  for(const L of (label?['H','Q','M']:['M'])){try{const t=qrcode(0,L);t.addData(text);t.make();q=t;lvl=L;break;}catch(e){}}
+  if(!q)return;
   const n=q.getModuleCount(),quiet=4,size=n+quiet*2,cell=Math.max(2,Math.floor((px||336)/size));
   canvas.width=canvas.height=size*cell;
-  const c=canvas.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);c.fillStyle='#000';
+  const c=canvas.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,canvas.width,canvas.height);c.fillStyle='#111';
   for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))c.fillRect((k+quiet)*cell,(r+quiet)*cell,cell,cell);
+  if(!label)return;
+  /* badge size stays well inside what the chosen level can repair */
+  const inner=n*cell,f=lvl==='H'?1:lvl==='Q'?.85:.7,bw=Math.round(inner*.40*f),bh=Math.round(inner*.16*f),
+        bx=Math.round((canvas.width-bw)/2),by=Math.round((canvas.height-bh)/2),rad=Math.round(bh*.28);
+  c.fillStyle='#fff';c.beginPath();if(c.roundRect)c.roundRect(bx-cell,by-cell,bw+cell*2,bh+cell*2,rad+cell);else c.rect(bx-cell,by-cell,bw+cell*2,bh+cell*2);c.fill();
+  c.fillStyle='#111';c.beginPath();if(c.roundRect)c.roundRect(bx,by,bw,bh,rad);else c.rect(bx,by,bw,bh);c.fill();
+  const words=String(label).trim().split(/\s+/),last=words.length>1?words.pop():'',first=words.join(' ');
+  const fam='-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,"Noto Sans Thai","Helvetica Neue",Arial,sans-serif';
+  const fit=(t,wt,max)=>{let z=max;c.font=wt+' '+z+'px '+fam;while(z>6&&c.measureText(t).width>bw*.84){z-=1;c.font=wt+' '+z+'px '+fam;}return z;};
+  c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';const cx=canvas.width/2,cy=canvas.height/2;
+  if(last){const z1=fit(first,'500',Math.round(bh*.28)),z2=fit(last,'700',Math.round(bh*.42));
+    c.font='500 '+z1+'px '+fam;c.globalAlpha=.78;c.fillText(first,cx,cy-z2*.42);c.globalAlpha=1;
+    c.font='700 '+z2+'px '+fam;c.fillText(last,cx,cy+z1*.55);}
+  else{const z=fit(first,'700',Math.round(bh*.42));c.font='700 '+z+'px '+fam;c.fillText(first,cx,cy);}
 };
 
 /* Which photos a snapshot shows, in display order (farmer photos have their own block) */
@@ -3196,11 +3231,13 @@ const viewAdmin=()=>!D.caps.isOwner?loginHtml():adminTop()+settingsHtml()+
 let editAddr=false;
 const viewResult=()=>{
   const s=D.S.snaps.find(x=>x.id===resultId);if(!s)return viewBeans();
-  const url=D.snapUrl(s.id),form=!url||editAddr;
-  return '<div class="sec"><h2>'+T('rs.h')+'</h2><p>'+esc(s.bean.name)+(s.customer?'  · '+T('rs.brewed')+' '+esc(s.customer):'')+'</p>'+
-   (url?'<div class="qrbox qr-only"><canvas id="qr" width="168" height="168" aria-label="QR"></canvas><div class="qr-cap">'+T('rs.scan')+'</div><div class="vh" id="url" aria-hidden="true">'+esc(url)+'</div></div>':'')+
-   (form?'<div style="'+(url?'margin-top:16px;':'')+'border-top:1px solid var(--line);padding-top:16px"><h2>'+T('rs.qr.h')+'</h2><div class="f"><label class="lbl" for="rs-base">'+T('rs.qr.l')+'</label><input id="rs-base" type="url" inputmode="url" value="'+esc(D.S.baseUrl||D.pageUrl())+'" placeholder="https://cafe-name.example/drip.html"></div><p class="cap">'+T('rs.qr.help')+'</p><div class="acts" style="margin-top:8px"><button class="btn" data-act="mkqr">'+T('rs.qr.btn')+'</button></div></div>':'')+
-   '<div class="acts" style="margin-top:14px"><button class="btn'+(url?'':' ghost')+'" data-act="jpeg" data-id="'+s.id+'">'+T('rs.jpeg')+'</button>'+(url?'<button class="btn ghost" data-act="copy">'+T('rs.copy')+'</button>':'')+'<button class="btn ghost" data-act="open" data-id="'+s.id+'">'+T('rs.cview')+'</button>'+'<button class="btn ghost" data-act="again">'+T('rs.next')+'</button></div></div>';
+  const url=D.qrUrl(s.id),form=!url||editAddr;
+  return '<section class="sec rs"><p class="rs-ok"><span aria-hidden="true">✓</span> '+T('rs.h')+'</p>'+
+   '<h2 class="rs-name">'+esc(s.bean.name)+'</h2>'+(s.customer?'<p class="rs-sub">'+T('rs.brewed')+' '+esc(s.customer)+'</p>':'')+
+   (url?'<figure class="rs-qr"><canvas id="qr" width="168" height="168" role="img" aria-label="'+esc(D.T('rs.scan'))+'"></canvas><figcaption>'+T('rs.lead')+'</figcaption></figure><div class="vh" id="url" aria-hidden="true">'+esc(url)+'</div>':'')+
+   (form?'<div class="rs-form"><h2>'+T('rs.qr.h')+'</h2><div class="f"><label class="lbl" for="rs-base">'+T('rs.qr.l')+'</label><input id="rs-base" type="url" inputmode="url" value="'+esc(D.S.baseUrl||D.pageUrl())+'" placeholder="https://cafe-name.example/drip.html"></div><p class="cap">'+T('rs.qr.help')+'</p><div class="acts" style="margin-top:8px"><button class="btn" data-act="mkqr">'+T('rs.qr.btn')+'</button></div></div>':'')+
+   '<button class="btn rs-next" data-act="again">'+T('rs.next')+'</button>'+
+   '<div class="rs-links"><button class="lnk" data-act="jpeg" data-id="'+s.id+'">'+T('rs.jpeg')+'</button>'+(url?'<button class="lnk" data-act="copy">'+T('rs.copy')+'</button>':'')+'<button class="lnk" data-act="open" data-id="'+s.id+'">'+T('rs.cview')+'</button></div></section>';
 };
 const viewSnap=s=>D.profileHtml(s);
 const viewCustomer=id=>{
@@ -3226,7 +3263,7 @@ const render=()=>{
   if(id){app.innerHTML=viewCustomer(id);return;}
   if(!D.caps.canEdit){app.innerHTML='<div class="profile cv-msg"><h1>'+T('title')+'</h1></div>';return;}
   if(!D.sync.code){app.innerHTML=joinHtml();return;}
-  if(resultId){app.innerHTML=shell(viewResult());const c=$('#qr'),u=D.snapUrl(resultId);if(c&&u&&window.qrcode)D.qr(u,c,640);return;}
+  if(resultId){app.innerHTML=shell(viewResult());const c=$('#qr'),sh=D.shortUrl(resultId),u=sh||D.snapUrl(resultId);if(c&&u&&window.qrcode){D.qr(u,c,720,sh?D.T('qr.brand'):'');c.dataset.short=sh?'1':'';}return;}
   const v={beans:viewBeans,addcoffee:viewAdd,recipe:viewRecipe,history:viewHistory,admin:viewAdmin}[tab]||viewBeans;
   app.innerHTML=shell(v());refreshCalc();
   const jq=$('#join-qr');if(jq&&window.qrcode)D.qr(D.joinLink(),jq,480);
@@ -3360,7 +3397,7 @@ app.addEventListener('click',async e=>{
      const snap={id:D.newId(),createdAt:Date.now(),customer:W.customer.trim(),barista:W.barista.trim(),dripper:W.dripper,
        bean:clone(Object.assign({},b,{sample:undefined})),photos:photosOf(b.id),recipe:clone(W.recipe),std:clone(STD[W.dripper]),
        brew:clone(W.brew),show:clone(W.show||{}),notes:W.notes.slice(),message:W.message.trim(),profile:clone(W.profile)};
-     snap.payload=await D.makePayload(snap);
+     snap.payload=await D.makePayload(snap);snap.key=await D.hashKey(snap.payload);
      D.S.snaps.unshift(snap);render();
      const ok=await doSave('Recipe saved',()=>{D.S.snaps.shift();render();});
      if(ok){resultId=snap.id;W=null;render();window.scrollTo(0,0);}
@@ -3399,6 +3436,7 @@ const SAMPLES=clone(BEANS);
 const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D.S.beans:clone(SAMPLES)));D.S.folders=D.S.folders||[];D.S.photos=D.S.photos||{};D.S.snaps=D.S.snaps||[];};
 const safeToRender=()=>!dirty&&!busy&&!document.querySelector('[role="dialog"]')&&!(document.activeElement&&app.contains(document.activeElement)&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))&&!(CD&&CD.scanBusy);
 let pendingRender=false,lastPull=0;
+D.sync.onFlush=()=>{const c=$('#qr');if(resultId&&c&&!c.dataset.short&&D.shortUrl(resultId)&&safeToRender())render();};
 const refreshShared=async()=>{if(!D.sync.code||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
   if(!D.sync.code){if(safeToRender())render();else pendingRender=true;return;}
   if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
@@ -3417,7 +3455,10 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
 (async()=>{
   const jm=location.hash.match(/^#join=([^&]+)/);if(jm){const c=decodeURIComponent(jm[1]);try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}try{localStorage.setItem('dp-shop',c.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);D.applyTheme();applyBeans();try{D.caps.isOwner=sessionStorage.getItem('dp-admin')==='1';}catch(x){D.caps.isOwner=false;}
-  const sync=async()=>{D.shared=null;const m=location.hash.match(/^#s=(.+)$/);if(m){try{D.shared=await D.readPayload(m[1]);}catch(e){D.shared=null;}}render();
+  const sync=async()=>{const cm=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/);
+    if(cm){app.innerHTML='<div class="profile cv-msg"><p class="cap">…</p></div>';document.body.classList.add('cv');let pl=null;try{pl=await D.rpc('drip_snap',{p_ref:cm[1]});}catch(e){}
+      try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||''));}catch(x){}}
+    D.shared=null;const m=location.hash.match(/^#s=(.+)$/);if(m){try{D.shared=await D.readPayload(m[1]);}catch(e){D.shared=null;}}render();
     const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();
   if(D.cap){document.body.classList.add('cap');window.DPcap=D.capNow;return;}
