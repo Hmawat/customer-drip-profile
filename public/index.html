@@ -945,6 +945,78 @@ body.cap .cv-photos figure:first-child:nth-last-child(2n+1){grid-column:1/-1;asp
 .rs-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 20px;margin-top:16px}
 .lnk{background:none;border:0;padding:6px 2px;font:400 15px/1.3 var(--font-b);color:var(--link,#0066cc);cursor:pointer}
 .lnk:hover{text-decoration:underline}
+
+/* ===== Download card: portrait 9:16, everything on one screen ===== */
+body.card{background:#f5f5f7}
+body.card article.profile{display:flex;flex-direction:column;background:#f5f5f7;box-sizing:border-box;padding-bottom:0}
+body.card .cv-in{padding-left:20px;padding-right:20px;max-width:none}
+body.card .cv-gal,body.card .cv-foot,body.card .cv-count,body.card .cv h2 span,body.card .cv-note,body.card .cv-specs .cv-sh{display:none!important}
+body.card .cv-hero{padding:22px 0 0;background:#f5f5f7}
+body.card .cv-hc{align-items:flex-start;text-align:left}
+body.card .cv-kick{margin:0 0 4px;font-size:12px}
+body.card .cv h1.cv-name{font-size:28px;line-height:1.08;max-width:none;letter-spacing:-.02em}
+body.card .cv-org{margin-top:4px;font-size:15px}
+body.card .cv-meta{justify-content:flex-start;margin-top:8px;font-size:12px;gap:0 8px}
+body.card .cv-ph{margin:14px 0 0;max-width:none;aspect-ratio:auto;border-radius:18px}
+body.card .cv-proc{left:12px;top:12px;font-size:11px;padding:5px 10px}
+body.card .cv-specs{padding:12px 0 2px;background:#f5f5f7}
+body.card .cv-spec{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 14px}
+body.card .cv-spec div{padding:7px 0;border-top:1px solid #d2d2d7}
+body.card .cv-spec dt{font-size:10.5px;margin:0 0 1px}
+body.card .cv-spec dd{font-size:13px;line-height:1.25}
+body.card .cv-brew{margin:12px 20px 0;padding:16px 0 14px;border-radius:22px;background:#000}
+body.card .cv-brew .cv-in{padding-left:16px;padding-right:16px}
+body.card .cv-bh{margin-bottom:12px;align-items:center}
+body.card .cv-bh h2,body.card .cv-taste h2{font-size:17px;letter-spacing:-.01em}
+body.card .cv-dn{padding:5px 11px 5px 8px}
+body.card .cv-dn b{font-size:12px}
+body.card .cv-dn .ico{width:16px;height:16px}
+body.card .cv-bg{grid-template-columns:minmax(0,1fr);gap:10px}
+body.card .cv-tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+body.card .cv-t{padding:10px 11px;border-radius:14px}
+body.card .cv-t .ico{width:14px;height:14px;margin-bottom:5px}
+body.card .cv-t b{font-size:21px}
+body.card .cv-t b small{font-size:12px}
+body.card .cv-t span{font-size:10.5px}
+body.card .cv-res{margin-top:10px}
+body.card .cv-res h3,body.card .cv-pours h3{font-size:12px;margin:0 0 6px;color:#86868b}
+body.card .cv-pours{padding:10px 12px 4px;border-radius:14px}
+body.card .cv-pr li{grid-template-columns:40px minmax(0,1fr) auto;gap:10px;padding:6px 0}
+body.card .cv-pr time{font-size:12px}
+body.card .cv-pr .n{font-size:11.5px;gap:4px}
+body.card .cv-pr .pb{height:3px}
+body.card .cv-pr .w{font-size:13px}
+body.card .cv-pr .w small{font-size:10px}
+body.card .cv-taste{padding:14px 0 0;background:#f5f5f7}
+body.card .cv-taste .cv-sh{margin-bottom:8px}
+body.card .cv-flcard{padding:12px 14px;border-radius:18px}
+body.card .flavors{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
+body.card .fl{gap:8px}
+body.card .fl-ic{font-size:20px}
+body.card .fl b{font-size:13.5px}
+body.card .fl small{font-size:10px}
+body.card .cv-q{margin:12px 0 0;max-width:none}
+body.card .cv-q p{font-size:16px;line-height:1.35}
+body.card .cv-q cite{margin-top:4px;font-size:13px}
+body.card .card-brand{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding:14px 20px 18px;font:600 13px/1.2 var(--font-s);color:#1d1d1f}
+body.card .card-brand .cb-mark{display:inline-flex;align-items:center;gap:8px}
+body.card .card-brand .cb-mark::before{content:'';width:8px;height:8px;border-radius:50%;background:#bf4800}
+body.card .card-brand .cb-date{font:400 12px var(--font-b);color:#86868b}
+
+body.card .cv-t .ico{display:none}
+body.card .cv-t{padding:9px 11px 8px}
+body.card .flavors.many{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px}
+body.card .flavors.many .fl small{display:none}
+body.card .flavors.many .fl b{font-size:12.5px}
+body.card .flavors.many .fl-ic{font-size:17px}
+body.card .fl{align-items:center}
+
+body.card .cv-meta{display:block;margin-top:6px}
+body.card .cv-meta i{margin:0 6px}
+body.card .cv-pr li{padding:4px 0}
+body.card .cv-pr .w small{display:none}
+body.card .cv-pr .n{flex-direction:row;align-items:center;gap:10px}
+body.card .cv-pr .n .pb{flex:1}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2942,13 +3014,27 @@ D.renderJpegCanvas=async s=>{
 /* ---------- Download image = picture of the real customer page ----------
    The customer page is opened at phone width in a hidden frame, every element is copied with its final look,
    and the result is drawn into a JPEG. The image therefore always matches what the customer sees after scanning. */
+D.cardPrep=()=>{const a=document.querySelector('article.profile');if(!a||a.querySelector('.card-brand'))return;
+  const m=a.querySelector('.cv-meta');if(m&&m.lastChild&&m.lastChild.nodeType===3){m.lastChild.remove();const i=m.lastElementChild;if(i&&i.tagName==='I')i.remove();}
+  const fl=a.querySelector('.flavors');if(fl&&fl.children.length>6)fl.classList.add('many');
+  const f=document.createElement('div');f.className='card-brand';f.innerHTML='<span class="cb-mark">'+esc(D.T('qr.brand'))+'</span><span class="cb-date">'+esc(D.fmtDate((D.shared||{}).createdAt))+'</span>';a.appendChild(f);};
+/* fixed 9:16 card: the photo takes whatever height is left; only if the text alone is too tall does the card widen (smaller type) */
+D.cardFit=node=>{const R=16/9,ph=node.querySelector('.cv-ph');
+  const measure=(w,p)=>{node.style.width=w+'px';node.style.minHeight='0';if(ph){ph.style.height=p+'px';ph.style.display=p?'':'none';}return node.scrollHeight;};
+  let W=400;
+  for(let i=0;i<14;i++){const H=Math.round(W*R),base=measure(W,0),gap=ph?14:0,avail=H-base-gap,minP=Math.round(W*.26);
+    if(!ph&&base<=H){node.style.minHeight=H+'px';return {W,H};}
+    if(ph&&avail>=minP){measure(W,Math.min(avail,Math.round(W*.66)));node.style.minHeight=H+'px';return {W,H};}
+    W=Math.round(W*1.06);}
+  measure(W,ph?Math.round(W*.26):0);const H=Math.max(Math.round(W*R),node.scrollHeight);node.style.minHeight=H+'px';return {W,H};};
 D.capNow=async()=>{
   const node=document.querySelector('article.profile');if(!node)throw new Error('no page');
   document.querySelectorAll('img').forEach(i=>{i.loading='eager';});
   await Promise.all([...document.images].map(i=>i.complete&&i.naturalWidth?(i.decode?i.decode().catch(()=>{}):0):new Promise(r=>{i.onload=i.onerror=r;setTimeout(r,8000);})));
   try{await document.fonts.ready;}catch(e){}
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-  const win=window,W=Math.ceil(node.getBoundingClientRect().width),H=Math.ceil(node.scrollHeight);
+  const card=document.body.classList.contains('card'),fit=card?D.cardFit(node):null;
+  const win=window,W=fit?fit.W:Math.ceil(node.getBoundingClientRect().width),H=fit?fit.H:Math.ceil(node.scrollHeight);
   const css=cs=>{let t='';for(let i=0;i<cs.length;i++){const p=cs[i];if(p.indexOf('transition')===0||p.indexOf('animation')===0)continue;t+=p+':'+cs.getPropertyValue(p)+';';}return t;};
   const pseudo=(src,dst,ps)=>{const c=win.getComputedStyle(src,ps),ct=c.getPropertyValue('content');
     if(!ct||ct==='none'||ct==='normal')return;const el=document.createElement('span');el.setAttribute('style',css(c));
@@ -2960,14 +3046,14 @@ D.capNow=async()=>{
     if(a.tagName==='IMG'){b.removeAttribute('loading');b.removeAttribute('srcset');}
     const ac=a.childNodes;for(let i=0;i<ac.length;i++)copy(ac[i],kids[i]);};
   const clone=node.cloneNode(true);copy(node,clone);
-  clone.style.margin='0';clone.style.width=W+'px';
+  clone.style.margin='0';clone.style.width=W+'px';clone.style.height=H+'px';
   const xml=new XMLSerializer().serializeToString(clone);
   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><foreignObject x="0" y="0" width="100%" height="100%">'+xml+'</foreignObject></svg>';
   const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
   {
     const img=new Image();img.decoding='sync';
     await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('draw'));img.src=url;});
-    const k=Math.max(1,Math.min(2.5,Math.sqrt(15000000/(W*H)))),cv=document.createElement('canvas');
+    const k=card?1080/W:Math.max(1,Math.min(2.5,Math.sqrt(15000000/(W*H)))),cv=document.createElement('canvas');
     cv.width=Math.round(W*k);cv.height=Math.round(H*k);const c=cv.getContext('2d');
     c.fillStyle=getComputedStyle(document.body).backgroundColor||'#fff';c.fillRect(0,0,cv.width,cv.height);
     c.drawImage(img,0,0,cv.width,cv.height);
@@ -2981,7 +3067,7 @@ D.captureProfile=s=>new Promise((res,rej)=>{
   const pl=s.payload||((location.hash.match(/^#s=(.+)$/)||[])[1]);if(!pl)return rej(new Error('no payload'));
   const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');f.tabIndex=-1;
   f.style.cssText='position:fixed;left:-10000px;top:0;width:430px;height:932px;border:0;opacity:0;pointer-events:none';
-  f.src=base+'?cap=1#s='+pl;document.body.appendChild(f);
+  f.src=base+'?cap=1&card=1#s='+pl;document.body.appendChild(f);
   const t0=Date.now();let over=false;const end=(v,e)=>{if(over)return;over=true;f.remove();e?rej(e):res(v);};
   const poll=async()=>{if(over)return;let w=null;try{w=f.contentWindow;}catch(e){}
     if(w&&w.DPcap){try{const u=await w.DPcap();const blob=await (await fetch(u)).blob();end({url:u,blob});}catch(e){end(null,e);}return;}
@@ -3461,7 +3547,7 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
     D.shared=null;const m=location.hash.match(/^#s=(.+)$/);if(m){try{D.shared=await D.readPayload(m[1]);}catch(e){D.shared=null;}}render();
     const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();
-  if(D.cap){document.body.classList.add('cap');window.DPcap=D.capNow;return;}
+  if(D.cap){document.body.classList.add('cap');if(/[?&]card=1(&|$)/.test(location.search)){document.body.classList.add('card');D.cardPrep();}window.DPcap=D.capNow;return;}
   window.addEventListener('hashchange',sync);
   setInterval(refreshShared,20000);
   window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
