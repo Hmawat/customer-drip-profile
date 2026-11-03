@@ -1022,6 +1022,12 @@ body.card .cv-pr .n .pb{flex:1}
 .bl .bl-ext{min-height:44px;display:flex;align-items:center;padding:0 14px;border-radius:12px;background:#f5f5f7;font:600 17px var(--font-b)}
 .bl .bl-show{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:15px;cursor:pointer}
 .bl .bl-show input{width:20px;height:20px;accent-color:#0071e3}
+
+.edit-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#fff4e5;color:#7a3e00}
+.edit-bar span{font-size:13px}
+.preset-row{margin:0 0 18px}
+.preset-row .lbl{display:block;margin-bottom:8px}
+.preset-row .cap{margin:8px 0 0}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2510,7 +2516,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['qr.brand','Coffee with Native'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand','Coffee with Native'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -2560,7 +2566,7 @@ D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
    Items are synced one by one, so two baristas adding coffees at the same time never overwrite each other. */
 D.SB={url:'https://fmrilvoshgiojorolico.supabase.co',key:'sb_publishable_1W0Qd6vBhclrnU6OMpubiA_Sw63P7PS'};
 D.sync={code:'',last:{},dirty:new Set(),since:null,state:'off',busy:false,ready:false,onChange:null};
-const SKEYS=['baseUrl','labels','adminPin','theme'];
+const SKEYS=['baseUrl','labels','adminPin','theme','presets'];
 const LS={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
 D.rpc=async(fn,body)=>{
   let r;try{r=await fetch(D.SB.url+'/rest/v1/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:D.SB.key},body:JSON.stringify(body)});}
@@ -3143,6 +3149,11 @@ const toast=m=>{let t=$('.toast');if(!t){t=document.createElement('div');t.class
 const photosOf=id=>{const p=D.S.photos[id]||{};return {label:(p.label||[]).slice(0,1),farm:(p.farm||[]).slice(),origin:(p.origin||[]).slice()};};
 const beanImg=b=>{const p=D.S.photos[b.id]||{};return (p.label||[])[0]||(p.origin||[])[0]||placeholder('origin',b.hue||30,b.country);};
 
+const workFromSnap=s=>({beanId:s.bean.id,beanSnap:clone(s.bean),dripper:s.dripper,customer:s.customer||'',barista:s.barista||'',recipe:clone(s.recipe),notes:(s.notes||[]).slice(),message:s.message||'',profile:clone(s.profile||{}),
+  brew:Object.assign({tds:'',yield:'',ext:'',acidity:'',sweetness:'',body:''},clone(s.brew||{})),show:clone(s.show||{}),editId:s.id});
+const applyPreset=(w,p)=>{if(!w||!p)return;w.dripper=p.dripper||w.dripper;w.recipe=Object.assign(clone(p.recipe),{waterTds:(w.recipe&&w.recipe.waterTds)||p.recipe.waterTds||''});if(p.show)w.show=Object.assign({},w.show,clone(p.show));w.presetId=p.id;w._shares=null;};
+let activePreset='';try{activePreset=localStorage.getItem('dp-preset')||'';}catch(e){}
+const presets=()=>Array.isArray(D.S.presets)?D.S.presets:[];
 const newWork=(b,dr)=>{
   dr=dr||'v60';
   let me='';try{me=localStorage.getItem('dp-barista')||'';}catch(e){}
@@ -3169,7 +3180,8 @@ const viewBeans=()=>{
   const q=filt.q.toLowerCase();
   const procs=[...new Set(BEANS.map(b=>b.process))];
   const list=BEANS.filter(b=>(!filt.p||b.process===filt.p)&&(!filt.f||(filt.f==='_'?!b.folder:b.folder===filt.f))&&(!q||(b.name+b.country+b.region+b.farm).toLowerCase().includes(q)));
-  return '<div class="acts quick"><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
+  const pl=presets(),presetRow=pl.length?'<div class="preset-row"><span class="lbl">'+T('pr.active')+'</span><div class="chips"><button class="chip" data-act="prpick" data-p="" aria-pressed="'+!pl.some(x=>x.id===activePreset)+'">'+T('pr.none')+'</button>'+pl.map(x=>'<button class="chip" data-act="prpick" data-p="'+esc(x.id)+'" aria-pressed="'+(x.id===activePreset)+'">'+esc(x.name)+'</button>').join('')+'</div><p class="cap">'+T('pr.help')+'</p></div>':'';
+  return presetRow+'<div class="acts quick"><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
@@ -3220,12 +3232,16 @@ const viewAdd=()=>{
 /* ---------- Recipe ---------- */
 const viewRecipe=()=>{
   if(!W)return '<p>'+T('rc.pick')+'</p><button class="btn" data-act="tab" data-t="beans">'+T('rc.pickbtn')+'</button>';
-  const b=bean(W.beanId),r=W.recipe,std=STD[W.dripper];
+  const b=bean(W.beanId)||W.beanSnap,r=W.recipe,std=STD[W.dripper];
   const pours=r.pours.map((p,i)=>'<tr><th class="lbl" scope="row">'+T('rc.pour')+' '+(i+2)+'</th><td><input data-k="pt:'+i+'" value="'+esc(p.t)+'" aria-label="'+T('rc.th.start')+', '+T('rc.pour')+' '+(i+2)+'"></td><td><input data-k="pw:'+i+'" type="number" step="any" inputmode="decimal" value="'+esc(p.w)+'" aria-label="'+T('rc.th.water')+', '+T('rc.pour')+' '+(i+2)+'"></td><td><button class="xs" data-act="delpour" data-i="'+i+'" aria-label="'+T('ad.delete')+'">×</button></td></tr>').join('');
   const grind=(()=>{const o=[];for(let m=300;m<=1200;m+=50)o.push(String(m));let v=String(r.grind==null?'':r.grind);if(v&&!o.includes(v))o.unshift(v);return '<div class="f"><label class="lbl" for="grind">'+T('rc.grind')+'</label><select id="grind" data-k="recipe.grind">'+o.map(x=>'<option value="'+esc(x)+'"'+(x===v?' selected':'')+'>'+esc(D.grind(x))+'</option>').join('')+'</select></div>';})();
   const L=k=>T('rc.log.'+k);
   const rng=(a,b,st)=>{let o='';for(let x=a;x<=b+1e-9;x+=st)o+='<option value="'+(+x.toFixed(2))+'">';return o;};
-  return '<div class="cols"><div>'+
+  const pl=presets(),cur=pl.find(x=>x.id===W.presetId);
+  const editBar=W.editId?'<div class="banner edit-bar"><div><b>'+T('ed.h')+'</b><br><span>'+T('ed.help')+'</span></div><button class="btn ghost" data-act="editcancel">'+T('ed.cancel')+'</button></div>':'';
+  const presetBar='<section class="sec preset-sec"><h2>'+T('pr.h')+'</h2><div class="row"><div class="f"><label class="lbl" for="pr-sel">'+T('pr.apply')+'</label><select id="pr-sel"><option value="">'+T('pr.none')+'</option>'+pl.map(x=>'<option value="'+esc(x.id)+'"'+(x.id===W.presetId?' selected':'')+'>'+esc(x.name)+'</option>').join('')+'</select></div></div>'+
+   '<div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="prsave">'+T('pr.save')+'</button>'+(cur?'<button class="btn ghost" data-act="prupdate">'+T('pr.update')+'</button><button class="btn ghost" data-act="prdel">'+T('pr.del')+'</button>':'')+'</div></section>';
+  return editBar+'<div class="cols"><div>'+presetBar+
    '<section class="sec"><h2>'+T('rc.cust.h')+'</h2><div class="row">'+field(T('rc.cust.name'),'customer',W.customer)+field(T('rc.cust.barista'),'barista',W.barista)+'</div></section>'+
    '<section class="sec"><h2>'+T('rc.dr.h')+'</h2><div class="drippers">'+DRIPPERS.map(d=>'<button class="dr" data-act="dripper" data-d="'+d.id+'" aria-pressed="'+(W.dripper===d.id)+'">'+esc(D.dName(d.id))+'</button>').join('')+'</div></section>'+
    '<section class="sec"><h2>'+T('rc.h')+'</h2><div class="row">'+
@@ -3244,7 +3260,7 @@ const viewRecipe=()=>{
     '<details class="grp" data-g="rc-more"'+(openG.has('rc-more')?' open':'')+'><summary>'+T('rc.notes.more')+'</summary><div style="padding:0 14px 14px">'+noteGroups(EXTRA,'note',W.notes)+'</div></details>'+
     '<div class="f" style="margin-top:14px"><label class="lbl" for="msg">'+T('rc.msg')+'</label><textarea id="msg" data-k="message" rows="3" placeholder="'+T('rc.msgph')+'">'+esc(W.message)+'</textarea></div></section>'+
    '<section class="sec"><h2>'+T('rc.show.h')+'</h2><p class="cap" style="margin:0 0 10px">'+T('rc.show.help')+'</p><div class="chips">'+[['dose','cp.dose'],['water','cp.tw'],['ratio','cp.ratio'],['temp','cp.temp'],['grind','cp.grind'],['time','cp.time'],['pours','cp.pourchart'],['wtds','cp.tds'],['brew','rc.show.brew']].map(x=>'<button class="chip" data-act="showtog" data-n="'+x[0]+'" aria-pressed="'+!!(W.show&&W.show[x[0]])+'"><i style="--c:var(--sage)"></i>'+T(x[1])+'</button>').join('')+'</div></section>'+
-  '<div class="acts"><button class="btn" data-act="saverecipe" '+(busy?'disabled':'')+'>'+T('rc.save')+'</button></div>'+
+  '<div class="acts"><button class="btn" data-act="saverecipe" '+(busy?'disabled':'')+'>'+T(W.editId?'ed.save':'rc.save')+'</button>'+(W.editId?'<button class="btn ghost" data-act="editcancel">'+T('ed.cancel')+'</button>':'')+'</div>'+
    '<p class="cap" style="margin-top:8px">'+T('rc.savehelp')+'</p>'+
   '</div></div>';
 };
@@ -3267,7 +3283,7 @@ const cmpHtml=()=>{
   return '<section class="sec"><h2>'+T('hs.cmp.h')+'</h2><div class="scroll"><table class="hist"><thead><tr><th></th><th class="lbl">'+hd(a[0])+'</th><th class="lbl">'+hd(a[1])+'</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="cap">'+T('hs.cmp.diff')+'</p><div class="acts"><button class="chip" data-act="cmpclear">'+T('hs.cmp.clear')+'</button></div></section>';
 };
 const viewHistory=()=>{
-  const rows=D.S.snaps.map(s=>'<tr><td>'+esc(D.fmtDate(s.createdAt))+'</td><td>'+esc(s.customer||'-')+'</td><td>'+esc(s.bean.name)+'</td><td>'+esc(D.dName(s.dripper))+'</td><td>'+esc(s.barista||'-')+'</td><td><div class="acts"><button class="chip" data-act="open" data-id="'+s.id+'">'+T('hs.view')+'</button><button class="chip" data-act="qr" data-id="'+s.id+'">'+T('hs.qr')+'</button><button class="chip" data-act="brewlater" data-id="'+s.id+'">'+T(s.brew&&(s.brew.tds||s.brew.yield)?'bl.edit':'bl.add')+'</button><button class="chip" data-act="cmp" data-id="'+s.id+'" aria-pressed="'+cmpSel.includes(s.id)+'">'+T('hs.cmp')+'</button>'+
+  const rows=D.S.snaps.map(s=>'<tr><td>'+esc(D.fmtDate(s.createdAt))+'</td><td>'+esc(s.customer||'-')+'</td><td>'+esc(s.bean.name)+'</td><td>'+esc(D.dName(s.dripper))+'</td><td>'+esc(s.barista||'-')+'</td><td><div class="acts"><button class="chip" data-act="open" data-id="'+s.id+'">'+T('hs.view')+'</button><button class="chip" data-act="qr" data-id="'+s.id+'">'+T('hs.qr')+'</button><button class="chip" data-act="editsnap" data-id="'+s.id+'">'+T('hs.edit')+'</button><button class="chip" data-act="brewlater" data-id="'+s.id+'">'+T(s.brew&&(s.brew.tds||s.brew.yield)?'bl.edit':'bl.add')+'</button><button class="chip" data-act="cmp" data-id="'+s.id+'" aria-pressed="'+cmpSel.includes(s.id)+'">'+T('hs.cmp')+'</button>'+
     (D.caps.isOwner?'<button class="chip" data-act="del" data-id="'+s.id+'">'+T('hs.del')+'</button>':'')+'</div></td></tr>').join('');
   return '<h2>'+T('hs.h')+' ('+D.S.snaps.length+')</h2>'+cmpHtml()+(rows?'<div class="scroll"><table class="hist"><thead><tr><th class="lbl">'+T('hs.time')+'</th><th class="lbl">'+T('hs.cust')+'</th><th class="lbl">'+T('hs.bean')+'</th><th class="lbl">'+T('hs.dripper')+'</th><th class="lbl">'+T('hs.barista')+'</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="cap">'+T('hs.empty')+'</p>');
 };
@@ -3328,7 +3344,7 @@ const viewResult=()=>{
    (url?'<figure class="rs-qr"><canvas id="qr" width="168" height="168" role="img" aria-label="'+esc(D.T('rs.scan'))+'"></canvas><figcaption>'+T('rs.lead')+'</figcaption></figure><div class="vh" id="url" aria-hidden="true">'+esc(url)+'</div>':'')+
    (form?'<div class="rs-form"><h2>'+T('rs.qr.h')+'</h2><div class="f"><label class="lbl" for="rs-base">'+T('rs.qr.l')+'</label><input id="rs-base" type="url" inputmode="url" value="'+esc(D.S.baseUrl||D.pageUrl())+'" placeholder="https://cafe-name.example/drip.html"></div><p class="cap">'+T('rs.qr.help')+'</p><div class="acts" style="margin-top:8px"><button class="btn" data-act="mkqr">'+T('rs.qr.btn')+'</button></div></div>':'')+
    '<button class="btn rs-next" data-act="again">'+T('rs.next')+'</button>'+
-   '<div class="rs-links"><button class="lnk" data-act="jpeg" data-id="'+s.id+'">'+T('rs.jpeg')+'</button>'+(url?'<button class="lnk" data-act="copy">'+T('rs.copy')+'</button>':'')+'<button class="lnk" data-act="open" data-id="'+s.id+'">'+T('rs.cview')+'</button><button class="lnk" data-act="brewlater" data-id="'+s.id+'">'+T(s.brew&&(s.brew.tds||s.brew.yield)?'bl.edit':'bl.add')+'</button></div>'+(s.brew&&(s.brew.tds||s.brew.yield)?'<p class="rs-brew">TDS '+esc(s.brew.tds||'–')+'% · Yield '+esc(s.brew.yield||'–')+' g · EXT '+esc(s.brew.ext||'–')+'%</p>':'')+'</section>';
+   '<div class="rs-links"><button class="lnk" data-act="jpeg" data-id="'+s.id+'">'+T('rs.jpeg')+'</button>'+(url?'<button class="lnk" data-act="copy">'+T('rs.copy')+'</button>':'')+'<button class="lnk" data-act="open" data-id="'+s.id+'">'+T('rs.cview')+'</button><button class="lnk" data-act="editsnap" data-id="'+s.id+'">'+T('ed.btn')+'</button><button class="lnk" data-act="brewlater" data-id="'+s.id+'">'+T(s.brew&&(s.brew.tds||s.brew.yield)?'bl.edit':'bl.add')+'</button></div>'+(s.brew&&(s.brew.tds||s.brew.yield)?'<p class="rs-brew">TDS '+esc(s.brew.tds||'–')+'% · Yield '+esc(s.brew.yield||'–')+' g · EXT '+esc(s.brew.ext||'–')+'%</p>':'')+'</section>';
 };
 const viewSnap=s=>D.profileHtml(s);
 const viewCustomer=id=>{
@@ -3487,7 +3503,7 @@ app.addEventListener('click',async e=>{
      break;}
    case 'tab':{const t=el.dataset.t;if(t==='addcoffee'&&CD&&(CD.id||CD.done))CD=null;tab=t;resultId=null;render();break;}
    case 'proc':filt.p=el.dataset.p;render();break;
-   case 'pick':W=newWork(bean(id));tab='recipe';render();window.scrollTo(0,0);break;
+   case 'pick':W=newWork(bean(id));{const p=presets().find(x=>x.id===activePreset);if(p)applyPreset(W,p);}tab='recipe';render();window.scrollTo(0,0);break;
    case 'dripper':W._shares=null;W.dripper=el.dataset.d;W.recipe=Object.assign(clone(STD[W.dripper]),{waterTds:W.recipe.waterTds});render();toast(D.T('rc.dr.std')+': '+D.dName(W.dripper));break;
    case 'addpour':{const r=W.recipe;r.pours.push({t:nextPourTime(r),w:0});splitPours(r);W._shares=null;render();break;}
    case 'delpour':W.recipe.pours.splice(+el.dataset.i,1);splitPours(W.recipe);W._shares=null;render();break;
@@ -3498,9 +3514,15 @@ app.addEventListener('click',async e=>{
    case 'showtog':{const k=el.dataset.n;W.show=W.show||{};W.show[k]=!W.show[k];el.setAttribute('aria-pressed',!!W.show[k]);break;}
    case 'saverecipe':{
      if(busy)return;
-     const b=bean(W.beanId);
+     const b=bean(W.beanId)||W.beanSnap;
      if(!(+W.recipe.dose>0)){toast('Enter the coffee dose before saving');return;}
      if(!W.barista.trim()){toast('Enter the barista name before saving');return;}
+     if(W.editId){const s=D.S.snaps.find(x=>x.id===W.editId);if(!s){toast('This saved recipe no longer exists');W.editId=null;render();return;}
+       const old=clone(s);Object.assign(s,{customer:W.customer.trim(),barista:W.barista.trim(),dripper:W.dripper,bean:clone(Object.assign({},b,{sample:undefined})),photos:photosOf(b.id),recipe:clone(W.recipe),std:clone(STD[W.dripper]),
+         brew:clone(W.brew),show:clone(W.show||{}),notes:W.notes.slice(),message:W.message.trim(),profile:clone(W.profile),updatedAt:Date.now()});
+       s.payload=await D.makePayload(s);if(!s.key)s.key=await D.hashKey(s.payload);
+       const ok=await doSave(D.T('ed.ok'),()=>{Object.keys(s).forEach(k=>delete s[k]);Object.assign(s,old);render();});
+       if(ok){resultId=s.id;W=null;render();window.scrollTo(0,0);}break;}
      const snap={id:D.newId(),createdAt:Date.now(),customer:W.customer.trim(),barista:W.barista.trim(),dripper:W.dripper,
        bean:clone(Object.assign({},b,{sample:undefined})),photos:photosOf(b.id),recipe:clone(W.recipe),std:clone(STD[W.dripper]),
        brew:clone(W.brew),show:clone(W.show||{}),notes:W.notes.slice(),message:W.message.trim(),profile:clone(W.profile)};
@@ -3543,6 +3565,23 @@ const SAMPLES=clone(BEANS);
 const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D.S.beans:clone(SAMPLES)));D.S.folders=D.S.folders||[];D.S.photos=D.S.photos||{};D.S.snaps=D.S.snaps||[];};
 const safeToRender=()=>!dirty&&!busy&&!document.querySelector('[role="dialog"]')&&!(document.activeElement&&app.contains(document.activeElement)&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))&&!(CD&&CD.scanBusy);
 let pendingRender=false,lastPull=0;
+const askName=(title,val)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px;margin:12vh auto 0"><h2>'+esc(title)+'</h2><div class="f"><label class="lbl" for="nm">'+D.tt('pr.name')+'</label><input id="nm" maxlength="40" value="'+esc(val||'')+'"></div><div class="acts" style="margin-top:12px"><button class="btn" data-y>'+D.tt('bl.save')+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');
+  const i=d.querySelector('#nm');i.select();i.addEventListener('keydown',e=>{if(e.key==='Enter')d.querySelector('[data-y]').click();});
+  d.onclick=e=>{if(e.target===d||e.target.dataset.n!==undefined){d.remove();res(null);}else if(e.target.dataset.y!==undefined){const v=i.value.trim();if(!v){toast(D.T('pr.namebad'));return;}d.remove();res(v);}};});
+const presetFromWork=()=>({dripper:W.dripper,recipe:Object.assign(clone(W.recipe),{waterTds:W.recipe.waterTds||''}),show:clone(W.show||{})});
+app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="editsnap"],[data-act="editcancel"],[data-act="prpick"],[data-act="prsave"],[data-act="prupdate"],[data-act="prdel"]');if(!b)return;e.stopPropagation();
+  const a=b.dataset.act;
+  if(a==='editsnap'){const s=D.S.snaps.find(x=>x.id===b.dataset.id);if(!s)return;W=workFromSnap(s);resultId=null;tab='recipe';render();window.scrollTo(0,0);return;}
+  if(a==='editcancel'){const id=W&&W.editId;W=null;resultId=id&&D.S.snaps.some(x=>x.id===id)?id:null;if(!resultId)tab='history';render();return;}
+  if(a==='prpick'){activePreset=b.dataset.p;try{localStorage.setItem('dp-preset',activePreset);}catch(x){}render();return;}
+  if(!W)return;const list=presets().slice();
+  if(a==='prsave'){const n=await askName(D.T('pr.save'),'');if(!n)return;const p=Object.assign({id:'pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n},presetFromWork());
+    const old=D.S.presets;D.S.presets=list.concat([p]);W.presetId=p.id;if(await doSave(D.T('pr.saved'),()=>{D.S.presets=old;}))render();return;}
+  const i=list.findIndex(x=>x.id===W.presetId);if(i<0)return;
+  if(a==='prupdate'){const n=await askName(D.T('pr.update'),list[i].name);if(!n)return;const old=D.S.presets;list[i]=Object.assign({id:list[i].id,name:n},presetFromWork());D.S.presets=list;if(await doSave(D.T('pr.updated'),()=>{D.S.presets=old;}))render();return;}
+  if(a==='prdel'){if(!await ask(D.tt('pr.del')+': <b>'+esc(list[i].name)+'</b>?',D.tt('pr.del')))return;const old=D.S.presets,gone=list[i].id;list.splice(i,1);D.S.presets=list;W.presetId=null;if(activePreset===gone){activePreset='';try{localStorage.removeItem('dp-preset');}catch(x){}}if(await doSave(D.T('pr.deleted'),()=>{D.S.presets=old;}))render();return;}
+},true);
+app.addEventListener('change',e=>{if(e.target.id!=='pr-sel'||!W)return;e.stopPropagation();const p=presets().find(x=>x.id===e.target.value);if(p){applyPreset(W,p);toast(D.T('pr.h')+': '+p.name);}else W.presetId=null;render();},true);
 /* Add TDS / Yield to a recipe that was already saved. The customer's link stays the same and shows the new values. */
 const brewLater=id=>{const s=D.S.snaps.find(x=>x.id===id);if(!s)return;const b=s.brew||{},had=b.tds!==''&&b.tds!=null||b.yield!==''&&b.yield!=null,on=had?!!(s.show&&s.show.brew):true,dose=+((s.recipe||{}).dose)||0;
   const d=ov('<div class="sec bl" style="max-width:440px;margin:10vh auto 0"><h2>'+D.tt('bl.h')+'</h2><p class="cap">'+esc(s.bean.name)+(s.customer?' · '+D.tt('rs.brewed')+' '+esc(s.customer):'')+'</p><p class="cap">'+D.tt('bl.help')+'</p>'+
@@ -3565,7 +3604,7 @@ app.addEventListener('click',e=>{const b=e.target.closest('[data-act="brewlater"
 D.sync.onFlush=()=>{const c=$('#qr');if(resultId&&c&&!c.dataset.short&&D.shortUrl(resultId)&&safeToRender())render();};
 const refreshShared=async()=>{if(!D.sync.code||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
   if(!D.sync.code){if(safeToRender())render();else pendingRender=true;return;}
-  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
+  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join"],[data-act="copyjoin"],[data-act="syncnow"],[data-act="gencode"],[data-act="setcode"]');if(!b)return;
   if(b.dataset.act==='gencode'){const i=$('#new-code');if(i){i.value=D.newCode();i.focus();}return;}
   if(b.dataset.act==='setcode'){if(!D.caps.isOwner)return;const i=$('#new-code'),v=(i&&i.value||'').trim();
