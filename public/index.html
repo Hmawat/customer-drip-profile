@@ -1044,6 +1044,8 @@ body.card .cv-pr .n .pb{flex:1}
 .cv-foot .cv-btn2{display:block;margin:14px auto 0;width:auto;min-height:0;padding:6px 10px;background:none;color:#0066cc;font:400 15px/1.3 var(--font-b);text-transform:none;letter-spacing:0;border-radius:8px}
 .cv-foot .cv-btn2:hover{background:none;text-decoration:underline}
 body.cap .cv-review,body.cap .cv-rv-lead{display:none!important}
+.bean .bn-farmer{display:flex;flex-direction:column;gap:1px;margin-top:8px;padding-top:10px;border-top:1px solid #e8e8ed;font:600 15px/1.3 var(--font-b);color:var(--ink)}
+.bean .bn-farmer .lbl{font:400 12px/1.3 var(--font-b);color:var(--mute)}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -3198,7 +3200,7 @@ const viewBeans=()=>{
   if(filt.p&&!BEANS.some(b=>b.process===filt.p))filt.p='';if(filt.f&&filt.f!=='_'&&!D.S.folders.some(f=>f.id===filt.f))filt.f='';
   const q=filt.q.toLowerCase();
   const procs=[...new Set(BEANS.map(b=>b.process))];
-  const list=BEANS.filter(b=>(!filt.p||b.process===filt.p)&&(!filt.f||(filt.f==='_'?!b.folder:b.folder===filt.f))&&(!q||(b.name+b.country+b.region+b.farm).toLowerCase().includes(q)));
+  const list=BEANS.filter(b=>(!filt.p||b.process===filt.p)&&(!filt.f||(filt.f==='_'?!b.folder:b.folder===filt.f))&&(!q||(b.name+b.country+b.region+b.farm+(b.farmer||'')).toLowerCase().includes(q)));
   const pl=presets(),ap=pl.find(x=>x.id===activePreset),presetRow='<section class="sec preset-row"><div class="pr-head"><h2>'+T('pr.list.h')+'</h2><button class="btn" data-act="prnew">+ '+T('pr.new')+'</button></div>'+
    (pl.length?'<div class="chips"><button class="chip" data-act="prpick" data-p="" aria-pressed="'+!ap+'">'+T('pr.none')+'</button>'+pl.map(x=>'<button class="chip" data-act="prpick" data-p="'+esc(x.id)+'" aria-pressed="'+(x.id===activePreset)+'">'+esc(x.name)+'</button>').join('')+'</div>'+
    (ap?'<p class="pr-sum">'+esc(D.dName(ap.dripper))+' · '+esc(ap.recipe.dose)+' g · 1:'+esc(ap.recipe.ratio)+' · '+esc(ap.recipe.temp)+'°C · '+(ap.recipe.pours.length+1)+' '+T('pr.pours')+' <button class="lnk" data-act="predit" data-p="'+esc(ap.id)+'">'+T('pr.editbtn')+'</button></p>':'')+'<p class="cap">'+T('pr.help')+'</p>':'<p class="cap">'+T('pr.empty')+'</p>')+'</section>';
@@ -3206,7 +3208,7 @@ const viewBeans=()=>{
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
-   folderChips()+'<div class="grid">'+list.map(b=>'<button class="bean" data-act="pick" data-id="'+b.id+'"><img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span><span class="cap">'+esc(b.farm)+'</span></div></button>').join('')+'</div>'+
+   folderChips()+'<div class="grid">'+list.map(b=>'<button class="bean" data-act="pick" data-id="'+b.id+'"><img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
    (list.length?'':(BEANS.length?'<p class="cap">'+T('sb.none')+'</p>':'<p class="cap">'+T('sb.empty')+'</p><button class="btn" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button>'))+
    '';
 };
