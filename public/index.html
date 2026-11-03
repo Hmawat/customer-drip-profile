@@ -915,6 +915,14 @@ body.cv .wrap{padding:0;max-width:none;margin:0}
 .join h1{margin-bottom:22px}
 .join #join-code{font:600 22px/1 var(--font-m);letter-spacing:.08em;text-transform:uppercase;text-align:center}
 .join .err{min-height:1.4em;margin:10px 0 4px}
+
+.dev-grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:center;margin-top:14px}
+#join-qr{width:150px;height:150px;image-rendering:pixelated;border:10px solid #fff;border-radius:16px;box-shadow:var(--sh)}
+.dev-main .url{word-break:break-all}
+.dev-code{margin-top:24px;padding-top:20px;border-top:1px solid var(--line,#e8e8ed)}
+.join .banner{margin:0 0 14px;background:#fff4e5;color:#7a3e00}
+@media(max-width:560px){.dev-grid{grid-template-columns:minmax(0,1fr);justify-items:center}#join-qr{width:200px;height:200px}.dev-main{width:100%}}
+.dev-code h3{font:600 17px/1.3 var(--font-s);letter-spacing:-.01em;text-transform:none;margin:0 0 6px;color:var(--ink)}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2429,8 +2437,8 @@ D.TXT=[
   ['ad.ph.farm','Farm photos'],['ad.ph.origin','Origin photos'],['ad.ph.save','Save photo links'],
   ['ad.pub.h','Backup'],
   ['ad.pub.help','Coffees, photos, recipes and settings are saved in the shop database, and farm photos now appear on the customer page automatically. Download a copy here to keep as a backup.'],
-  ['jn.h','Connect this device to your shop'],['jn.help','Enter the shop code once. After that this device shares the same coffees, recipes and settings as every other device in the shop. Ask the shop admin for the code or the join link.'],['jn.l','Shop code'],['jn.btn','Connect'],['jn.bad','That code is not right. Check it and try again.'],['jn.off','No internet connection. Connect and try again.'],['jn.ok','Connected to the shop'],
-  ['jn.ad.h','Devices'],['jn.ad.help','Every device that opens this page needs the shop code once. Send the join link to a new device: opening it connects that device automatically. Keep the code inside the team.'],['jn.ad.copy','Copy join link'],['jn.ad.sync','Sync now'],['jn.ad.synced','Synced'],
+  ['jn.h','Connect this device to your shop'],['jn.changed','The shop code was changed. Open the new staff link from the admin, or enter the new code.'],['jn.help','Open the staff link from your admin, or enter the shop code. You only do this once on each device.'],['jn.l','Shop code'],['jn.btn','Connect'],['jn.bad','That code is not right. Check it and try again.'],['jn.off','No internet connection. Connect and try again.'],['jn.ok','Connected to the shop'],
+  ['jn.ad.h','Staff access'],['jn.ad.help','Staff open this link, or scan the QR with the phone camera, and the device is connected with no code to type. Bookmark it or add it to the Home Screen. Share it only inside the team.'],['jn.ad.link','Staff link'],['jn.ad.qr','QR code of the staff link'],['jn.ad.codeh','Shop code'],['jn.ad.codehelp','Changing the code disconnects every device and the old staff link stops working. Send the new link to staff afterwards. Letters and numbers, at least 6.'],['jn.ad.new','New shop code'],['jn.ad.set','Change code'],['jn.ad.gen','Generate'],['jn.ad.confirm','Change the shop code? All other devices will be disconnected until they open the new staff link.'],['jn.ad.setok','Shop code changed. Send the new staff link to your team.'],['jn.ad.short','Use at least 6 letters or numbers.'],['jn.ad.fail','Could not change the code. Try again.'],['jn.ad.copy','Copy staff link'],['jn.ad.sync','Sync now'],['jn.ad.synced','Synced'],
   ['sync.ok','Synced'],['sync.ok.t','All changes are saved and shared with every device.'],['sync.saving','Saving…'],['sync.saving.t','Sending changes to the shop.'],['sync.offline','Offline'],['sync.offline.t','No connection. Changes are kept on this device and sent when the connection is back.'],['sync.off',''],['sync.off.t',''],
   ['ad.pub.btn','Download backup (drip-data.json)']]]
 ];
@@ -2494,7 +2502,7 @@ D.load=async()=>{
 D.pull=async full=>{
   if(!D.sync.code)return false;
   let res;try{res=await D.rpc('drip_pull',{p_code:D.sync.code,p_since:full?null:D.sync.since});}
-  catch(e){if(e.code==='bad_code'){D.sync.code='';LS.set('dp-shop',null);D.setSync('off');}else D.setSync('offline');return false;}
+  catch(e){if(e.code==='bad_code'){D.sync.code='';D.sync.kicked=true;LS.set('dp-shop',null);D.setSync('off');}else D.setSync('offline');return false;}
   const cur=D.items(D.S),L=D.sync.last,dirty=D.sync.dirty;let changed=false;
   const seen=new Set();
   (res&&res.rows||[]).forEach(r=>{const key=r.k+'|'+r.i;seen.add(key);
@@ -2527,7 +2535,7 @@ D.flush=async()=>{
       const now=D.items(D.S);Object.keys(sent).forEach(k=>{if(sent[k]==null)delete s.last[k];else s.last[k]=sent[k];if(now[k]===sent[k])s.dirty.delete(k);});
     }
     D.saveLocal();D.setSync(s.dirty.size?'offline':'ok');
-  }catch(e){if(e.code==='bad_code'){s.code='';LS.set('dp-shop',null);D.setSync('off');}else D.setSync('offline');}
+  }catch(e){if(e.code==='bad_code'){s.code='';s.kicked=true;LS.set('dp-shop',null);D.setSync('off');}else D.setSync('offline');}
   finally{s.busy=false;}
 };
 D.save=()=>{
@@ -2538,12 +2546,16 @@ D.save=()=>{
 };
 /* Join this device to the shop with the shop code */
 D.join=async code=>{
-  code=String(code||'').trim().toUpperCase().replace(/\s+/g,'');
+  code=String(code||'').trim().toUpperCase().replace(/\s+/g,'');if(code===D.sync.code)return 'ok';
   if(!code)return 'empty';
   try{await D.rpc('drip_pull',{p_code:code,p_since:new Date().toISOString()});}catch(e){return e.code==='bad_code'?'bad':'offline';}
-  D.sync.code=code;LS.set('dp-shop',code);D.sync.migrate=!LS.get('dp-synced');if(D.sync.migrate)D.sync.last={};
+  D.sync.code=code;D.sync.kicked=false;LS.set('dp-shop',code);D.sync.migrate=!LS.get('dp-synced');if(D.sync.migrate)D.sync.last={};
   await D.pull(true);return 'ok';
 };
+D.setCode=async v=>{const n=String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(n.length<6||n.length>40)return 'short';
+  try{await D.rpc('drip_set_code',{p_code:D.sync.code,p_new:n});}catch(e){return e.code==='offline'?'offline':'fail';}
+  D.sync.code=n;LS.set('dp-shop',n);return 'ok';};
+D.newCode=()=>{const a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',r=new Uint32Array(12);crypto.getRandomValues(r);return Array.from(r,x=>a[x%a.length]).join('').replace(/(.{4})(?=.)/g,'$1-');};
 D.joinLink=()=>(D.pageUrl()||location.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
 D.saveError=e=>{
   if(e&&e.code==='storage')return 'The browser blocked saving (storage full or private mode). Remove photos or use a normal window.';
@@ -3107,7 +3119,13 @@ const settingsHtml=()=>{
   '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div></section>';};
 const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
 const viewAdmin=()=>!D.caps.isOwner?loginHtml():adminTop()+settingsHtml()+
-  '<section class="sec"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p><div class="f" style="margin-top:10px"><span class="lbl">'+T('jn.l')+'</span><div class="url">'+esc(D.sync.code)+'</div></div><div class="acts" style="margin-top:12px"><button class="btn" data-act="copyjoin">'+T('jn.ad.copy')+'</button><button class="btn ghost" data-act="syncnow">'+T('jn.ad.sync')+'</button></div></section>'+
+  '<section class="sec dev"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
+   '<div class="dev-grid"><canvas id="join-qr" width="240" height="240" aria-label="'+esc(D.T('jn.ad.qr'))+'"></canvas><div class="dev-main">'+
+   '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><div class="url" id="join-url">'+esc(D.joinLink())+'</div></div>'+
+   '<div class="acts" style="margin-top:12px"><button class="btn" data-act="copyjoin">'+T('jn.ad.copy')+'</button><button class="btn ghost" data-act="syncnow">'+T('jn.ad.sync')+'</button></div></div></div>'+
+   '<div class="dev-code"><h3>'+T('jn.ad.codeh')+'</h3><p class="cap">'+T('jn.ad.codehelp')+'</p><div class="f"><label class="lbl" for="new-code">'+T('jn.ad.new')+'</label>'+
+   '<input id="new-code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="'+esc(D.sync.code)+'"></div>'+
+   '<div class="acts" style="margin-top:10px"><button class="btn" data-act="setcode">'+T('jn.ad.set')+'</button><button class="btn ghost" data-act="gencode">'+T('jn.ad.gen')+'</button></div></div></section>'+
   '<section class="sec"><h2>'+T('ad.pub.h')+'</h2><p class="cap">'+T('ad.pub.help')+'</p><div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="pubphotos">'+T('ad.pub.btn')+'</button></div></section>'+
   '<div class="banner">'+T('ad.ph.banner')+'</div>'+
   BEANS.map(b=>{const p=D.S.photos[b.id]||{};return '<section class="sec"><h2>'+esc(b.name)+'</h2>'+KINDS.map(k=>'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T(k[1])+'</div><div class="photos">'+(p[k[0]]||[]).map((src,i)=>'<figure><img alt="" src="'+esc(src)+'"><figcaption><button class="chip" data-act="rmphoto" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('ad.delete')+'</button></figcaption></figure>').join('')+'</div><input type="file" accept="image/*" id="up-'+b.id+'-'+k[0]+'" data-up="'+b.id+':'+k[0]+'" aria-label="'+esc(D.T(k[1])+' · '+b.name)+'"></div>').join('')+'</section>';}).join('')+
@@ -3134,7 +3152,7 @@ const viewCustomer=id=>{
 const calcExt=()=>{const b=W.brew,t=parseFloat(b.tds),y=parseFloat(b.yield),d=parseFloat(W.recipe.dose);
   const v=(isFinite(t)&&isFinite(y)&&isFinite(d)&&d>0)?(t*y/d).toFixed(2):'';b.ext=v;const e=$('#f-brew_ext');if(e)e.value=v;};
 const refreshCalc=()=>{if(!W)return;calcExt();const w=D.water(W.recipe),a=$('#tw'),r=$('#ar');if(a)a.textContent=D.num(w)+' g';if(r)r.textContent='1 : '+D.num(W.recipe.dose?w/W.recipe.dose:0)+'  ('+D.T('rc.target')+' 1 : '+W.recipe.ratio+')';};
-const joinHtml=()=>'<section class="sec join"><h1>'+T('title')+'</h1><h2>'+T('jn.h')+'</h2><p class="cap">'+T('jn.help')+'</p>'+
+const joinHtml=()=>'<section class="sec join"><h1>'+T('title')+'</h1><h2>'+T('jn.h')+'</h2>'+(D.sync.kicked?'<p class="banner">'+T('jn.changed')+'</p>':'')+'<p class="cap">'+T('jn.help')+'</p>'+
   '<div class="f"><label class="lbl" for="join-code">'+T('jn.l')+'</label><input id="join-code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX"></div>'+
   '<p class="err" id="join-err" role="alert"></p><div class="acts"><button class="btn" data-act="join">'+T('jn.btn')+'</button></div></section>';
 const render=()=>{
@@ -3150,6 +3168,8 @@ const render=()=>{
   if(resultId){app.innerHTML=shell(viewResult());const c=$('#qr'),u=D.snapUrl(resultId);if(c&&u&&window.qrcode)D.qr(u,c,640);return;}
   const v={beans:viewBeans,addcoffee:viewAdd,recipe:viewRecipe,history:viewHistory,admin:viewAdmin}[tab]||viewBeans;
   app.innerHTML=shell(v());refreshCalc();
+  if(D.sync.code&&(location.hash===''||/^#join=/.test(location.hash))&&location.hash!=='#join='+encodeURIComponent(D.sync.code)){try{history.replaceState(null,'','#join='+encodeURIComponent(D.sync.code));}catch(x){}}
+  const jq=$('#join-qr');if(jq&&window.qrcode)D.qr(D.joinLink(),jq,480);
 };
 const setPath=(k,val)=>{
   if(k.startsWith('pt:')||k.startsWith('pw:')){const i=+k.slice(3);if(k[1]==='t')W.recipe.pours[i].t=val;else W.recipe.pours[i].w=val===''?'':+val;return;}
@@ -3320,22 +3340,29 @@ const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D
 const safeToRender=()=>!dirty&&!busy&&!document.querySelector('[role="dialog"]')&&!(document.activeElement&&app.contains(document.activeElement)&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))&&!(CD&&CD.scanBusy);
 let pendingRender=false,lastPull=0;
 const refreshShared=async()=>{if(!D.sync.code||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
+  if(!D.sync.code){if(safeToRender())render();else pendingRender=true;return;}
   if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
-app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join"],[data-act="copyjoin"],[data-act="syncnow"]');if(!b)return;
+app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join"],[data-act="copyjoin"],[data-act="syncnow"],[data-act="gencode"],[data-act="setcode"]');if(!b)return;
+  if(b.dataset.act==='gencode'){const i=$('#new-code');if(i){i.value=D.newCode();i.focus();}return;}
+  if(b.dataset.act==='setcode'){if(!D.caps.isOwner)return;const i=$('#new-code'),v=(i&&i.value||'').trim();
+    if(String(v).replace(/[^A-Za-z0-9]/g,'').length<6){toast(D.T('jn.ad.short'));return;}
+    if(!await ask(D.tt('jn.ad.confirm'),D.tt('jn.ad.set')))return;
+    b.disabled=true;const r=await D.setCode(v);b.disabled=false;
+    if(r==='ok'){render();toast(D.T('jn.ad.setok'));}else toast(D.T(r==='offline'?'jn.off':r==='short'?'jn.ad.short':'jn.ad.fail'));return;}
   if(b.dataset.act==='copyjoin'){const u=D.joinLink();try{await navigator.clipboard.writeText(u);toast(D.T('jn.ad.copy')+' ✓');}catch(x){prompt(D.T('jn.ad.copy'),u);}return;}
   if(b.dataset.act==='syncnow'){lastPull=0;await D.flush();await D.pull(true);applyBeans();render();toast(D.T(D.sync.state==='ok'?'jn.ad.synced':'sync.offline'));return;}
   const i=$('#join-code'),er=$('#join-err');b.disabled=true;const r=await D.join(i&&i.value);b.disabled=false;
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
-  const jm=location.hash.match(/^#join=([^&]+)/);if(jm){const c=decodeURIComponent(jm[1]);history.replaceState(null,'',location.pathname+location.search);try{localStorage.setItem('dp-shop',c.trim().toUpperCase());}catch(x){}}
+  const jm=location.hash.match(/^#join=([^&]+)/);if(jm){const c=decodeURIComponent(jm[1]);try{localStorage.setItem('dp-shop',c.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);D.applyTheme();applyBeans();try{D.caps.isOwner=sessionStorage.getItem('dp-admin')==='1';}catch(x){D.caps.isOwner=false;}
   const sync=async()=>{D.shared=null;const m=location.hash.match(/^#s=(.+)$/);if(m){try{D.shared=await D.readPayload(m[1]);}catch(e){D.shared=null;}}render();
     const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();
   window.addEventListener('hashchange',sync);
   setInterval(refreshShared,20000);
-  window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;history.replaceState(null,'',location.pathname+location.search);const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
+  window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m||decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshShared();});
   window.addEventListener('focus',refreshShared);
   window.addEventListener('online',()=>{D.flush().then(refreshShared);});
