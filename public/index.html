@@ -923,6 +923,13 @@ body.cv .wrap{padding:0;max-width:none;margin:0}
 .join .banner{margin:0 0 14px;background:#fff4e5;color:#7a3e00}
 @media(max-width:560px){.dev-grid{grid-template-columns:minmax(0,1fr);justify-items:center}#join-qr{width:200px;height:200px}.dev-main{width:100%}}
 .dev-code h3{font:600 17px/1.3 var(--font-s);letter-spacing:-.01em;text-transform:none;margin:0 0 6px;color:var(--ink)}
+
+/* picture for download: no back link or button, photos laid out instead of scrolling */
+body.cap .cv-back,body.cap .cv-btn,body.cap .toast{display:none!important}
+body.cap .cv-foot{padding-bottom:56px}
+body.cap .cv-photos{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;padding-left:max(22px,env(safe-area-inset-left,0px));padding-right:max(22px,env(safe-area-inset-right,0px))}
+body.cap .cv-photos figure{aspect-ratio:1}
+body.cap .cv-photos figure:first-child:nth-last-child(2n+1){grid-column:1/-1;aspect-ratio:16/10}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2451,6 +2458,7 @@ D.cpLabels=()=>{const o={},l=D.S.labels||{};Object.keys(l).forEach(k=>{if((k.ind
 D.dName=id=>{const d=DRIPPERS.find(x=>x.id===id);return d?D.T('dr.'+d.id):String(id||'');};
 
 D.S={v:1,baseUrl:'',photos:{},snaps:[]};
+D.cap=/[?&]cap=1(&|$)/.test(location.search);
 D.caps={art:null,user:null,dl:null,canEdit:false,isOwner:false};
 
 D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
@@ -2490,6 +2498,7 @@ D.saveLocal=()=>{const ok=LS.set('dp-state',JSON.stringify(D.S));LS.set('dp-dirt
 D.setSync=st=>{D.sync.state=st;const n=document.getElementById('sync');if(n){n.dataset.s=st;n.textContent=D.T('sync.'+st);n.title=D.T('sync.'+st+'.t');}};
 
 D.load=async()=>{
+  if(D.cap){try{const j=JSON.parse(LS.get('dp-state')||'null');if(j)D.S=Object.assign({v:1,baseUrl:'',photos:{},snaps:[]},j);}catch(e){}return;}
   try{const j=JSON.parse(LS.get('dp-state')||'null');if(j)D.S=Object.assign({v:1,baseUrl:'',photos:{},snaps:[]},j);}catch(e){}
   try{(JSON.parse(LS.get('dp-dirty')||'[]')||[]).forEach(k=>D.sync.dirty.add(k));}catch(e){}
   D.sync.code=LS.get('dp-shop')||'';
@@ -2539,6 +2548,7 @@ D.flush=async()=>{
   finally{s.busy=false;}
 };
 D.save=()=>{
+  if(D.cap)return Promise.resolve();
   const cur=D.items(D.S),L=D.sync.last;
   new Set(Object.keys(cur).concat(Object.keys(L))).forEach(k=>{if(cur[k]!==L[k])D.sync.dirty.add(k);});
   if(!D.saveLocal()&&!D.sync.code)return Promise.reject({code:'storage'});
@@ -2767,7 +2777,7 @@ D.profileHtml=s=>{
 };
 
 /* JPEG export: draws the profile on a canvas so it works the same on phone and desktop */
-D.renderJpeg=async s=>{
+D.renderJpegCanvas=async s=>{
   try{await Promise.all([document.fonts.load('700 30px Inter'),document.fonts.load('600 22px Inter'),document.fonts.load('400 22px "Noto Sans Thai"','ก'),document.fonts.load('700 22px "Noto Sans Thai"','ก')]);}catch(e){}
   const W=1080,P=64,IW=W-P*2,INK='#1d1d1f',MUTE='#6e6e73',LINE='#d2d2d7',PAPER='#f5f5f7',T=D.T;
   const b=s.bean,r=s.recipe;
@@ -2894,6 +2904,57 @@ D.renderJpeg=async s=>{
 };
 
 /* Customer page: photos cannot travel inside a QR code, so they are read from drip-data.json next to this page when it exists */
+/* ---------- Download image = picture of the real customer page ----------
+   The customer page is opened at phone width in a hidden frame, every element is copied with its final look,
+   and the result is drawn into a JPEG. The image therefore always matches what the customer sees after scanning. */
+D.capNow=async()=>{
+  const node=document.querySelector('article.profile');if(!node)throw new Error('no page');
+  document.querySelectorAll('img').forEach(i=>{i.loading='eager';});
+  await Promise.all([...document.images].map(i=>i.complete&&i.naturalWidth?(i.decode?i.decode().catch(()=>{}):0):new Promise(r=>{i.onload=i.onerror=r;setTimeout(r,8000);})));
+  try{await document.fonts.ready;}catch(e){}
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  const win=window,W=Math.ceil(node.getBoundingClientRect().width),H=Math.ceil(node.scrollHeight);
+  const css=cs=>{let t='';for(let i=0;i<cs.length;i++){const p=cs[i];if(p.indexOf('transition')===0||p.indexOf('animation')===0)continue;t+=p+':'+cs.getPropertyValue(p)+';';}return t;};
+  const pseudo=(src,dst,ps)=>{const c=win.getComputedStyle(src,ps),ct=c.getPropertyValue('content');
+    if(!ct||ct==='none'||ct==='normal')return;const el=document.createElement('span');el.setAttribute('style',css(c));
+    el.textContent=/^["']/.test(ct)?ct.slice(1,-1).replace(/\\([0-9a-f]{1,6}) ?/gi,(m,h)=>String.fromCodePoint(parseInt(h,16))).replace(/\\(.)/g,'$1'):'';
+    if(ps==='::before')dst.insertBefore(el,dst.firstChild);else dst.appendChild(el);};
+  const copy=(a,b)=>{if(a.nodeType!==1)return;const kids=[...b.childNodes];
+    b.setAttribute('style',css(win.getComputedStyle(a)));
+    if(a.tagName!=='svg'&&!(a instanceof SVGElement)){pseudo(a,b,'::before');pseudo(a,b,'::after');}
+    if(a.tagName==='IMG'){b.removeAttribute('loading');b.removeAttribute('srcset');}
+    const ac=a.childNodes;for(let i=0;i<ac.length;i++)copy(ac[i],kids[i]);};
+  const clone=node.cloneNode(true);copy(node,clone);
+  clone.style.margin='0';clone.style.width=W+'px';
+  const xml=new XMLSerializer().serializeToString(clone);
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><foreignObject x="0" y="0" width="100%" height="100%">'+xml+'</foreignObject></svg>';
+  const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  {
+    const img=new Image();img.decoding='sync';
+    await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('draw'));img.src=url;});
+    const k=Math.max(1,Math.min(2.5,Math.sqrt(15000000/(W*H)))),cv=document.createElement('canvas');
+    cv.width=Math.round(W*k);cv.height=Math.round(H*k);const c=cv.getContext('2d');
+    c.fillStyle=getComputedStyle(document.body).backgroundColor||'#fff';c.fillRect(0,0,cv.width,cv.height);
+    c.drawImage(img,0,0,cv.width,cv.height);
+    /* Safari sometimes leaves images out on the first draw */
+    if(/Safari/.test(navigator.userAgent)&&!/Chrome|Chromium|Android/.test(navigator.userAgent)){await new Promise(r=>setTimeout(r,250));c.drawImage(img,0,0,cv.width,cv.height);}
+    return cv.toDataURL('image/jpeg',0.9);
+  }
+};
+D.captureProfile=s=>new Promise((res,rej)=>{
+  const base=location.href.split('#')[0].split('?')[0];if(!/^https?:/.test(base))return rej(new Error('not hosted'));
+  const pl=s.payload||((location.hash.match(/^#s=(.+)$/)||[])[1]);if(!pl)return rej(new Error('no payload'));
+  const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');f.tabIndex=-1;
+  f.style.cssText='position:fixed;left:-10000px;top:0;width:430px;height:932px;border:0;opacity:0;pointer-events:none';
+  f.src=base+'?cap=1#s='+pl;document.body.appendChild(f);
+  const t0=Date.now();let over=false;const end=(v,e)=>{if(over)return;over=true;f.remove();e?rej(e):res(v);};
+  const poll=async()=>{if(over)return;let w=null;try{w=f.contentWindow;}catch(e){}
+    if(w&&w.DPcap){try{const u=await w.DPcap();const blob=await (await fetch(u)).blob();end({url:u,blob});}catch(e){end(null,e);}return;}
+    if(Date.now()-t0>25000)return end(null,new Error('timeout'));setTimeout(poll,150);};
+  poll();
+});
+D.renderJpeg=async s=>{try{return await D.captureProfile(s);}catch(e){return D.renderJpegCanvas(s);}};
+
 D.loadSharedPhotos=async s=>{
   try{const id=s.bean&&s.bean.id;if(id){const p=await D.rpc('drip_photo',{p_bean:String(id)}).catch(()=>null);
       if(p){let any=false;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});if(any)return true;}}}catch(e){}
@@ -3359,6 +3420,7 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
   const sync=async()=>{D.shared=null;const m=location.hash.match(/^#s=(.+)$/);if(m){try{D.shared=await D.readPayload(m[1]);}catch(e){D.shared=null;}}render();
     const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();
+  if(D.cap){document.body.classList.add('cap');window.DPcap=D.capNow;return;}
   window.addEventListener('hashchange',sync);
   setInterval(refreshShared,20000);
   window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
