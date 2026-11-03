@@ -2438,7 +2438,7 @@ D.TXT=[
   ['ad.pub.h','Backup'],
   ['ad.pub.help','Coffees, photos, recipes and settings are saved in the shop database, and farm photos now appear on the customer page automatically. Download a copy here to keep as a backup.'],
   ['jn.h','Connect this device to your shop'],['jn.changed','The shop code was changed. Open the new staff link from the admin, or enter the new code.'],['jn.help','Open the staff link from your admin, or enter the shop code. You only do this once on each device.'],['jn.l','Shop code'],['jn.btn','Connect'],['jn.bad','That code is not right. Check it and try again.'],['jn.off','No internet connection. Connect and try again.'],['jn.ok','Connected to the shop'],
-  ['jn.ad.h','Staff access'],['jn.ad.help','Staff open this link, or scan the QR with the phone camera, and the device is connected with no code to type. Bookmark it or add it to the Home Screen. Share it only inside the team.'],['jn.ad.link','Staff link'],['jn.ad.qr','QR code of the staff link'],['jn.ad.codeh','Shop code'],['jn.ad.codehelp','Changing the code disconnects every device and the old staff link stops working. Send the new link to staff afterwards. Letters and numbers, at least 6.'],['jn.ad.new','New shop code'],['jn.ad.set','Change code'],['jn.ad.gen','Generate'],['jn.ad.confirm','Change the shop code? All other devices will be disconnected until they open the new staff link.'],['jn.ad.setok','Shop code changed. Send the new staff link to your team.'],['jn.ad.short','Use at least 6 letters or numbers.'],['jn.ad.fail','Could not change the code. Try again.'],['jn.ad.copy','Copy staff link'],['jn.ad.sync','Sync now'],['jn.ad.synced','Synced'],
+  ['jn.ad.h','Staff access'],['jn.ad.help','Staff open this link, or scan the QR with the phone camera, and the device is connected with no code to type. Share it only inside the team.'],['jn.ad.link','Staff link'],['jn.ad.linkhelp','Scan the QR, or copy the link and send it to staff. After it opens, the address bar shows only the normal page address.'],['jn.ad.qr','QR code of the staff link'],['jn.ad.codeh','Shop code'],['jn.ad.codehelp','Changing the code disconnects every device and the old staff link stops working. Send the new link to staff afterwards. Letters and numbers, at least 6.'],['jn.ad.new','New shop code'],['jn.ad.set','Change code'],['jn.ad.gen','Generate'],['jn.ad.confirm','Change the shop code? All other devices will be disconnected until they open the new staff link.'],['jn.ad.setok','Shop code changed. Send the new staff link to your team.'],['jn.ad.short','Use at least 6 letters or numbers.'],['jn.ad.fail','Could not change the code. Try again.'],['jn.ad.copy','Copy staff link'],['jn.ad.sync','Sync now'],['jn.ad.synced','Synced'],
   ['sync.ok','Synced'],['sync.ok.t','All changes are saved and shared with every device.'],['sync.saving','Saving…'],['sync.saving.t','Sending changes to the shop.'],['sync.offline','Offline'],['sync.offline.t','No connection. Changes are kept on this device and sent when the connection is back.'],['sync.off',''],['sync.off.t',''],
   ['ad.pub.btn','Download backup (drip-data.json)']]]
 ];
@@ -3121,10 +3121,10 @@ const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
 const viewAdmin=()=>!D.caps.isOwner?loginHtml():adminTop()+settingsHtml()+
   '<section class="sec dev"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
    '<div class="dev-grid"><canvas id="join-qr" width="240" height="240" aria-label="'+esc(D.T('jn.ad.qr'))+'"></canvas><div class="dev-main">'+
-   '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><div class="url" id="join-url">'+esc(D.joinLink())+'</div></div>'+
+   '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><p class="cap" style="margin:0">'+T('jn.ad.linkhelp')+'</p></div>'+
    '<div class="acts" style="margin-top:12px"><button class="btn" data-act="copyjoin">'+T('jn.ad.copy')+'</button><button class="btn ghost" data-act="syncnow">'+T('jn.ad.sync')+'</button></div></div></div>'+
    '<div class="dev-code"><h3>'+T('jn.ad.codeh')+'</h3><p class="cap">'+T('jn.ad.codehelp')+'</p><div class="f"><label class="lbl" for="new-code">'+T('jn.ad.new')+'</label>'+
-   '<input id="new-code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="'+esc(D.sync.code)+'"></div>'+
+   '<input id="new-code" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>'+
    '<div class="acts" style="margin-top:10px"><button class="btn" data-act="setcode">'+T('jn.ad.set')+'</button><button class="btn ghost" data-act="gencode">'+T('jn.ad.gen')+'</button></div></div></section>'+
   '<section class="sec"><h2>'+T('ad.pub.h')+'</h2><p class="cap">'+T('ad.pub.help')+'</p><div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="pubphotos">'+T('ad.pub.btn')+'</button></div></section>'+
   '<div class="banner">'+T('ad.ph.banner')+'</div>'+
@@ -3168,7 +3168,6 @@ const render=()=>{
   if(resultId){app.innerHTML=shell(viewResult());const c=$('#qr'),u=D.snapUrl(resultId);if(c&&u&&window.qrcode)D.qr(u,c,640);return;}
   const v={beans:viewBeans,addcoffee:viewAdd,recipe:viewRecipe,history:viewHistory,admin:viewAdmin}[tab]||viewBeans;
   app.innerHTML=shell(v());refreshCalc();
-  if(D.sync.code&&(location.hash===''||/^#join=/.test(location.hash))&&location.hash!=='#join='+encodeURIComponent(D.sync.code)){try{history.replaceState(null,'','#join='+encodeURIComponent(D.sync.code));}catch(x){}}
   const jq=$('#join-qr');if(jq&&window.qrcode)D.qr(D.joinLink(),jq,480);
 };
 const setPath=(k,val)=>{
@@ -3355,14 +3354,14 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
-  const jm=location.hash.match(/^#join=([^&]+)/);if(jm){const c=decodeURIComponent(jm[1]);try{localStorage.setItem('dp-shop',c.trim().toUpperCase());}catch(x){}}
+  const jm=location.hash.match(/^#join=([^&]+)/);if(jm){const c=decodeURIComponent(jm[1]);try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}try{localStorage.setItem('dp-shop',c.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);D.applyTheme();applyBeans();try{D.caps.isOwner=sessionStorage.getItem('dp-admin')==='1';}catch(x){D.caps.isOwner=false;}
   const sync=async()=>{D.shared=null;const m=location.hash.match(/^#s=(.+)$/);if(m){try{D.shared=await D.readPayload(m[1]);}catch(e){D.shared=null;}}render();
     const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();
   window.addEventListener('hashchange',sync);
   setInterval(refreshShared,20000);
-  window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m||decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
+  window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshShared();});
   window.addEventListener('focus',refreshShared);
   window.addEventListener('online',()=>{D.flush().then(refreshShared);});
