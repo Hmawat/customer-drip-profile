@@ -1028,6 +1028,14 @@ body.card .cv-pr .n .pb{flex:1}
 .preset-row{margin:0 0 18px}
 .preset-row .lbl{display:block;margin-bottom:8px}
 .preset-row .cap{margin:8px 0 0}
+
+.sec.preset-row{margin-bottom:22px}
+.pr-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.pr-head h2{margin:0}
+.pr-sum{margin:10px 0 0;font-size:14px;color:var(--ink)}
+.pr-sum .lnk{padding:0 0 0 6px;font-size:14px}
+.preset-row .cap{margin:8px 0 0}
+.pr-head .btn{flex:none;white-space:nowrap;min-height:38px;padding:0 16px;font-size:15px;line-height:36px}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2516,7 +2524,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['qr.brand','Coffee with Native'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand','Coffee with Native'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -3180,7 +3188,9 @@ const viewBeans=()=>{
   const q=filt.q.toLowerCase();
   const procs=[...new Set(BEANS.map(b=>b.process))];
   const list=BEANS.filter(b=>(!filt.p||b.process===filt.p)&&(!filt.f||(filt.f==='_'?!b.folder:b.folder===filt.f))&&(!q||(b.name+b.country+b.region+b.farm).toLowerCase().includes(q)));
-  const pl=presets(),presetRow=pl.length?'<div class="preset-row"><span class="lbl">'+T('pr.active')+'</span><div class="chips"><button class="chip" data-act="prpick" data-p="" aria-pressed="'+!pl.some(x=>x.id===activePreset)+'">'+T('pr.none')+'</button>'+pl.map(x=>'<button class="chip" data-act="prpick" data-p="'+esc(x.id)+'" aria-pressed="'+(x.id===activePreset)+'">'+esc(x.name)+'</button>').join('')+'</div><p class="cap">'+T('pr.help')+'</p></div>':'';
+  const pl=presets(),ap=pl.find(x=>x.id===activePreset),presetRow='<section class="sec preset-row"><div class="pr-head"><h2>'+T('pr.list.h')+'</h2><button class="btn" data-act="prnew">+ '+T('pr.new')+'</button></div>'+
+   (pl.length?'<div class="chips"><button class="chip" data-act="prpick" data-p="" aria-pressed="'+!ap+'">'+T('pr.none')+'</button>'+pl.map(x=>'<button class="chip" data-act="prpick" data-p="'+esc(x.id)+'" aria-pressed="'+(x.id===activePreset)+'">'+esc(x.name)+'</button>').join('')+'</div>'+
+   (ap?'<p class="pr-sum">'+esc(D.dName(ap.dripper))+' · '+esc(ap.recipe.dose)+' g · 1:'+esc(ap.recipe.ratio)+' · '+esc(ap.recipe.temp)+'°C · '+(ap.recipe.pours.length+1)+' '+T('pr.pours')+' <button class="lnk" data-act="predit" data-p="'+esc(ap.id)+'">'+T('pr.editbtn')+'</button></p>':'')+'<p class="cap">'+T('pr.help')+'</p>':'<p class="cap">'+T('pr.empty')+'</p>')+'</section>';
   return presetRow+'<div class="acts quick"><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
@@ -3230,6 +3240,12 @@ const viewAdd=()=>{
 };
 
 /* ---------- Recipe ---------- */
+/* Preset editor: build a recipe ahead of time, no coffee needed */
+const presetEditorHtml=(drSec,rcSec)=>'<div class="banner edit-bar"><div><b>'+T(W.editPresetId?'pr.edit.h':'pr.new.h')+'</b><br><span>'+T('pr.new.help')+'</span></div></div>'+
+  '<div class="cols"><div><section class="sec"><h2>'+T('pr.name')+'</h2><div class="f"><label class="lbl" for="pr-name">'+T('pr.name')+'</label><input id="pr-name" data-k="name" maxlength="40" value="'+esc(W.name||'')+'" placeholder="V60 Fruity · Orea Sweet"></div></section>'+drSec+'</div><div>'+rcSec+
+  '<div class="acts"><button class="btn" data-act="prstore">'+T('pr.store')+'</button><button class="btn ghost" data-act="prcancel">Cancel</button>'+(W.editPresetId?'<button class="btn ghost" data-act="prremove">'+T('pr.del')+'</button>':'')+'</div></div></div>';
+const presetWork=p=>{const dr=(p&&p.dripper)||'v60';return {presetEdit:true,editPresetId:p?p.id:null,name:p?p.name:'',beanId:null,dripper:dr,customer:'',barista:'',
+  recipe:p?Object.assign({waterTds:''},clone(p.recipe)):Object.assign(clone(STD[dr]),{waterTds:''}),notes:[],message:'',profile:{},brew:{tds:'',yield:'',ext:''},show:p&&p.show?clone(p.show):{dose:true,water:true,ratio:true,temp:true,grind:true,time:true,pours:true,wtds:true,brew:false}};};
 const viewRecipe=()=>{
   if(!W)return '<p>'+T('rc.pick')+'</p><button class="btn" data-act="tab" data-t="beans">'+T('rc.pickbtn')+'</button>';
   const b=bean(W.beanId)||W.beanSnap,r=W.recipe,std=STD[W.dripper];
@@ -3241,17 +3257,19 @@ const viewRecipe=()=>{
   const editBar=W.editId?'<div class="banner edit-bar"><div><b>'+T('ed.h')+'</b><br><span>'+T('ed.help')+'</span></div><button class="btn ghost" data-act="editcancel">'+T('ed.cancel')+'</button></div>':'';
   const presetBar='<section class="sec preset-sec"><h2>'+T('pr.h')+'</h2><div class="row"><div class="f"><label class="lbl" for="pr-sel">'+T('pr.apply')+'</label><select id="pr-sel"><option value="">'+T('pr.none')+'</option>'+pl.map(x=>'<option value="'+esc(x.id)+'"'+(x.id===W.presetId?' selected':'')+'>'+esc(x.name)+'</option>').join('')+'</select></div></div>'+
    '<div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="prsave">'+T('pr.save')+'</button>'+(cur?'<button class="btn ghost" data-act="prupdate">'+T('pr.update')+'</button><button class="btn ghost" data-act="prdel">'+T('pr.del')+'</button>':'')+'</div></section>';
-  return editBar+'<div class="cols"><div>'+presetBar+
-   '<section class="sec"><h2>'+T('rc.cust.h')+'</h2><div class="row">'+field(T('rc.cust.name'),'customer',W.customer)+field(T('rc.cust.barista'),'barista',W.barista)+'</div></section>'+
-   '<section class="sec"><h2>'+T('rc.dr.h')+'</h2><div class="drippers">'+DRIPPERS.map(d=>'<button class="dr" data-act="dripper" data-d="'+d.id+'" aria-pressed="'+(W.dripper===d.id)+'">'+esc(D.dName(d.id))+'</button>').join('')+'</div></section>'+
-   '<section class="sec"><h2>'+T('rc.h')+'</h2><div class="row">'+
+  const drSec='<section class="sec"><h2>'+T('rc.dr.h')+'</h2><div class="drippers">'+DRIPPERS.map(d=>'<button class="dr" data-act="dripper" data-d="'+d.id+'" aria-pressed="'+(W.dripper===d.id)+'">'+esc(D.dName(d.id))+'</button>').join('')+'</div></section>';
+  const rcSec='<section class="sec"><h2>'+T('rc.h')+'</h2><div class="row">'+
     field(T('rc.dose'),'recipe.dose',r.dose,'number',null,'dl-dose')+field(T('rc.ratio'),'recipe.ratio',r.ratio,'number')+
     field(T('rc.temp'),'recipe.temp',r.temp,'number')+field(T('rc.tds'),'recipe.waterTds',r.waterTds,'number')+
     grind+field(T('rc.time'),'recipe.time',r.time)+
     field(T('rc.bw'),'recipe.bloomWater',r.bloomWater,'number')+field(T('rc.bt'),'recipe.bloomTime',r.bloomTime,'number')+'</div>'+
     '<div class="scroll" style="margin-top:12px"><table class="pours"><thead><tr><th class="lbl">'+T('rc.th.step')+'</th><th class="lbl">'+T('rc.th.start')+'</th><th class="lbl">'+T('rc.th.water')+'</th><th></th></tr></thead><tbody>'+pours+'</tbody></table></div>'+
     '<div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="addpour">'+T('rc.add')+'</button><button class="btn ghost" data-act="fit">'+T('rc.fit')+'</button><button class="btn ghost" data-act="reset">'+T('rc.reset')+'</button></div>'+
-    '<div class="dots" style="margin-top:12px"><span class="lbl">'+T('rc.tw')+'</span><i></i><b id="tw"></b></div><div class="dots"><span class="lbl">'+T('rc.ar')+'</span><i></i><b id="ar"></b></div></section>'+
+    '<div class="dots" style="margin-top:12px"><span class="lbl">'+T('rc.tw')+'</span><i></i><b id="tw"></b></div><div class="dots"><span class="lbl">'+T('rc.ar')+'</span><i></i><b id="ar"></b></div></section>';
+  if(W.presetEdit)return presetEditorHtml(drSec,rcSec);
+  return editBar+'<div class="cols"><div>'+presetBar+
+   '<section class="sec"><h2>'+T('rc.cust.h')+'</h2><div class="row">'+field(T('rc.cust.name'),'customer',W.customer)+field(T('rc.cust.barista'),'barista',W.barista)+'</div></section>'+
+   drSec+rcSec+
    '<section class="sec"><h2>'+T('rc.log.h')+'</h2><div class="row">'+field(L('tds'),'brew.tds',W.brew.tds,'number',null,'dl-tds')+field(L('yield'),'brew.yield',W.brew.yield,'number',null,'dl-yield')+field(L('ext'),'brew.ext',W.brew.ext,'text',null,null,true)+'</div><datalist id="dl-dose">'+rng(10,30,1)+'</datalist><datalist id="dl-tds">'+rng(1,1.7,0.05)+'</datalist><datalist id="dl-yield">'+rng(100,500,10)+'</datalist></section>'+
   '</div><div>'+
    '<section class="sec"><h2>'+T('rc.bean.h')+'</h2><div class="f"><label class="lbl" for="bsel">'+T('rc.bean.change')+'</label><select id="bsel" data-bsel="1">'+beanOptions(W.beanId)+'</select></div>'+
@@ -3569,6 +3587,21 @@ const askName=(title,val)=>new Promise(res=>{const d=ov('<div class="sec" style=
   const i=d.querySelector('#nm');i.select();i.addEventListener('keydown',e=>{if(e.key==='Enter')d.querySelector('[data-y]').click();});
   d.onclick=e=>{if(e.target===d||e.target.dataset.n!==undefined){d.remove();res(null);}else if(e.target.dataset.y!==undefined){const v=i.value.trim();if(!v){toast(D.T('pr.namebad'));return;}d.remove();res(v);}};});
 const presetFromWork=()=>({dripper:W.dripper,recipe:Object.assign(clone(W.recipe),{waterTds:W.recipe.waterTds||''}),show:clone(W.show||{})});
+app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="prnew"],[data-act="predit"],[data-act="prstore"],[data-act="prcancel"],[data-act="prremove"]');if(!b)return;e.stopPropagation();
+  const a=b.dataset.act,list=presets().slice();
+  if(a==='prnew'){W=presetWork(null);resultId=null;tab='recipe';render();window.scrollTo(0,0);const n=$('#pr-name');if(n)n.focus();return;}
+  if(a==='predit'){const p=list.find(x=>x.id===b.dataset.p);if(!p)return;W=presetWork(p);resultId=null;tab='recipe';render();window.scrollTo(0,0);return;}
+  if(a==='prcancel'){W=null;tab='beans';render();return;}
+  if(!W||!W.presetEdit)return;
+  if(a==='prremove'){const i=list.findIndex(x=>x.id===W.editPresetId);if(i<0)return;if(!await ask(D.tt('pr.del')+': <b>'+esc(list[i].name)+'</b>?',D.tt('pr.del')))return;
+    const old=D.S.presets,gone=list[i].id;list.splice(i,1);D.S.presets=list;if(activePreset===gone){activePreset='';try{localStorage.removeItem('dp-preset');}catch(x){}}
+    if(await doSave(D.T('pr.deleted'),()=>{D.S.presets=old;})){W=null;tab='beans';render();}return;}
+  if(a==='prstore'){const name=String(W.name||'').trim();if(!name){toast(D.T('pr.namebad'));const n=$('#pr-name');if(n)n.focus();return;}
+    if(!(+W.recipe.dose>0)){toast('Enter the coffee dose');return;}
+    const p={id:W.editPresetId||('pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)),name,dripper:W.dripper,recipe:Object.assign(clone(W.recipe),{waterTds:W.recipe.waterTds||''}),show:clone(W.show||{})};
+    const i=list.findIndex(x=>x.id===p.id);if(i<0)list.push(p);else list[i]=p;const old=D.S.presets;D.S.presets=list;
+    if(await doSave(D.T(i<0?'pr.saved':'pr.updated'),()=>{D.S.presets=old;})){activePreset=p.id;try{localStorage.setItem('dp-preset',p.id);}catch(x){}W=null;tab='beans';render();window.scrollTo(0,0);}return;}
+},true);
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="editsnap"],[data-act="editcancel"],[data-act="prpick"],[data-act="prsave"],[data-act="prupdate"],[data-act="prdel"]');if(!b)return;e.stopPropagation();
   const a=b.dataset.act;
   if(a==='editsnap'){const s=D.S.snaps.find(x=>x.id===b.dataset.id);if(!s)return;W=workFromSnap(s);resultId=null;tab='recipe';render();window.scrollTo(0,0);return;}
@@ -3604,7 +3637,7 @@ app.addEventListener('click',e=>{const b=e.target.closest('[data-act="brewlater"
 D.sync.onFlush=()=>{const c=$('#qr');if(resultId&&c&&!c.dataset.short&&D.shortUrl(resultId)&&safeToRender())render();};
 const refreshShared=async()=>{if(!D.sync.code||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
   if(!D.sync.code){if(safeToRender())render();else pendingRender=true;return;}
-  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
+  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!W.presetEdit&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join"],[data-act="copyjoin"],[data-act="syncnow"],[data-act="gencode"],[data-act="setcode"]');if(!b)return;
   if(b.dataset.act==='gencode'){const i=$('#new-code');if(i){i.value=D.newCode();i.focus();}return;}
   if(b.dataset.act==='setcode'){if(!D.caps.isOwner)return;const i=$('#new-code'),v=(i&&i.value||'').trim();
