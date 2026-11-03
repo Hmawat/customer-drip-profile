@@ -1046,6 +1046,58 @@ body.card .cv-pr .n .pb{flex:1}
 body.cap .cv-review,body.cap .cv-rv-lead{display:none!important}
 .bean .bn-farmer{display:flex;flex-direction:column;gap:1px;margin-top:8px;padding-top:10px;border-top:1px solid #e8e8ed;font:600 15px/1.3 var(--font-b);color:var(--ink)}
 .bean .bn-farmer .lbl{font:400 12px/1.3 var(--font-b);color:var(--mute)}
+
+/* ===== Coffee showcase ===== */
+html.sc-open,html.sc-open body{overflow:hidden}
+.sc{position:fixed;inset:0;z-index:100;background:#f5f5f7;display:flex;flex-direction:column;color:#1d1d1f;animation:sc-in .22s ease-out}
+@keyframes sc-in{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.sc{animation:none}}
+.sc-top{display:grid;grid-template-columns:44px 1fr 64px;align-items:center;gap:8px;padding:max(8px,env(safe-area-inset-top)) 12px 8px;background:rgba(245,245,247,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.06);z-index:2}
+.sc-x{width:40px;height:40px;border:0;border-radius:50%;background:#e8e8ed;color:#1d1d1f;font-size:16px;cursor:pointer}
+.sc-title{text-align:center;font:600 16px/1.2 var(--font-s)}
+.sc-count{text-align:right;font:500 14px var(--font-b);color:#6e6e73}
+.sc-track{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior:contain;scrollbar-width:none}
+.sc-track::-webkit-scrollbar{display:none}
+.sc-page{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;min-width:0;height:100%}
+.sc-scroll{height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:120px}
+.sc-hero{position:relative;margin:0 auto;max-width:760px;aspect-ratio:4/3;background:#e8e8ed;overflow:hidden}
+.sc-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.sc-hero figcaption{position:absolute;left:16px;top:16px;padding:6px 12px;border-radius:980px;background:rgba(255,255,255,.88);font:600 12px var(--font-b);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.sc-body{max-width:760px;margin:0 auto;padding:22px 22px 0}
+.sc-kick{margin:0 0 6px;font:600 15px/1.3 var(--font-s);color:#bf4800}
+.sc-name{margin:0;font:600 clamp(28px,7vw,40px)/1.1 var(--font-s);letter-spacing:-.015em}
+.sc-grown{margin:12px 0 0;font:400 17px/1.45 var(--font-b);color:#6e6e73}
+.sc-grown b{color:#1d1d1f;font-weight:600}
+.sc-notes{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.sc-notes li{display:inline-flex;align-items:center;gap:7px;padding:8px 14px 8px 10px;border-radius:980px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);font:500 15px var(--font-b)}
+.sc-notes li span{font-size:20px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.sc-spec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;margin:22px 0 0}
+.sc-spec div{padding:12px 0;border-top:1px solid #d2d2d7}
+.sc-spec dt{font:400 13px var(--font-b);color:#6e6e73;margin:0 0 2px}
+.sc-spec dd{margin:0;font:600 17px/1.3 var(--font-s)}
+.sc-note{margin:18px 0 0;font:400 17px/1.55 var(--font-b);color:#1d1d1f}
+.sc-h3{margin:26px 0 10px;font:600 19px var(--font-s)}
+.sc-gal{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sc-gal img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:16px;display:block;background:#e8e8ed}
+.sc-bar{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:12px;padding:14px 20px max(16px,env(safe-area-inset-bottom));background:linear-gradient(to top,#f5f5f7 62%,rgba(245,245,247,0))}
+.sc-dots{display:flex;gap:7px}
+.sc-dots i{width:7px;height:7px;border-radius:50%;background:#c7c7cc;cursor:pointer;transition:all .2s}
+.sc-dots i.on{width:20px;border-radius:4px;background:#1d1d1f}
+.sc-choose{width:100%;max-width:420px;min-height:52px;font-size:17px}
+.sc-arrow{display:none;position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border:0;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 2px 10px rgba(0,0,0,.12);font:300 30px/1 var(--font-s);color:#1d1d1f;cursor:pointer;z-index:3}
+.sc-arrow:disabled{opacity:0;pointer-events:none}
+.sc-l{left:20px}.sc-r{right:20px}
+@media(min-width:900px){.sc-arrow{display:block}.sc-hero{margin-top:24px;border-radius:24px}.sc-spec{grid-template-columns:repeat(3,minmax(0,1fr))}.sc-gal{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sc-hint{margin:2px 0 10px}
+
+.sc .sc-h3{font:600 19px/1.3 var(--font-s);letter-spacing:-.01em;text-transform:none;color:#1d1d1f}
+@media(min-width:900px){
+  .sc-scroll{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;max-width:1120px;margin:0 auto;padding:32px 96px 150px;align-items:start}
+  .sc-hero{position:sticky;top:0;margin:0;max-width:none;aspect-ratio:4/5;border-radius:24px}
+  .sc-body{padding:8px 0 0;max-width:none}
+  .sc-spec{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sc-gal{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2539,7 +2591,7 @@ D.TXT=[
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
   ['cp.kicker','Specialty Coffee Profile'],['cp.brewed','Brewed for'],['cp.barista','Barista'],['cp.by','Prepared by'],
-  ['cp.coffee','Coffee Profile'],['cp.l.country','Country'],['cp.l.region','Region'],['cp.l.farm','Farm'],['cp.l.farmer','Farmer'],['cp.l.process','Process'],
+  ['cp.coffee','Coffee Profile'],['sc.title','Our coffees'],['sc.choose','Choose this coffee'],['sc.grown','Grown by'],['sc.at','at'],['sc.close','Close'],['sc.prev','Previous coffee'],['sc.next','Next coffee'],['sc.hint','Tap a coffee to see its story. Swipe to compare.'],['sc.photos','From the farm'],['cp.l.country','Country'],['cp.l.region','Region'],['cp.l.farm','Farm'],['cp.l.farmer','Farmer'],['cp.l.process','Process'],
   ['cp.l.variety','Variety'],['cp.l.altitude','Altitude'],['cp.l.harvest','Harvest'],['cp.l.roast','Roast'],
   ['cp.lbl.h','Coffee Label'],
   ['cp.recipe','Brew Log'],['cp.pourchart','Pour schedule'],['cp.cum','Cumulative water'],['cp.coffeeword','Coffee'],['cp.waterword','Water'],['cp.brewres','Brew result'],['cp.res.tds','TDS'],['cp.res.yield','Yield OUT'],['cp.res.ext','Extraction'],['cp.dose','Coffee dose'],['cp.ratio','Brew ratio'],['cp.tw','Total water'],['cp.temp','Temperature'],['cp.tds','Water TDS'],
@@ -3208,7 +3260,7 @@ const viewBeans=()=>{
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
-   folderChips()+'<div class="grid">'+list.map(b=>'<button class="bean" data-act="pick" data-id="'+b.id+'"><img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
+   folderChips()+'<p class="cap sc-hint">'+T('sc.hint')+'</p><div class="grid">'+list.map(b=>'<button class="bean" data-act="showbean" data-id="'+b.id+'" aria-label="'+esc(b.name)+'"><img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
    (list.length?'':(BEANS.length?'<p class="cap">'+T('sb.none')+'</p>':'<p class="cap">'+T('sb.empty')+'</p><button class="btn" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button>'))+
    '';
 };
@@ -3596,6 +3648,42 @@ const SAMPLES=clone(BEANS);
 const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D.S.beans:clone(SAMPLES)));D.S.folders=D.S.folders||[];D.S.photos=D.S.photos||{};D.S.snaps=D.S.snaps||[];};
 const safeToRender=()=>!dirty&&!busy&&!document.querySelector('[role="dialog"]')&&!(document.activeElement&&app.contains(document.activeElement)&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))&&!(CD&&CD.scanBusy);
 let pendingRender=false,lastPull=0;
+/* ---------- Coffee showcase: full-screen profiles the customer swipes through before choosing ---------- */
+const chooseBean=id=>{const b=bean(id);if(!b)return;W=newWork(b);const p=presets().find(x=>x.id===activePreset);if(p)applyPreset(W,p);tab='recipe';resultId=null;render();window.scrollTo(0,0);};
+const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.flavors);
+  const spec=[['variety',b.variety],['process',b.process],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['region',b.region]].filter(x=>x[1]).map(x=>'<div><dt>'+T('cp.l.'+x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>').join('');
+  const gal=ph.farm.concat(ph.origin).filter(u=>u&&u!==hero).slice(0,4);
+  return '<article class="sc-page" data-id="'+esc(b.id)+'" aria-roledescription="slide" aria-label="'+esc(b.name)+'"><div class="sc-scroll">'+
+   '<figure class="sc-hero"><img src="'+esc(hero)+'" alt="">'+(b.process?'<figcaption>'+esc(b.process)+'</figcaption>':'')+'</figure>'+
+   '<div class="sc-body"><p class="sc-kick">'+esc([b.country,b.region].filter(Boolean).join(' · '))+'</p><h2 class="sc-name">'+esc(b.name)+'</h2>'+
+   (b.farmer||b.farm?'<p class="sc-grown">'+(b.farmer?T('sc.grown')+' <b>'+esc(b.farmer)+'</b>':'')+(b.farm?(b.farmer?' '+T('sc.at')+' ':'')+'<b>'+esc(b.farm)+'</b>':'')+'</p>':'')+
+   (notes.length?'<ul class="sc-notes">'+notes.map(n=>'<li><span aria-hidden="true">'+D.noteIcon(n)+'</span>'+esc(n)+'</li>').join('')+'</ul>':'')+
+   (spec?'<dl class="sc-spec">'+spec+'</dl>':'')+(b.note?'<p class="sc-note">'+esc(b.note)+'</p>':'')+
+   (gal.length?'<h3 class="sc-h3">'+T('sc.photos')+'</h3><div class="sc-gal">'+gal.map(u=>'<img loading="lazy" src="'+esc(u)+'" alt="">').join('')+'</div>':'')+
+   '</div></div></article>';};
+const openShowcase=id=>{
+  const ids=[...app.querySelectorAll('.bean[data-id]')].map(x=>x.dataset.id).filter(i=>bean(i));if(!ids.length)return;let at=Math.max(0,ids.indexOf(id));
+  const prevFocus=document.activeElement;
+  const el=document.createElement('div');el.className='sc';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',D.T('sc.title'));
+  el.innerHTML='<header class="sc-top"><button class="sc-x" data-sc="close" aria-label="'+D.tt('sc.close')+'">✕</button><span class="sc-title">'+D.tt('sc.title')+'</span><span class="sc-count" aria-live="polite"></span></header>'+
+    '<div class="sc-track">'+ids.map(i=>showPage(bean(i))).join('')+'</div>'+
+    '<button class="sc-arrow sc-l" data-sc="prev" aria-label="'+D.tt('sc.prev')+'">‹</button><button class="sc-arrow sc-r" data-sc="next" aria-label="'+D.tt('sc.next')+'">›</button>'+
+    '<footer class="sc-bar"><div class="sc-dots">'+ids.map((_,i)=>'<i data-i="'+i+'"></i>').join('')+'</div><button class="btn sc-choose" data-sc="choose">'+D.tt('sc.choose')+'</button></footer>';
+  document.body.appendChild(el);document.documentElement.classList.add('sc-open');
+  const tr=el.querySelector('.sc-track'),cnt=el.querySelector('.sc-count'),dots=[...el.querySelectorAll('.sc-dots i')];
+  const mark=()=>{cnt.textContent=(at+1)+' / '+ids.length;dots.forEach((d,i)=>d.classList.toggle('on',i===at));el.querySelector('.sc-l').disabled=at===0;el.querySelector('.sc-r').disabled=at===ids.length-1;};
+  const go=(i,smooth)=>{at=Math.max(0,Math.min(ids.length-1,i));tr.scrollTo({left:at*tr.clientWidth,behavior:smooth?'smooth':'auto'});mark();};
+  let raf=0;tr.addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{const i=Math.round(tr.scrollLeft/Math.max(1,tr.clientWidth));if(i!==at){at=i;mark();}});},{passive:true});
+  const close=()=>{document.removeEventListener('keydown',key);window.removeEventListener('resize',rs);el.remove();document.documentElement.classList.remove('sc-open');if(prevFocus&&prevFocus.focus)try{prevFocus.focus();}catch(x){}};
+  const key=e=>{if(e.key==='Escape')close();else if(e.key==='ArrowRight')go(at+1,true);else if(e.key==='ArrowLeft')go(at-1,true);};
+  const rs=()=>go(at,false);
+  document.addEventListener('keydown',key);window.addEventListener('resize',rs);
+  el.addEventListener('click',e=>{const t=e.target.closest('[data-sc],.sc-dots i');if(!t)return;
+    if(t.matches('.sc-dots i'))return go(+t.dataset.i,true);const a=t.dataset.sc;
+    if(a==='close')close();else if(a==='prev')go(at-1,true);else if(a==='next')go(at+1,true);else if(a==='choose'){const id=ids[at];close();chooseBean(id);}});
+  requestAnimationFrame(()=>{go(at,false);el.querySelector('.sc-choose').focus({preventScroll:true});});
+};
+app.addEventListener('click',e=>{const c=e.target.closest('[data-act="showbean"]');if(!c)return;e.stopPropagation();openShowcase(c.dataset.id);},true);
 const askName=(title,val)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px;margin:12vh auto 0"><h2>'+esc(title)+'</h2><div class="f"><label class="lbl" for="nm">'+D.tt('pr.name')+'</label><input id="nm" maxlength="40" value="'+esc(val||'')+'"></div><div class="acts" style="margin-top:12px"><button class="btn" data-y>'+D.tt('bl.save')+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');
   const i=d.querySelector('#nm');i.select();i.addEventListener('keydown',e=>{if(e.key==='Enter')d.querySelector('[data-y]').click();});
   d.onclick=e=>{if(e.target===d||e.target.dataset.n!==undefined){d.remove();res(null);}else if(e.target.dataset.y!==undefined){const v=i.value.trim();if(!v){toast(D.T('pr.namebad'));return;}d.remove();res(v);}};});
