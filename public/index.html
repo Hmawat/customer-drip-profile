@@ -1098,6 +1098,11 @@ html.sc-open,html.sc-open body{overflow:hidden}
   .sc-spec{grid-template-columns:repeat(2,minmax(0,1fr))}
   .sc-gal{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+.resume{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin:0 0 16px;padding:14px 18px;border:0;border-radius:var(--r,18px);background:#0071e3;color:#fff;text-align:left;cursor:pointer;font:400 15px/1.35 var(--font-b)}
+.resume b{display:block;font:600 13px var(--font-b);opacity:.85;margin-bottom:2px}
+.resume span[aria-hidden]{font-size:26px;line-height:1}
+.rc-back{display:inline-block;margin:0 0 12px;padding:4px 0;font-size:16px}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2586,7 +2591,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['qr.brand','Coffee with Native'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand','Coffee with Native'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -3236,7 +3241,7 @@ const newWork=(b,dr)=>{
 };
 
 /* ---------- shared bits ---------- */
-const TABS=['beans','addcoffee','recipe','history','admin'];
+const TABS=['beans','addcoffee','history','admin'];
 const shell=inner=>'<div class="top"><div><div class="lbl" id="t-role">'+T('role')+'</div><h1 id="t-title">'+T('title')+' <span class="sync" id="sync" role="status" data-s="'+D.sync.state+'" title="'+esc(D.T('sync.'+D.sync.state+'.t'))+'">'+esc(D.T('sync.'+D.sync.state))+'</span></h1></div><div class="tabs" role="tablist">'+
   TABS.map(t=>'<button class="tab" role="tab" data-act="tab" data-t="'+t+'" aria-selected="'+(tab===t)+'">'+T(t)+'</button>').join('')+'</div></div>'+inner;
 const refreshChrome=()=>{document.title=D.T('title');const r=$('#t-role'),h=$('#t-title');if(r)r.textContent=D.T('role');if(h)h.textContent=D.T('title');
@@ -3256,7 +3261,8 @@ const viewBeans=()=>{
   const pl=presets(),ap=pl.find(x=>x.id===activePreset),presetRow='<section class="sec preset-row"><div class="pr-head"><h2>'+T('pr.list.h')+'</h2><button class="btn" data-act="prnew">+ '+T('pr.new')+'</button></div>'+
    (pl.length?'<div class="chips"><button class="chip" data-act="prpick" data-p="" aria-pressed="'+!ap+'">'+T('pr.none')+'</button>'+pl.map(x=>'<button class="chip" data-act="prpick" data-p="'+esc(x.id)+'" aria-pressed="'+(x.id===activePreset)+'">'+esc(x.name)+'</button>').join('')+'</div>'+
    (ap?'<p class="pr-sum">'+esc(D.dName(ap.dripper))+' · '+esc(ap.recipe.dose)+' g · 1:'+esc(ap.recipe.ratio)+' · '+esc(ap.recipe.temp)+'°C · '+(ap.recipe.pours.length+1)+' '+T('pr.pours')+' <button class="lnk" data-act="predit" data-p="'+esc(ap.id)+'">'+T('pr.editbtn')+'</button></p>':'')+'<p class="cap">'+T('pr.help')+'</p>':'<p class="cap">'+T('pr.empty')+'</p>')+'</section>';
-  return presetRow+'<div class="acts quick"><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
+  const wb=W&&!W.presetEdit?(bean(W.beanId)||W.beanSnap):null,resume=wb?'<button class="resume" data-act="tab" data-t="recipe"><span><b>'+T(W.editId?'rs.resume.edit':'rs.resume')+'</b>'+esc(wb.name)+(W.customer?' · '+esc(W.customer):'')+'</span><span aria-hidden="true">›</span></button>':'';
+  return resume+presetRow+'<div class="acts quick"><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
@@ -3332,7 +3338,8 @@ const viewRecipe=()=>{
     '<div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="addpour">'+T('rc.add')+'</button><button class="btn ghost" data-act="fit">'+T('rc.fit')+'</button><button class="btn ghost" data-act="reset">'+T('rc.reset')+'</button></div>'+
     '<div class="dots" style="margin-top:12px"><span class="lbl">'+T('rc.tw')+'</span><i></i><b id="tw"></b></div><div class="dots"><span class="lbl">'+T('rc.ar')+'</span><i></i><b id="ar"></b></div></section>';
   if(W.presetEdit)return presetEditorHtml(drSec,rcSec);
-  return editBar+'<div class="cols"><div>'+presetBar+
+  const back='<button class="lnk rc-back" data-act="tab" data-t="beans">‹ '+T('sc.title')+'</button>';
+  return back+editBar+'<div class="cols"><div>'+presetBar+
    '<section class="sec"><h2>'+T('rc.cust.h')+'</h2><div class="row">'+field(T('rc.cust.name'),'customer',W.customer)+field(T('rc.cust.barista'),'barista',W.barista)+'</div></section>'+
    drSec+rcSec+
    '<section class="sec"><h2>'+T('rc.log.h')+'</h2><div class="row">'+field(L('tds'),'brew.tds',W.brew.tds,'number',null,'dl-tds')+field(L('yield'),'brew.yield',W.brew.yield,'number',null,'dl-yield')+field(L('ext'),'brew.ext',W.brew.ext,'text',null,null,true)+'</div><datalist id="dl-dose">'+rng(10,30,1)+'</datalist><datalist id="dl-tds">'+rng(1,1.7,0.05)+'</datalist><datalist id="dl-yield">'+rng(100,500,10)+'</datalist></section>'+
