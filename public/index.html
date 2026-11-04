@@ -1103,6 +1103,25 @@ html.sc-open,html.sc-open body{overflow:hidden}
 .resume b{display:block;font:600 13px var(--font-b);opacity:.85;margin-bottom:2px}
 .resume span[aria-hidden]{font-size:26px;line-height:1}
 .rc-back{display:inline-block;margin:0 0 12px;padding:4px 0;font-size:16px}
+
+/* stock */
+.bean.oos img{filter:grayscale(1);opacity:.55}
+.bean.oos .b{opacity:.6}
+.bean{position:relative}
+.oos-tag{position:absolute;top:12px;right:12px;z-index:1;padding:5px 11px;border-radius:980px;background:#1d1d1f;color:#fff;font:600 12px/1.2 var(--font-b)}
+.sc-hero.oos img{filter:grayscale(1);opacity:.6}
+.sc-choose:disabled{background:#d2d2d7;border-color:#d2d2d7;color:#6e6e73;opacity:1}
+.st-n{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:980px;background:#1d1d1f;color:#fff;font-size:12px;line-height:20px}
+.st-list{list-style:none;margin:10px 0 0;padding:0;max-height:55vh;overflow-y:auto}
+.st-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #e8e8ed}
+.st-name{display:flex;flex-direction:column;min-width:0;font:600 15px/1.3 var(--font-b)}
+.st-name small{font:400 13px var(--font-b);color:#6e6e73}
+.st-sw{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px 0 10px;border-radius:980px;border:1px solid #d2d2d7;background:#fff;font:600 13px var(--font-b);cursor:pointer;color:#1a7f37}
+.st-sw::before{content:'';width:10px;height:10px;border-radius:50%;background:#34c759}
+.st-sw[aria-checked="false"]{color:#b25000;background:#fff4e5;border-color:#ffd8a8}
+.st-sw[aria-checked="false"]::before{background:#ff9500}
+.acts.quick{display:flex;flex-wrap:wrap}
+.acts.quick .st-btn{order:3}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2591,7 +2610,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['qr.brand','Coffee with Native'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand','Coffee with Native'],['st.btn','Stock'],['st.h','Coffee stock'],['st.pin','Stock PIN'],['st.pinhelp','Enter the stock PIN set by the admin.'],['st.unlock','Unlock'],['st.bad','Wrong PIN'],['st.in','In stock'],['st.out','Out of stock'],['st.help','Out-of-stock coffees stay visible but cannot be chosen, and move to the end of the list.'],['st.done','Done'],['st.marked','Marked out of stock'],['st.back','Back in stock'],['st.ad.h','Stock PIN'],['st.ad.help','Staff use this PIN to mark coffees out of stock. Default is 123456 until you change it.'],['st.ad.new','New stock PIN (at least 4 characters)'],['st.ad.save','Change stock PIN'],['st.ad.ok','Stock PIN changed'],['st.ad.short','Use at least 4 characters'],['st.count','out of stock'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -2641,7 +2660,7 @@ D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
    Items are synced one by one, so two baristas adding coffees at the same time never overwrite each other. */
 D.SB={url:'https://fmrilvoshgiojorolico.supabase.co',key:'sb_publishable_1W0Qd6vBhclrnU6OMpubiA_Sw63P7PS'};
 D.sync={code:'',last:{},dirty:new Set(),since:null,state:'off',busy:false,ready:false,onChange:null};
-const SKEYS=['baseUrl','labels','adminPin','theme','presets'];
+const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin'];
 const LS={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
 D.rpc=async(fn,body)=>{
   let r;try{r=await fetch(D.SB.url+'/rest/v1/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:D.SB.key},body:JSON.stringify(body)});}
@@ -3248,7 +3267,7 @@ const refreshChrome=()=>{document.title=D.T('title');const r=$('#t-role'),h=$('#
   app.querySelectorAll('.tab').forEach(b=>b.textContent=D.T(b.dataset.t));};
 const field=(l,k,v,type,u,list,ro)=>{const id='f-'+k.replace(/\W/g,'_');return '<div class="f"><label class="lbl" for="'+id+'">'+l+'</label><input id="'+id+'" data-k="'+k+'" type="'+(type||'text')+'" '+(type==='number'?'step="any" inputmode="decimal" ':'')+'value="'+esc(v)+'"'+(list?' list="'+list+'" autocomplete="off"':'')+(ro?' readonly tabindex="-1"':'')+'>'+(u?'<span class="u">'+u+'</span>':'')+'</div>';};
 const folderChips=()=>!D.S.folders.length?'':'<div class="chips" style="margin-bottom:14px">'+[['',D.T('sb.all')+' ('+BEANS.length+')'],...D.S.folders.map(f=>[f.id,f.name+' ('+BEANS.filter(b=>b.folder===f.id).length+')']),['_',D.T('sb.unfiled')+' ('+BEANS.filter(b=>!b.folder).length+')']].map(x=>'<button class="chip" data-act="fold" data-f="'+esc(x[0])+'" aria-pressed="'+(filt.f===x[0])+'">'+esc(x[1])+'</button>').join('')+'</div>';
-const beanOptions=sel=>{const opt=b=>'<option value="'+b.id+'"'+(b.id===sel?' selected':'')+'>'+esc(b.name)+'</option>';
+const beanOptions=sel=>{const opt=b=>'<option value="'+b.id+'"'+(b.id===sel?' selected':'')+'>'+esc(b.name)+(b.oos?' ('+esc(D.T('st.out'))+')':'')+'</option>';
   const g=D.S.folders.map(f=>[f.name,BEANS.filter(b=>b.folder===f.id)]).concat([[D.T('sb.unfiled'),BEANS.filter(b=>!D.S.folders.some(f=>f.id===b.folder))]]).filter(x=>x[1].length);
   return g.length===1&&!D.S.folders.length?g[0][1].map(opt).join(''):g.map(x=>'<optgroup label="'+esc(x[0])+'">'+x[1].map(opt).join('')+'</optgroup>').join('');};
 
@@ -3257,16 +3276,18 @@ const viewBeans=()=>{
   if(filt.p&&!BEANS.some(b=>b.process===filt.p))filt.p='';if(filt.f&&filt.f!=='_'&&!D.S.folders.some(f=>f.id===filt.f))filt.f='';
   const q=filt.q.toLowerCase();
   const procs=[...new Set(BEANS.map(b=>b.process))];
-  const list=BEANS.filter(b=>(!filt.p||b.process===filt.p)&&(!filt.f||(filt.f==='_'?!b.folder:b.folder===filt.f))&&(!q||(b.name+b.country+b.region+b.farm+(b.farmer||'')).toLowerCase().includes(q)));
+  const list0=BEANS.filter(b=>(!filt.p||b.process===filt.p)&&(!filt.f||(filt.f==='_'?!b.folder:b.folder===filt.f))&&(!q||(b.name+b.country+b.region+b.farm+(b.farmer||'')).toLowerCase().includes(q)));
+  const list=list0.filter(b=>!b.oos).concat(list0.filter(b=>b.oos));
   const pl=presets(),ap=pl.find(x=>x.id===activePreset),presetRow='<section class="sec preset-row"><div class="pr-head"><h2>'+T('pr.list.h')+'</h2><button class="btn" data-act="prnew">+ '+T('pr.new')+'</button></div>'+
    (pl.length?'<div class="chips"><button class="chip" data-act="prpick" data-p="" aria-pressed="'+!ap+'">'+T('pr.none')+'</button>'+pl.map(x=>'<button class="chip" data-act="prpick" data-p="'+esc(x.id)+'" aria-pressed="'+(x.id===activePreset)+'">'+esc(x.name)+'</button>').join('')+'</div>'+
    (ap?'<p class="pr-sum">'+esc(D.dName(ap.dripper))+' · '+esc(ap.recipe.dose)+' g · 1:'+esc(ap.recipe.ratio)+' · '+esc(ap.recipe.temp)+'°C · '+(ap.recipe.pours.length+1)+' '+T('pr.pours')+' <button class="lnk" data-act="predit" data-p="'+esc(ap.id)+'">'+T('pr.editbtn')+'</button></p>':'')+'<p class="cap">'+T('pr.help')+'</p>':'<p class="cap">'+T('pr.empty')+'</p>')+'</section>';
   const wb=W&&!W.presetEdit?(bean(W.beanId)||W.beanSnap):null,resume=wb?'<button class="resume" data-act="tab" data-t="recipe"><span><b>'+T(W.editId?'rs.resume.edit':'rs.resume')+'</b>'+esc(wb.name)+(W.customer?' · '+esc(W.customer):'')+'</span><span aria-hidden="true">›</span></button>':'';
-  return resume+presetRow+'<div class="acts quick"><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
+  const nOos=BEANS.filter(b=>b.oos).length;
+  return resume+presetRow+'<div class="acts quick"><button class="btn ghost st-btn" data-act="stock">'+T('st.btn')+(nOos?' <span class="st-n">'+nOos+' '+T('st.count')+'</span>':'')+'</button><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
-   folderChips()+'<p class="cap sc-hint">'+T('sc.hint')+'</p><div class="grid">'+list.map(b=>'<button class="bean" data-act="showbean" data-id="'+b.id+'" aria-label="'+esc(b.name)+'"><img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
+   folderChips()+'<p class="cap sc-hint">'+T('sc.hint')+'</p><div class="grid">'+list.map(b=>'<button class="bean'+(b.oos?' oos':'')+'" data-act="showbean" data-id="'+b.id+'" aria-label="'+esc(b.name)+(b.oos?' ('+esc(D.T('st.out'))+')':'')+'">'+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'<img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
    (list.length?'':(BEANS.length?'<p class="cap">'+T('sb.none')+'</p>':'<p class="cap">'+T('sb.empty')+'</p><button class="btn" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button>'))+
    '';
 };
@@ -3411,7 +3432,7 @@ const settingsHtml=()=>{
   '<h2 style="margin-top:20px">'+T('ad.theme.h')+'</h2><div class="set">'+TH.map(x=>'<div class="f"><label class="lbl" for="col-'+x[0]+'">'+x[1]+'</label><input id="col-'+x[0]+'" type="color" data-col="'+x[0]+'" value="'+(th[x[0]]||cs.getPropertyValue('--'+x[0]).trim()||'#ffffff')+'"></div>').join('')+'</div>'+
   '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div></section>';};
 const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
-const viewAdmin=()=>!D.caps.isOwner?loginHtml():adminTop()+settingsHtml()+
+const viewAdmin=()=>!D.caps.isOwner?loginHtml():adminTop()+'<section class="sec"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
   '<section class="sec dev"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
    '<div class="dev-grid"><canvas id="join-qr" width="240" height="240" aria-label="'+esc(D.T('jn.ad.qr'))+'"></canvas><div class="dev-main">'+
    '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><p class="cap" style="margin:0">'+T('jn.ad.linkhelp')+'</p></div>'+
@@ -3655,13 +3676,36 @@ const SAMPLES=clone(BEANS);
 const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D.S.beans:clone(SAMPLES)));D.S.folders=D.S.folders||[];D.S.photos=D.S.photos||{};D.S.snaps=D.S.snaps||[];};
 const safeToRender=()=>!dirty&&!busy&&!document.querySelector('[role="dialog"]')&&!(document.activeElement&&app.contains(document.activeElement)&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))&&!(CD&&CD.scanBusy);
 let pendingRender=false,lastPull=0;
+/* ---------- Stock: staff mark coffees out of stock with the stock PIN (default 123456, admin can change it) ---------- */
+let stockOk=false;try{stockOk=sessionStorage.getItem('dp-stock')==='1';}catch(e){}
+const stockPinOk=async v=>{const h=await hp(String(v||''));return h===(D.S.stockPin||await hp('123456'));};
+const stockList=()=>'<p class="cap">'+D.tt('st.help')+'</p><ul class="st-list">'+BEANS.map(b=>'<li><span class="st-name">'+esc(b.name)+'<small>'+esc([b.region,b.process].filter(Boolean).join(' · '))+'</small></span>'+
+  '<button class="st-sw" role="switch" aria-checked="'+!b.oos+'" data-st="'+esc(b.id)+'"><span>'+D.tt(b.oos?'st.out':'st.in')+'</span></button></li>').join('')+'</ul>';
+const openStock=()=>{
+  const d=ov('<div class="sec st-dlg" style="max-width:520px;margin:6vh auto 0"><h2>'+D.tt('st.h')+'</h2><div class="st-body"></div><div class="acts" style="margin-top:14px"><button class="btn ghost" data-n>'+D.tt('st.done')+'</button></div></div>');
+  const body=d.querySelector('.st-body');
+  const lock=()=>{body.innerHTML='<p class="cap">'+D.tt('st.pinhelp')+'</p><div class="f"><label class="lbl" for="st-pin">'+D.tt('st.pin')+'</label><input id="st-pin" type="password" inputmode="numeric" autocomplete="off"></div><p class="err" id="st-err" role="alert"></p><div class="acts"><button class="btn" data-unlock>'+D.tt('st.unlock')+'</button></div>';
+    const i=body.querySelector('#st-pin');i.focus();i.addEventListener('keydown',e=>{if(e.key==='Enter')body.querySelector('[data-unlock]').click();});};
+  const list=()=>{body.innerHTML=stockList();};
+  stockOk?list():lock();
+  d.onclick=async e=>{
+    if(e.target===d||e.target.closest('[data-n]')){d.remove();render();return;}
+    if(e.target.closest('[data-unlock]')){if(await stockPinOk(body.querySelector('#st-pin').value)){stockOk=true;try{sessionStorage.setItem('dp-stock','1');}catch(x){}list();}else{body.querySelector('#st-err').textContent=D.T('st.bad');}return;}
+    const sw=e.target.closest('[data-st]');if(!sw||!stockOk)return;const b=bean(sw.dataset.st);if(!b)return;
+    const ok=await mutate(()=>{if(b.oos)delete b.oos;else b.oos=true;},D.T(b.oos?'st.back':'st.marked'));
+    if(document.body.contains(d))list();};
+};
+app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="stock"],[data-act="stpin"]');if(!b)return;e.stopPropagation();
+  if(b.dataset.act==='stock'){openStock();return;}
+  if(!D.caps.isOwner)return;const i=$('#st-new'),v=(i&&i.value||'').trim();if(v.length<4){toast(D.T('st.ad.short'));return;}
+  const old=D.S.stockPin;D.S.stockPin=await hp(v);if(await doSave(D.T('st.ad.ok'),()=>{D.S.stockPin=old;})){stockOk=false;try{sessionStorage.removeItem('dp-stock');}catch(x){}render();}},true);
 /* ---------- Coffee showcase: full-screen profiles the customer swipes through before choosing ---------- */
 const chooseBean=id=>{const b=bean(id);if(!b)return;W=newWork(b);const p=presets().find(x=>x.id===activePreset);if(p)applyPreset(W,p);tab='recipe';resultId=null;render();window.scrollTo(0,0);};
 const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.flavors);
   const spec=[['variety',b.variety],['process',b.process],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['region',b.region]].filter(x=>x[1]).map(x=>'<div><dt>'+T('cp.l.'+x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>').join('');
   const gal=ph.farm.concat(ph.origin).filter(u=>u&&u!==hero).slice(0,4);
   return '<article class="sc-page" data-id="'+esc(b.id)+'" aria-roledescription="slide" aria-label="'+esc(b.name)+'"><div class="sc-scroll">'+
-   '<figure class="sc-hero"><img src="'+esc(hero)+'" alt="">'+(b.process?'<figcaption>'+esc(b.process)+'</figcaption>':'')+'</figure>'+
+   '<figure class="sc-hero'+(b.oos?' oos':'')+'"><img src="'+esc(hero)+'" alt="">'+(b.process?'<figcaption>'+esc(b.process)+'</figcaption>':'')+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'</figure>'+
    '<div class="sc-body"><p class="sc-kick">'+esc([b.country,b.region].filter(Boolean).join(' · '))+'</p><h2 class="sc-name">'+esc(b.name)+'</h2>'+
    (b.farmer||b.farm?'<p class="sc-grown">'+(b.farmer?T('sc.grown')+' <b>'+esc(b.farmer)+'</b>':'')+(b.farm?(b.farmer?' '+T('sc.at')+' ':'')+'<b>'+esc(b.farm)+'</b>':'')+'</p>':'')+
    (notes.length?'<ul class="sc-notes">'+notes.map(n=>'<li><span aria-hidden="true">'+D.noteIcon(n)+'</span>'+esc(n)+'</li>').join('')+'</ul>':'')+
@@ -3678,7 +3722,8 @@ const openShowcase=id=>{
     '<footer class="sc-bar"><div class="sc-dots">'+ids.map((_,i)=>'<i data-i="'+i+'"></i>').join('')+'</div><button class="btn sc-choose" data-sc="choose">'+D.tt('sc.choose')+'</button></footer>';
   document.body.appendChild(el);document.documentElement.classList.add('sc-open');
   const tr=el.querySelector('.sc-track'),cnt=el.querySelector('.sc-count'),dots=[...el.querySelectorAll('.sc-dots i')];
-  const mark=()=>{cnt.textContent=(at+1)+' / '+ids.length;dots.forEach((d,i)=>d.classList.toggle('on',i===at));el.querySelector('.sc-l').disabled=at===0;el.querySelector('.sc-r').disabled=at===ids.length-1;};
+  const ch=el.querySelector('.sc-choose');
+  const mark=()=>{cnt.textContent=(at+1)+' / '+ids.length;const ob=bean(ids[at]);const o=!!(ob&&ob.oos);ch.disabled=o;ch.textContent=D.T(o?'st.out':'sc.choose');dots.forEach((d,i)=>d.classList.toggle('on',i===at));el.querySelector('.sc-l').disabled=at===0;el.querySelector('.sc-r').disabled=at===ids.length-1;};
   const go=(i,smooth)=>{at=Math.max(0,Math.min(ids.length-1,i));tr.scrollTo({left:at*tr.clientWidth,behavior:smooth?'smooth':'auto'});mark();};
   let raf=0;tr.addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{const i=Math.round(tr.scrollLeft/Math.max(1,tr.clientWidth));if(i!==at){at=i;mark();}});},{passive:true});
   const close=()=>{document.removeEventListener('keydown',key);window.removeEventListener('resize',rs);el.remove();document.documentElement.classList.remove('sc-open');if(prevFocus&&prevFocus.focus)try{prevFocus.focus();}catch(x){}};
@@ -3687,7 +3732,7 @@ const openShowcase=id=>{
   document.addEventListener('keydown',key);window.addEventListener('resize',rs);
   el.addEventListener('click',e=>{const t=e.target.closest('[data-sc],.sc-dots i');if(!t)return;
     if(t.matches('.sc-dots i'))return go(+t.dataset.i,true);const a=t.dataset.sc;
-    if(a==='close')close();else if(a==='prev')go(at-1,true);else if(a==='next')go(at+1,true);else if(a==='choose'){const id=ids[at];close();chooseBean(id);}});
+    if(a==='close')close();else if(a==='prev')go(at-1,true);else if(a==='next')go(at+1,true);else if(a==='choose'){const id=ids[at],cb=bean(id);if(cb&&cb.oos)return;close();chooseBean(id);}});
   requestAnimationFrame(()=>{go(at,false);el.querySelector('.sc-choose').focus({preventScroll:true});});
 };
 app.addEventListener('click',e=>{const c=e.target.closest('[data-act="showbean"]');if(!c)return;e.stopPropagation();openShowcase(c.dataset.id);},true);
