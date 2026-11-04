@@ -3718,9 +3718,12 @@ const openStock=()=>{
   d.onclick=async e=>{
     if(e.target===d||e.target.closest('[data-n]')){d.remove();render();return;}
     if(e.target.closest('[data-unlock]')){if(await stockPinOk(body.querySelector('#st-pin').value)){stockOk=true;try{sessionStorage.setItem('dp-stock','1');}catch(x){}list();}else{body.querySelector('#st-err').textContent=D.T('st.bad');}return;}
-    const sw=e.target.closest('[data-st]');if(!sw||!stockOk)return;const b=bean(sw.dataset.st);if(!b)return;
-    const ok=await mutate(()=>{if(b.oos)delete b.oos;else b.oos=true;},b.name+' '+D.T(b.oos?'st.nowin':'st.nowout'));
-    if(document.body.contains(d))list();};
+    const sw=e.target.closest('[data-st]');if(!sw||!stockOk||sw.disabled)return;const b=bean(sw.dataset.st);if(!b)return;
+    /* update only this row, so the list keeps its scroll position */
+    const li=sw.closest('li');sw.disabled=true;
+    await mutate(()=>{if(b.oos)delete b.oos;else b.oos=true;},b.name+' '+D.T(b.oos?'st.nowin':'st.nowout'));
+    const o=!!b.oos;if(li){li.classList.toggle('is-out',o);const st=li.querySelector('.st-state');if(st)st.textContent='● '+D.T(o?'st.s.out':'st.s.in');}
+    sw.textContent=D.T(o?'st.a.in':'st.a.out');sw.setAttribute('aria-label',D.T(o?'st.a.in':'st.a.out')+': '+b.name);sw.disabled=false;};
 };
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="stock"],[data-act="stpin"]');if(!b)return;e.stopPropagation();
   if(b.dataset.act==='stock'){openStock();return;}
