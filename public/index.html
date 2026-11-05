@@ -1191,6 +1191,36 @@ html.sc-open,html.sc-open body{overflow:hidden}
 .photos figcaption{display:flex;gap:6px;flex-wrap:wrap}
 .sc-gi{margin:0;aspect-ratio:1;border-radius:16px;overflow:hidden;background:#e8e8ed}
 .sc-gi img{width:100%;height:100%;aspect-ratio:auto;border-radius:0}
+
+/* barista sign-in */
+.li{max-width:520px;margin:9vh auto 0;padding:0 4px;text-align:center}
+.li h1{font:600 clamp(30px,7vw,40px)/1.1 var(--font-s);letter-spacing:-.015em;margin:0 0 8px}
+.li .cap{margin:0 0 22px}
+.li-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.li-name{display:flex;flex-direction:column;align-items:center;gap:10px;padding:22px 12px;border:0;border-radius:20px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);font:600 17px var(--font-b);color:var(--ink);cursor:pointer}
+.li-name:hover{box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.li-av{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:#1d1d1f;color:#fff;font:600 22px var(--font-s);flex:none}
+.li-av.big{width:72px;height:72px;font-size:28px}
+.li-av.sm{width:22px;height:22px;font-size:11px}
+.li-back{display:block;margin:0 0 12px;text-align:left;font-size:16px}
+.li-who{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:18px;font:600 20px var(--font-s)}
+.li h2{font:600 19px/1.3 var(--font-s);margin:0 0 6px}
+.li-pin{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.li-dots{display:flex;justify-content:center;gap:18px;margin:18px 0 6px;cursor:text}
+.li-dots i{width:18px;height:18px;border-radius:50%;border:2px solid #86868b;transition:background .12s}
+.li-dots i.on{background:#1d1d1f;border-color:#1d1d1f}
+.li .err{min-height:1.4em;color:#d70015}
+.li-pin.shake+.li-dots{animation:li-shake .35s}
+@keyframes li-shake{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+.who{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;margin-left:10px;padding:3px 10px 3px 4px;border:0;border-radius:980px;background:#e8e8ed;font:600 12px var(--font-b);color:#1d1d1f;cursor:pointer}
+.ba-nm{display:flex;flex-direction:column}
+.ba-nm small{font:400 12px var(--font-b);color:#6e6e73}
+.ba-list li .chip+.chip{margin-left:6px}
+.ba-list li .chip:first-of-type{margin-left:auto}
+.li-pad{display:grid;grid-template-columns:repeat(3,76px);justify-content:center;gap:14px 22px;margin:14px auto 0}
+.li-k{width:76px;height:76px;border-radius:50%;border:0;background:#e8e8ed;color:#1d1d1f;font:400 30px var(--font-s);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.li-k:active{background:#c7c7cc}
+.li-k.del{background:none;font-size:26px}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2679,7 +2709,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['qr.brand','Coffee with Native'],['pr.emptymine','You have no presets yet. Tap All to use the team\u2019s, or create your own.'],['px.btn','Adjust'],['px.h','Adjust photo'],['px.help','Drag the photo to choose what stays in frame. Use the slider to zoom. Applies everywhere this photo is shown.'],['px.zoom','Zoom'],['px.reset','Reset'],['px.save','Save position'],['px.saved','Photo position saved'],['px.label','Coffee label'],['pk.select','Choose coffees to present'],['pk.present','Present'],['pk.edit','Edit selection'],['pk.done','Done'],['pk.count','{n} selected'],['pk.clear','Clear'],['pk.help','Tap the coffees you want to show this customer.'],['pk.mine','Your selection'],['ba.h','Who\u2019s brewing?'],['ba.help','Tap your name. It fills in Prepared by and shows your own presets and recipes.'],['ba.none','Not set'],['ba.ad.h','Baristas'],['ba.ad.help','Names staff tap on Select Beans. The name appears as Prepared by on the customer page.'],['ba.ad.add','Add barista'],['ba.ad.ph','Barista name'],['ba.ad.empty','No baristas yet.'],['ba.ad.dup','That name is already on the list'],['ba.ad.added','Barista added'],['ba.ad.removed','Barista removed'],['sc.mine','Mine'],['sc.all','All'],['st.btn','Manage stock'],['st.h','Manage stock'],['st.pin','Stock PIN'],['st.pinhelp','Enter the stock PIN set by the admin.'],['st.unlock','Unlock'],['st.bad','Wrong PIN. Try again.'],['st.s.in','In stock'],['st.s.out','Out of stock'],['st.a.in','Make available'],['st.a.out','Mark sold out'],['st.nowout','is now out of stock'],['st.nowin','is back in stock'],['st.n','{n} out of stock'],['st.all','All in stock'],['st.in','In stock'],['st.out','Out of stock'],['st.help','Out-of-stock coffees stay visible to customers but can\u2019t be chosen, and move to the end of the list.'],['st.done','Done'],['st.marked','Marked out of stock'],['st.back','Back in stock'],['st.ad.h','Stock PIN'],['st.ad.help','Staff use this PIN to mark coffees out of stock. Default is 123456 until you change it.'],['st.ad.new','New stock PIN (at least 4 characters)'],['st.ad.save','Change stock PIN'],['st.ad.ok','Stock PIN changed'],['st.ad.short','Use at least 4 characters'],['st.count','out of stock'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand','Coffee with Native'],['li.h','Who\u2019s brewing?'],['li.help','Tap your name to start.'],['li.pin','Enter your 4-digit PIN'],['li.first','First time? Enter the starting PIN from your admin.'],['li.bad','Wrong PIN. Try again.'],['li.locked','Too many tries. Wait {s} seconds.'],['li.back','Back'],['li.new','Create your own 4-digit PIN'],['li.newhelp','You\u2019ll use it every time you sign in.'],['li.again','Enter it again to confirm'],['li.nomatch','The PINs don\u2019t match. Start again.'],['li.same','Choose a PIN different from the starting PIN.'],['li.welcome','Welcome, {n}'],['li.out','Switch barista'],['ba.ad.pinset','PIN set'],['ba.ad.pintemp','Starting PIN 0000 \u00b7 not signed in yet'],['ba.ad.reset','Reset PIN'],['ba.ad.resetq','Reset the PIN for {n}? They sign in with 0000 and create a new PIN.'],['ba.ad.resetok','PIN reset to 0000'],['pr.emptymine','You have no presets yet. Tap All to use the team\u2019s, or create your own.'],['px.btn','Adjust'],['px.h','Adjust photo'],['px.help','Drag the photo to choose what stays in frame. Use the slider to zoom. Applies everywhere this photo is shown.'],['px.zoom','Zoom'],['px.reset','Reset'],['px.save','Save position'],['px.saved','Photo position saved'],['px.label','Coffee label'],['pk.select','Choose coffees to present'],['pk.present','Present'],['pk.edit','Edit selection'],['pk.done','Done'],['pk.count','{n} selected'],['pk.clear','Clear'],['pk.help','Tap the coffees you want to show this customer.'],['pk.mine','Your selection'],['ba.h','Who\u2019s brewing?'],['ba.help','Tap your name. It fills in Prepared by and shows your own presets and recipes.'],['ba.none','Not set'],['ba.ad.h','Baristas'],['ba.ad.help','Names staff tap on Select Beans. The name appears as Prepared by on the customer page.'],['ba.ad.add','Add barista'],['ba.ad.ph','Barista name'],['ba.ad.empty','No baristas yet.'],['ba.ad.dup','That name is already on the list'],['ba.ad.added','Barista added'],['ba.ad.removed','Barista removed'],['sc.mine','Mine'],['sc.all','All'],['st.btn','Manage stock'],['st.h','Manage stock'],['st.pin','Stock PIN'],['st.pinhelp','Enter the stock PIN set by the admin.'],['st.unlock','Unlock'],['st.bad','Wrong PIN. Try again.'],['st.s.in','In stock'],['st.s.out','Out of stock'],['st.a.in','Make available'],['st.a.out','Mark sold out'],['st.nowout','is now out of stock'],['st.nowin','is back in stock'],['st.n','{n} out of stock'],['st.all','All in stock'],['st.in','In stock'],['st.out','Out of stock'],['st.help','Out-of-stock coffees stay visible to customers but can\u2019t be chosen, and move to the end of the list.'],['st.done','Done'],['st.marked','Marked out of stock'],['st.back','Back in stock'],['st.ad.h','Stock PIN'],['st.ad.help','Staff use this PIN to mark coffees out of stock. Default is 123456 until you change it.'],['st.ad.new','New stock PIN (at least 4 characters)'],['st.ad.save','Change stock PIN'],['st.ad.ok','Stock PIN changed'],['st.ad.short','Use at least 4 characters'],['st.count','out of stock'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -2729,7 +2759,7 @@ D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
    Items are synced one by one, so two baristas adding coffees at the same time never overwrite each other. */
 D.SB={url:'https://fmrilvoshgiojorolico.supabase.co',key:'sb_publishable_1W0Qd6vBhclrnU6OMpubiA_Sw63P7PS'};
 D.sync={code:'',last:{},dirty:new Set(),since:null,state:'off',busy:false,ready:false,onChange:null};
-const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin','baristas','picks'];
+const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin','baristas','picks','baPins'];
 const LS={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
 D.rpc=async(fn,body)=>{
   let r;try{r=await fetch(D.SB.url+'/rest/v1/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:D.SB.key},body:JSON.stringify(body)});}
@@ -3340,7 +3370,15 @@ const newWork=(b,dr)=>{
 
 /* ---------- shared bits ---------- */
 const TABS=['beans','addcoffee','history','admin'];
-const shell=inner=>'<div class="top"><div><div class="lbl" id="t-role">'+T('role')+'</div><h1 id="t-title">'+T('title')+' <span class="sync" id="sync" role="status" data-s="'+D.sync.state+'" title="'+esc(D.T('sync.'+D.sync.state+'.t'))+'">'+esc(D.T('sync.'+D.sync.state))+'</span></h1></div><div class="tabs" role="tablist">'+
+const loginHtml2=()=>{const bl=baristas(),st=LI.step;
+  if(st==='names')return '<section class="li"><h1>'+T('li.h')+'</h1><p class="cap">'+T('li.help')+'</p><div class="li-grid">'+bl.map(n=>'<button class="li-name" data-act="lipick" data-n="'+esc(n)+'"><span class="li-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span>'+esc(n)+'</span></button>').join('')+'</div></section>';
+  const tmp=!(baPins()[LI.name]&&baPins()[LI.name].h);
+  const title=st==='pin'?T('li.pin'):st==='new'?T('li.new'):T('li.again'),sub=st==='pin'?(tmp?T('li.first'):''):st==='new'?T('li.newhelp'):'';
+  return '<section class="li"><button class="lnk li-back" data-act="liback">‹ '+T('li.back')+'</button><div class="li-who"><span class="li-av big" aria-hidden="true">'+esc(Array.from(LI.name)[0].toUpperCase())+'</span><b>'+esc(LI.name)+'</b></div><h2>'+title+'</h2>'+(sub?'<p class="cap">'+sub+'</p>':'')+
+   '<label class="vh" for="li-pin">'+title+'</label><input id="li-pin" class="li-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="one-time-code" autofocus>'+
+   '<div class="li-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div><p class="err" id="li-err" role="alert">'+esc(LI.msg)+'</p>'+
+   '<div class="li-pad">'+['1','2','3','4','5','6','7','8','9','','0','del'].map(k=>k===''?'<span></span>':'<button class="li-k'+(k==='del'?' del':'')+'" data-act="lik" data-k="'+k+'" aria-label="'+(k==='del'?'Delete':k)+'">'+(k==='del'?'⌫':k)+'</button>').join('')+'</div></section>';};
+const shell=inner=>'<div class="top"><div><div class="lbl" id="t-role">'+T('role')+'</div><h1 id="t-title">'+T('title')+' '+(baristas().length&&curBarista()?'<button class="who" data-act="liout" title="'+esc(D.T('li.out'))+'"><span class="li-av sm" aria-hidden="true">'+esc(Array.from(curBarista())[0].toUpperCase())+'</span>'+esc(curBarista())+'</button>':'')+'<span class="sync" id="sync" role="status" data-s="'+D.sync.state+'" title="'+esc(D.T('sync.'+D.sync.state+'.t'))+'">'+esc(D.T('sync.'+D.sync.state))+'</span></h1></div><div class="tabs" role="tablist">'+
   TABS.map(t=>'<button class="tab" role="tab" data-act="tab" data-t="'+t+'" aria-selected="'+(tab===t)+'">'+T(t)+'</button>').join('')+'</div></div>'+inner;
 const refreshChrome=()=>{document.title=D.T('title');const r=$('#t-role'),h=$('#t-title');if(r)r.textContent=D.T('role');if(h)h.textContent=D.T('title');
   app.querySelectorAll('.tab').forEach(b=>b.textContent=D.T(b.dataset.t));};
@@ -3364,7 +3402,7 @@ const viewBeans=()=>{
   const wb=W&&!W.presetEdit?(bean(W.beanId)||W.beanSnap):null,resume=wb?'<button class="resume" data-act="tab" data-t="recipe"><span><b>'+T(W.editId?'rs.resume.edit':'rs.resume')+'</b>'+esc(wb.name)+(W.customer?' · '+esc(W.customer):'')+'</span><span aria-hidden="true">›</span></button>':'';
   const nOos=BEANS.filter(b=>b.oos).length;
   const float=selMode?'<div class="pk-float" id="pk-float"><b>'+esc(D.T('pk.count').replace('{n}',myPicks().length))+'</b><button class="lnk" data-act="pkclear">'+T('pk.clear')+'</button><button class="btn" data-act="pkdone">'+T('pk.done')+'</button></div>':'';
-  return float+resume+baRow+presetRow+'<div class="acts quick"><button class="st-entry" data-act="stock"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M4 7.5l8 4.5 8-4.5 M12 12v9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>'+T('st.btn')+'</span><span class="st-n'+(nOos?'':' ok')+'">'+(nOos?esc(D.T('st.n').replace('{n}',nOos)):T('st.all'))+'</span><span class="st-chev" aria-hidden="true">›</span></button><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
+  return float+resume+presetRow+'<div class="acts quick"><button class="st-entry" data-act="stock"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M4 7.5l8 4.5 8-4.5 M12 12v9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>'+T('st.btn')+'</span><span class="st-n'+(nOos?'':' ok')+'">'+(nOos?esc(D.T('st.n').replace('{n}',nOos)):T('st.all'))+'</span><span class="st-chev" aria-hidden="true">›</span></button><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
@@ -3514,7 +3552,7 @@ const settingsHtml=()=>{
   '<h2 style="margin-top:20px">'+T('ad.theme.h')+'</h2><div class="set">'+TH.map(x=>'<div class="f"><label class="lbl" for="col-'+x[0]+'">'+x[1]+'</label><input id="col-'+x[0]+'" type="color" data-col="'+x[0]+'" value="'+(th[x[0]]||cs.getPropertyValue('--'+x[0]).trim()||'#ffffff')+'"></div>').join('')+'</div>'+
   '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div></section>';};
 const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
-const viewAdmin=()=>!D.caps.isOwner?loginHtml():'<section class="sec"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span>'+esc(n)+'</span><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
+const viewAdmin=()=>!D.caps.isOwner?loginHtml():'<section class="sec"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span class="ba-nm">'+esc(n)+'<small>'+T(baPins()[n]&&baPins()[n].h?'ba.ad.pinset':'ba.ad.pintemp')+'</small></span><button class="chip" data-act="bareset" data-n="'+esc(n)+'">'+T('ba.ad.reset')+'</button><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
   '<section class="sec dev"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
    '<div class="dev-grid"><canvas id="join-qr" width="240" height="240" aria-label="'+esc(D.T('jn.ad.qr'))+'"></canvas><div class="dev-main">'+
    '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><p class="cap" style="margin:0">'+T('jn.ad.linkhelp')+'</p></div>'+
@@ -3577,6 +3615,7 @@ const render=()=>{
   if(id){app.innerHTML=viewCustomer(id);return;}
   if(!D.caps.canEdit){app.innerHTML='<div class="profile cv-msg"><h1>'+T('title')+'</h1></div>';return;}
   if(!D.sync.code){app.innerHTML=joinHtml();return;}
+  if(!signedIn()){document.title=D.T('title');app.innerHTML=loginHtml2();const pi=$('#li-pin');if(pi&&!/iPhone|iPad|Android/i.test(navigator.userAgent))setTimeout(()=>pi.focus(),30);return;}
   if(resultId){app.innerHTML=shell(viewResult());const c=$('#qr'),sh=D.shortUrl(resultId),u=sh||D.snapUrl(resultId);if(c&&u&&window.qrcode){D.qr(u,c,720,sh?D.T('qr.brand'):'');c.dataset.short=sh?'1':'';}return;}
   const v={beans:viewBeans,addcoffee:viewAdd,recipe:viewRecipe,history:viewHistory,admin:viewAdmin}[tab]||viewBeans;
   app.innerHTML=shell(v());refreshCalc();
@@ -3600,7 +3639,7 @@ app.addEventListener('input',e=>{
     setPath(t.dataset.k,v);
     if(t.dataset.k==='recipe.dose'||t.dataset.k==='recipe.ratio')scaleRecipe();
     else if(/^pw:|^recipe\.bloomWater$/.test(t.dataset.k))W._shares=null;
-    if(t.dataset.k==='barista'){try{localStorage.setItem('dp-barista',v);}catch(x){}}
+    if(t.dataset.k==='barista'&&!baristas().length){try{localStorage.setItem('dp-barista',v);}catch(x){}}
     refreshCalc();
   }
 });
@@ -3780,6 +3819,14 @@ const openAdjust=(beanId,src)=>{if(!beanId||!src)return;const h=D.phash(src),cur
 app.addEventListener('click',e=>{const b=e.target.closest('[data-act="phadj"]');if(!b)return;e.stopPropagation();const ph=D.S.photos[b.dataset.b]||{},src=b.dataset.k==='cd'?(CD&&CD.label[0]):(ph[b.dataset.k]||[])[+b.dataset.i];openAdjust(b.dataset.b,src);},true);
 /* ---------- Baristas: admin keeps the list, staff tap their name on Select Beans ---------- */
 const baristas=()=>Array.isArray(D.S.baristas)?D.S.baristas:[];
+/* Barista sign-in: names first, then a personal 4-digit PIN. New baristas start with 0000 and must create their own PIN. */
+const TEMP_PIN='0000';
+const baPins=()=>D.S.baPins&&typeof D.S.baPins==='object'?D.S.baPins:{};
+const pinHash=(n,p)=>hp('ba:'+n.toLowerCase()+':'+p);
+const signedIn=()=>{if(!baristas().length||D.caps.isOwner)return true;let a='';try{a=localStorage.getItem('dp-ba-auth')||'';}catch(e){}const n=curBarista();return !!n&&a===n&&baristas().includes(n);};
+const signIn=n=>{try{localStorage.setItem('dp-barista',n);localStorage.setItem('dp-ba-auth',n);}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
+const signOut=()=>{try{localStorage.removeItem('dp-ba-auth');localStorage.removeItem('dp-barista');}catch(e){}W=null;resultId=null;selMode=false;tab='beans';D.caps.isOwner=false;try{sessionStorage.removeItem('dp-admin');sessionStorage.removeItem('dp-stock');}catch(e){}stockOk=false;};
+let LI={step:'names',name:'',first:'',tries:0,until:0,msg:''};
 let selMode=false;
 const pickKey=()=>curBarista()||'_';
 const myPicks=()=>{const m=D.S.picks&&typeof D.S.picks==='object'?D.S.picks:{};return (m[pickKey()]||[]).filter(id=>bean(id));};
@@ -3792,13 +3839,33 @@ const mineOnly=k=>!!curBarista()&&scope[k]!=='all';
 const scopeBtns=k=>curBarista()?'<div class="seg2" role="group"><button data-act="scope" data-k="'+k+'" data-v="mine" aria-pressed="'+(scope[k]!=='all')+'">'+D.tt('sc.mine')+'</button><button data-act="scope" data-k="'+k+'" data-v="all" aria-pressed="'+(scope[k]==='all')+'">'+D.tt('sc.all')+'</button></div>':'';
 const visPresets=()=>presets().filter(p=>!mineOnly('pr')||p.owner===curBarista());
 const canEditPreset=p=>!p.owner||!curBarista()||p.owner===curBarista()||D.caps.isOwner;
+const liSubmit=async v=>{const n=LI.name,rec=baPins()[n],er=$('#li-err');const fail=m=>{LI.msg=m;const i=$('#li-pin');if(i){i.value='';i.classList.remove('shake');void i.offsetWidth;i.classList.add('shake');}if(er)er.textContent=m;liDots();};
+  if(LI.step==='pin'){if(Date.now()<LI.until)return fail(D.T('li.locked').replace('{s}',Math.ceil((LI.until-Date.now())/1000)));
+    const ok=rec&&rec.h?(await pinHash(n,v))===rec.h:v===TEMP_PIN;
+    if(!ok){LI.tries++;if(LI.tries>=5){LI.until=Date.now()+30000;LI.tries=0;}return fail(D.T('li.bad'));}
+    LI.tries=0;LI.msg='';if(!(rec&&rec.h)){LI.step='new';render();return;}
+    signIn(n);LI={step:'names',name:'',first:'',tries:0,until:0,msg:''};render();toast(D.T('li.welcome').replace('{n}',n));return;}
+  if(LI.step==='new'){if(v===TEMP_PIN)return fail(D.T('li.same'));LI.first=v;LI.msg='';LI.step='again';render();return;}
+  if(LI.step==='again'){if(v!==LI.first){LI.first='';LI.step='new';LI.msg=D.T('li.nomatch');render();return;}
+    const m=Object.assign({},baPins());m[n]={h:await pinHash(n,v),at:Date.now()};const old=D.S.baPins;D.S.baPins=m;
+    if(!await doSave(D.T('li.welcome').replace('{n}',n),()=>{D.S.baPins=old;}))return;signIn(n);LI={step:'names',name:'',first:'',tries:0,until:0,msg:''};render();}};
+const liDots=()=>{const i=$('#li-pin'),l=i?i.value.length:0;app.querySelectorAll('.li-dots i').forEach((d,k)=>d.classList.toggle('on',k<l));};
+app.addEventListener('input',e=>{if(e.target.id!=='li-pin')return;const i=e.target;i.value=i.value.replace(/\D/g,'').slice(0,4);liDots();if(i.value.length===4){const v=i.value;setTimeout(()=>liSubmit(v),120);}},true);
+app.addEventListener('click',e=>{const k=e.target.closest('[data-act="lik"]');if(!k)return;e.stopPropagation();const i=$('#li-pin');if(!i)return;
+  if(k.dataset.k==='del')i.value=i.value.slice(0,-1);else if(i.value.length<4)i.value+=k.dataset.k;i.dispatchEvent(new Event('input',{bubbles:true}));},true);
+app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="lipick"],[data-act="liback"],[data-act="liout"],[data-act="bareset"]');if(!b)return;e.stopPropagation();const a=b.dataset.act;
+  if(a==='lipick'){LI={step:'pin',name:b.dataset.n,first:'',tries:LI.tries,until:LI.until,msg:''};render();return;}
+  if(a==='liback'){LI.step='names';LI.msg='';render();return;}
+  if(a==='liout'){signOut();LI={step:'names',name:'',first:'',tries:0,until:0,msg:''};render();window.scrollTo(0,0);return;}
+  if(a==='bareset'){if(!D.caps.isOwner)return;const n=b.dataset.n;if(!await ask(esc(D.T('ba.ad.resetq').replace('{n}',n)),D.tt('ba.ad.reset')))return;const m=Object.assign({},baPins()),old=D.S.baPins;delete m[n];D.S.baPins=m;if(await doSave(D.T('ba.ad.resetok'),()=>{D.S.baPins=old;}))render();return;}
+},true);
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="bapick"],[data-act="scope"],[data-act="baadd"],[data-act="badel"]');if(!b)return;e.stopPropagation();const a=b.dataset.act;
   if(a==='bapick'){setBarista(b.dataset.n);render();return;}
   if(a==='scope'){setScope(b.dataset.k,b.dataset.v);render();return;}
   if(!D.caps.isOwner)return;const list=baristas().slice(),old=D.S.baristas;
   if(a==='baadd'){const i=$('#ba-new'),v=(i&&i.value||'').trim().slice(0,30);if(!v)return;if(list.some(x=>x.toLowerCase()===v.toLowerCase())){toast(D.T('ba.ad.dup'));return;}
     D.S.baristas=list.concat([v]);if(await doSave(D.T('ba.ad.added'),()=>{D.S.baristas=old;}))render();return;}
-  if(a==='badel'){const n=b.dataset.n;if(!await ask(D.tt('ad.delete')+': <b>'+esc(n)+'</b>?',D.tt('ad.delete')))return;D.S.baristas=list.filter(x=>x!==n);
+  if(a==='badel'){const n=b.dataset.n;if(!await ask(D.tt('ad.delete')+': <b>'+esc(n)+'</b>?',D.tt('ad.delete')))return;D.S.baristas=list.filter(x=>x!==n);{const m=Object.assign({},baPins());delete m[n];D.S.baPins=m;}
     if(await doSave(D.T('ba.ad.removed'),()=>{D.S.baristas=old;})){if(curBarista()===n)setBarista('');render();}return;}
 },true);
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='ba-new'){const b=app.querySelector('[data-act="baadd"]');if(b)b.click();}});
