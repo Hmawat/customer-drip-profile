@@ -1146,6 +1146,51 @@ html.sc-open,html.sc-open body{overflow:hidden}
 .st-row.is-out .st-title{color:#6e6e73}
 .st-list li .st-state{margin-top:4px}
 @media(max-width:480px){.st-list li.st-row{grid-template-columns:60px minmax(0,1fr)}.st-img{width:60px;height:60px}.st-row .st-act{grid-column:2;justify-self:start;margin-top:2px}}
+
+/* baristas + Mine/All */
+.ba-row{margin-bottom:16px}
+.ba-row .chips{gap:8px}
+.ba-chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px 0 5px;font-size:15px}
+.ba-av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#e8e8ed;color:#1d1d1f;font:600 13px var(--font-b);flex:none}
+.ba-chip[aria-pressed="true"] .ba-av{background:#fff;color:#1d1d1f}
+.ba-list{list-style:none;margin:8px 0 0;padding:0}
+.ba-list li{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #e8e8ed;font:500 16px var(--font-b)}
+.ba-list li .chip{margin-left:auto}
+.seg2{display:inline-flex;padding:2px;border-radius:980px;background:#e8e8ed;flex:none}
+.seg2 button{border:0;background:none;padding:6px 14px;border-radius:980px;font:500 13px var(--font-b);color:#1d1d1f;cursor:pointer}
+.seg2 button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pr-head{flex-wrap:wrap}
+.pr-head .seg2{margin-left:auto}
+.hs-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.hs-head h2{margin:0}
+
+/* presentation selection */
+.pk-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:4px 0 14px}
+.pk-bar .cap{margin:0}
+.pk-bar.on{padding:12px 16px;border-radius:14px;background:#eaf3ff;color:#0b4a8b;font-size:14px}
+.pk-go{min-width:160px}
+.grid.selecting .bean{outline:2px solid transparent;transition:outline-color .15s}
+.grid.selecting .bean.picked{outline:3px solid #0071e3;outline-offset:-3px}
+.pk-tick{position:absolute;top:12px;left:12px;z-index:2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.92);border:2px solid #c7c7cc;color:transparent;font:700 15px var(--font-b)}
+.bean.picked .pk-tick{background:#0071e3;border-color:#0071e3;color:#fff}
+.pk-float{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;display:flex;align-items:center;gap:14px;padding:10px 10px 10px 20px;border-radius:980px;background:rgba(29,29,31,.94);color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.25);white-space:nowrap}
+.pk-float b{font:600 15px var(--font-b)}
+.pk-float .lnk{color:#9fcbff}
+.pk-float .btn{min-height:40px;line-height:38px;padding:0 18px}
+
+/* photo adjust */
+.px-frame{position:relative;margin-top:12px;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#e8e8ed;cursor:grab;touch-action:none;user-select:none}
+.px-frame.drag{cursor:grabbing}
+.px-frame img{width:100%;height:100%;display:block;pointer-events:none}
+.px-cross{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#fff6,#fff6) 33.33% 0/1px 100% no-repeat,linear-gradient(#fff6,#fff6) 66.66% 0/1px 100% no-repeat,linear-gradient(#fff6,#fff6) 0 33.33%/100% 1px no-repeat,linear-gradient(#fff6,#fff6) 0 66.66%/100% 1px no-repeat}
+.px-prev{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:10px}
+.px-prev div{border-radius:12px;overflow:hidden;background:#e8e8ed}
+.px-sq{aspect-ratio:1}.px-wide{aspect-ratio:16/9;align-self:start}
+.px-prev img{width:100%;height:100%;display:block}
+.photos figure,.bean,.sc-hero,.cv-ph,.cv-photos figure,.st-img,.clabel .ci{overflow:hidden}
+.photos figcaption{display:flex;gap:6px;flex-wrap:wrap}
+.sc-gi{margin:0;aspect-ratio:1;border-radius:16px;overflow:hidden;background:#e8e8ed}
+.sc-gi img{width:100%;height:100%;aspect-ratio:auto;border-radius:0}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2634,7 +2679,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['qr.brand','Coffee with Native'],['st.btn','Manage stock'],['st.h','Manage stock'],['st.pin','Stock PIN'],['st.pinhelp','Enter the stock PIN set by the admin.'],['st.unlock','Unlock'],['st.bad','Wrong PIN. Try again.'],['st.s.in','In stock'],['st.s.out','Out of stock'],['st.a.in','Make available'],['st.a.out','Mark sold out'],['st.nowout','is now out of stock'],['st.nowin','is back in stock'],['st.n','{n} out of stock'],['st.all','All in stock'],['st.in','In stock'],['st.out','Out of stock'],['st.help','Out-of-stock coffees stay visible to customers but can\u2019t be chosen, and move to the end of the list.'],['st.done','Done'],['st.marked','Marked out of stock'],['st.back','Back in stock'],['st.ad.h','Stock PIN'],['st.ad.help','Staff use this PIN to mark coffees out of stock. Default is 123456 until you change it.'],['st.ad.new','New stock PIN (at least 4 characters)'],['st.ad.save','Change stock PIN'],['st.ad.ok','Stock PIN changed'],['st.ad.short','Use at least 4 characters'],['st.count','out of stock'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand','Coffee with Native'],['pr.emptymine','You have no presets yet. Tap All to use the team\u2019s, or create your own.'],['px.btn','Adjust'],['px.h','Adjust photo'],['px.help','Drag the photo to choose what stays in frame. Use the slider to zoom. Applies everywhere this photo is shown.'],['px.zoom','Zoom'],['px.reset','Reset'],['px.save','Save position'],['px.saved','Photo position saved'],['px.label','Coffee label'],['pk.select','Choose coffees to present'],['pk.present','Present'],['pk.edit','Edit selection'],['pk.done','Done'],['pk.count','{n} selected'],['pk.clear','Clear'],['pk.help','Tap the coffees you want to show this customer.'],['pk.mine','Your selection'],['ba.h','Who\u2019s brewing?'],['ba.help','Tap your name. It fills in Prepared by and shows your own presets and recipes.'],['ba.none','Not set'],['ba.ad.h','Baristas'],['ba.ad.help','Names staff tap on Select Beans. The name appears as Prepared by on the customer page.'],['ba.ad.add','Add barista'],['ba.ad.ph','Barista name'],['ba.ad.empty','No baristas yet.'],['ba.ad.dup','That name is already on the list'],['ba.ad.added','Barista added'],['ba.ad.removed','Barista removed'],['sc.mine','Mine'],['sc.all','All'],['st.btn','Manage stock'],['st.h','Manage stock'],['st.pin','Stock PIN'],['st.pinhelp','Enter the stock PIN set by the admin.'],['st.unlock','Unlock'],['st.bad','Wrong PIN. Try again.'],['st.s.in','In stock'],['st.s.out','Out of stock'],['st.a.in','Make available'],['st.a.out','Mark sold out'],['st.nowout','is now out of stock'],['st.nowin','is back in stock'],['st.n','{n} out of stock'],['st.all','All in stock'],['st.in','In stock'],['st.out','Out of stock'],['st.help','Out-of-stock coffees stay visible to customers but can\u2019t be chosen, and move to the end of the list.'],['st.done','Done'],['st.marked','Marked out of stock'],['st.back','Back in stock'],['st.ad.h','Stock PIN'],['st.ad.help','Staff use this PIN to mark coffees out of stock. Default is 123456 until you change it.'],['st.ad.new','New stock PIN (at least 4 characters)'],['st.ad.save','Change stock PIN'],['st.ad.ok','Stock PIN changed'],['st.ad.short','Use at least 4 characters'],['st.count','out of stock'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -2684,7 +2729,7 @@ D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
    Items are synced one by one, so two baristas adding coffees at the same time never overwrite each other. */
 D.SB={url:'https://fmrilvoshgiojorolico.supabase.co',key:'sb_publishable_1W0Qd6vBhclrnU6OMpubiA_Sw63P7PS'};
 D.sync={code:'',last:{},dirty:new Set(),since:null,state:'off',busy:false,ready:false,onChange:null};
-const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin'];
+const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin','baristas','picks'];
 const LS={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
 D.rpc=async(fn,body)=>{
   let r;try{r=await fetch(D.SB.url+'/rest/v1/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:D.SB.key},body:JSON.stringify(body)});}
@@ -3208,9 +3253,19 @@ D.captureProfile=s=>new Promise((res,rej)=>{
 });
 D.renderJpeg=async s=>{try{return await D.captureProfile(s);}catch(e){return D.renderJpegCanvas(s);}};
 
+/* Photo position: each photo keeps a focus point (x,y in %) and zoom, stored with the coffee's photos */
+D._ph=new Map();
+D.phash=src=>{let h=D._ph.get(src);if(h)return h;let a=5381,b=52711;for(let i=0;i<src.length;i++){const c=src.charCodeAt(i);a=(a*33)^c;b=(b*31)^c;}h=(a>>>0).toString(36)+(b>>>0).toString(36)+src.length.toString(36);D._ph.set(src,h);return h;};
+D.posOf=src=>{if(!src||src.length<64)return null;const h=D.phash(src);const ph=D.S&&D.S.photos||{};
+  for(const k in ph){const p=ph[k]&&ph[k].pos;if(p&&p[h])return p[h];}const sp=D.shared&&D.shared.photos&&D.shared.photos.pos;return sp&&sp[h]||null;};
+D.applyPos=root=>{if(!root||!root.querySelectorAll)return;const imgs=root.tagName==='IMG'?[root]:root.querySelectorAll('img');
+  imgs.forEach(im=>{const src=im.getAttribute('src');if(!src||src.indexOf('data:image')!==0)return;const p=D.posOf(src);
+    if(p){im.style.objectFit='cover';im.style.objectPosition=p.x+'% '+p.y+'%';im.style.transformOrigin=p.x+'% '+p.y+'%';let clip=false;try{const o=getComputedStyle(im.parentElement);clip=/hidden|clip/.test(o.overflow+o.overflowX);}catch(x){}im.style.transform=p.z>1&&clip?'scale('+p.z+')':'';im.dataset.pos='1';}
+    else if(im.dataset.pos){im.style.objectPosition=im.style.transform=im.style.transformOrigin='';delete im.dataset.pos;}});};
+try{new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)D.applyPos(n);}));}).observe(document.documentElement,{childList:true,subtree:true});}catch(e){}
 D.loadSharedPhotos=async s=>{
   try{const id=s.bean&&s.bean.id;if(id){const p=await D.rpc('drip_photo',{p_bean:String(id)}).catch(()=>null);
-      if(p){let any=false;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});if(any)return true;}}}catch(e){}
+      if(p){let any=false;if(p.pos&&typeof p.pos==='object')s.photos.pos=p.pos;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});if(any)return true;}}}catch(e){}
   try{
     const u=location.href.split('#')[0].replace(/[^\/]*$/,'')+'drip-data.json';
     const r=await fetch(u,{cache:'no-cache'});if(!r.ok)return false;
@@ -3302,16 +3357,18 @@ const viewBeans=()=>{
   const procs=[...new Set(BEANS.map(b=>b.process))];
   const list0=BEANS.filter(b=>(!filt.p||b.process===filt.p)&&(!filt.f||(filt.f==='_'?!b.folder:b.folder===filt.f))&&(!q||(b.name+b.country+b.region+b.farm+(b.farmer||'')).toLowerCase().includes(q)));
   const list=list0.filter(b=>!b.oos).concat(list0.filter(b=>b.oos));
-  const pl=presets(),ap=pl.find(x=>x.id===activePreset),presetRow='<section class="sec preset-row"><div class="pr-head"><h2>'+T('pr.list.h')+'</h2><button class="btn" data-act="prnew">+ '+T('pr.new')+'</button></div>'+
+  const bl=baristas(),cb=curBarista(),baRow=bl.length?'<section class="sec ba-row"><h2>'+T('ba.h')+'</h2><div class="chips">'+bl.map(n=>'<button class="chip ba-chip" data-act="bapick" data-n="'+esc(n)+'" aria-pressed="'+(n===cb)+'"><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span>'+esc(n)+'</button>').join('')+'</div><p class="cap">'+T('ba.help')+'</p></section>':'';
+  const pl=visPresets(),ap=presets().find(x=>x.id===activePreset),presetRow='<section class="sec preset-row"><div class="pr-head"><h2>'+T('pr.list.h')+'</h2>'+scopeBtns('pr')+'<button class="btn" data-act="prnew">+ '+T('pr.new')+'</button></div>'+
    (pl.length?'<div class="chips"><button class="chip" data-act="prpick" data-p="" aria-pressed="'+!ap+'">'+T('pr.none')+'</button>'+pl.map(x=>'<button class="chip" data-act="prpick" data-p="'+esc(x.id)+'" aria-pressed="'+(x.id===activePreset)+'">'+esc(x.name)+'</button>').join('')+'</div>'+
-   (ap?'<p class="pr-sum">'+esc(D.dName(ap.dripper))+' · '+esc(ap.recipe.dose)+' g · 1:'+esc(ap.recipe.ratio)+' · '+esc(ap.recipe.temp)+'°C · '+(ap.recipe.pours.length+1)+' '+T('pr.pours')+' <button class="lnk" data-act="predit" data-p="'+esc(ap.id)+'">'+T('pr.editbtn')+'</button></p>':'')+'<p class="cap">'+T('pr.help')+'</p>':'<p class="cap">'+T('pr.empty')+'</p>')+'</section>';
+   (ap?'<p class="pr-sum">'+esc(D.dName(ap.dripper))+' · '+esc(ap.recipe.dose)+' g · 1:'+esc(ap.recipe.ratio)+' · '+esc(ap.recipe.temp)+'°C · '+(ap.recipe.pours.length+1)+' '+T('pr.pours')+(ap.owner?' · '+esc(ap.owner):'')+(canEditPreset(ap)?' <button class="lnk" data-act="predit" data-p="'+esc(ap.id)+'">'+T('pr.editbtn')+'</button>':'')+'</p>':'')+'<p class="cap">'+T('pr.help')+'</p>':'<p class="cap">'+T(presets().length?'pr.emptymine':'pr.empty')+'</p>')+'</section>';
   const wb=W&&!W.presetEdit?(bean(W.beanId)||W.beanSnap):null,resume=wb?'<button class="resume" data-act="tab" data-t="recipe"><span><b>'+T(W.editId?'rs.resume.edit':'rs.resume')+'</b>'+esc(wb.name)+(W.customer?' · '+esc(W.customer):'')+'</span><span aria-hidden="true">›</span></button>':'';
   const nOos=BEANS.filter(b=>b.oos).length;
-  return resume+presetRow+'<div class="acts quick"><button class="st-entry" data-act="stock"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M4 7.5l8 4.5 8-4.5 M12 12v9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>'+T('st.btn')+'</span><span class="st-n'+(nOos?'':' ok')+'">'+(nOos?esc(D.T('st.n').replace('{n}',nOos)):T('st.all'))+'</span><span class="st-chev" aria-hidden="true">›</span></button><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
+  const float=selMode?'<div class="pk-float" id="pk-float"><b>'+esc(D.T('pk.count').replace('{n}',myPicks().length))+'</b><button class="lnk" data-act="pkclear">'+T('pk.clear')+'</button><button class="btn" data-act="pkdone">'+T('pk.done')+'</button></div>':'';
+  return float+resume+baRow+presetRow+'<div class="acts quick"><button class="st-entry" data-act="stock"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M4 7.5l8 4.5 8-4.5 M12 12v9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>'+T('st.btn')+'</span><span class="st-n'+(nOos?'':' ok')+'">'+(nOos?esc(D.T('st.n').replace('{n}',nOos)):T('st.all'))+'</span><span class="st-chev" aria-hidden="true">›</span></button><button class="btn" data-act="scan">'+CAM+T('sb.scan')+'</button><button class="btn ghost" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button></div>'+
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
-   folderChips()+'<p class="cap sc-hint">'+T('sc.hint')+'</p><div class="grid">'+list.map(b=>'<button class="bean'+(b.oos?' oos':'')+'" data-act="showbean" data-id="'+b.id+'" aria-label="'+esc(b.name)+(b.oos?' ('+esc(D.T('st.out'))+')':'')+'">'+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'<img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
+   folderChips()+pickBar()+'<div class="grid'+(selMode?' selecting':'')+'">'+list.map(b=>'<button class="bean'+(b.oos?' oos':'')+(selMode&&myPicks().includes(b.id)?' picked':'')+'" data-act="showbean" data-id="'+b.id+'"'+(selMode?' aria-pressed="'+myPicks().includes(b.id)+'"':'')+' aria-label="'+esc(b.name)+(b.oos?' ('+esc(D.T('st.out'))+')':'')+'">'+(selMode?'<span class="pk-tick" aria-hidden="true">✓</span>':'')+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'<img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
    (list.length?'':(BEANS.length?'<p class="cap">'+T('sb.none')+'</p>':'<p class="cap">'+T('sb.empty')+'</p><button class="btn" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button>'))+
    '';
 };
@@ -3349,7 +3406,7 @@ const viewAdd=()=>{
     '<details class="grp" data-g="cn-more"'+(openG.has('cn-more')?' open':'')+'><summary>'+T('ac.tn.more')+'</summary><div id="cn-more" style="padding:0 14px 14px">'+cnMore()+'</div></details></div>'+
    '<div class="f" style="margin-top:12px"><label class="lbl" for="cf-note">'+T('ac.f.note')+'</label><textarea id="cf-note" data-cf="note" rows="3">'+esc(v.note||'')+'</textarea></div>'+
    '<div class="f" style="margin-top:16px"><span class="lbl">'+T('ac.lbl.h')+'</span>'+
-    '<div class="acts" style="align-items:center;margin:6px 0"><label class="btn ghost" for="cf-photo" style="cursor:pointer">'+(CD.label.length?T('ac.lbl.change'):T('ac.lbl.add'))+'</label>'+(CD.label.length?'<button class="btn ghost" data-act="cfrm">'+T('ac.lbl.remove')+'</button>':'')+'<input type="file" accept="image/*" id="cf-photo" data-cfphoto="1" aria-label="'+T('ac.lbl.h')+'" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></div><span class="u">'+T('ac.lbl.help')+'</span></div>'+
+    '<div class="acts" style="align-items:center;margin:6px 0"><label class="btn ghost" for="cf-photo" style="cursor:pointer">'+(CD.label.length?T('ac.lbl.change'):T('ac.lbl.add'))+'</label>'+(CD.id&&CD.label.length?'<button class="btn ghost" data-act="phadj" data-b="'+esc(CD.id)+'" data-k="cd">'+T('px.btn')+'</button>':'')+(CD.label.length?'<button class="btn ghost" data-act="cfrm">'+T('ac.lbl.remove')+'</button>':'')+'<input type="file" accept="image/*" id="cf-photo" data-cfphoto="1" aria-label="'+T('ac.lbl.h')+'" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></div><span class="u">'+T('ac.lbl.help')+'</span></div>'+
     '<div style="margin-top:16px"><span class="lbl">'+T('ac.lbl.prev')+'</span><div id="lblprev" style="margin-top:8px">'+D.labelHtml(cdBean(),CD.label[0],T)+'</div></div>'+
    (ed?'<p class="cap" style="margin-top:12px">'+T('ac.keep')+'</p>':'')+
    '<p class="cap err" id="cferr" role="alert"></p><div class="acts"><button class="btn" data-act="cfsave"'+(busy?' disabled':'')+'>'+T('ac.save')+'</button><button class="btn ghost" data-act="cfcancel">'+(ed?T('ac.cancel'):T('ac.clear'))+'</button></div></section>';
@@ -3369,7 +3426,7 @@ const viewRecipe=()=>{
   const grind=(()=>{const o=[];for(let m=300;m<=1200;m+=50)o.push(String(m));let v=String(r.grind==null?'':r.grind);if(v&&!o.includes(v))o.unshift(v);return '<div class="f"><label class="lbl" for="grind">'+T('rc.grind')+'</label><select id="grind" data-k="recipe.grind">'+o.map(x=>'<option value="'+esc(x)+'"'+(x===v?' selected':'')+'>'+esc(D.grind(x))+'</option>').join('')+'</select></div>';})();
   const L=k=>T('rc.log.'+k);
   const rng=(a,b,st)=>{let o='';for(let x=a;x<=b+1e-9;x+=st)o+='<option value="'+(+x.toFixed(2))+'">';return o;};
-  const pl=presets(),cur=pl.find(x=>x.id===W.presetId);
+  const pl=visPresets(),cur=presets().find(x=>x.id===W.presetId&&canEditPreset(x));
   const editBar=W.editId?'<div class="banner edit-bar"><div><b>'+T('ed.h')+'</b><br><span>'+T('ed.help')+'</span></div><button class="btn ghost" data-act="editcancel">'+T('ed.cancel')+'</button></div>':'';
   const presetBar='<section class="sec preset-sec"><h2>'+T('pr.h')+'</h2><div class="row"><div class="f"><label class="lbl" for="pr-sel">'+T('pr.apply')+'</label><select id="pr-sel"><option value="">'+T('pr.none')+'</option>'+pl.map(x=>'<option value="'+esc(x.id)+'"'+(x.id===W.presetId?' selected':'')+'>'+esc(x.name)+'</option>').join('')+'</select></div></div>'+
    '<div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="prsave">'+T('pr.save')+'</button>'+(cur?'<button class="btn ghost" data-act="prupdate">'+T('pr.update')+'</button><button class="btn ghost" data-act="prdel">'+T('pr.del')+'</button>':'')+'</div></section>';
@@ -3418,9 +3475,10 @@ const cmpHtml=()=>{
   return '<section class="sec"><h2>'+T('hs.cmp.h')+'</h2><div class="scroll"><table class="hist"><thead><tr><th></th><th class="lbl">'+hd(a[0])+'</th><th class="lbl">'+hd(a[1])+'</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="cap">'+T('hs.cmp.diff')+'</p><div class="acts"><button class="chip" data-act="cmpclear">'+T('hs.cmp.clear')+'</button></div></section>';
 };
 const viewHistory=()=>{
-  const rows=D.S.snaps.map(s=>'<tr><td>'+esc(D.fmtDate(s.createdAt))+'</td><td>'+esc(s.customer||'-')+'</td><td>'+esc(s.bean.name)+'</td><td>'+esc(D.dName(s.dripper))+'</td><td>'+esc(s.barista||'-')+'</td><td><div class="acts"><button class="chip" data-act="open" data-id="'+s.id+'">'+T('hs.view')+'</button><button class="chip" data-act="qr" data-id="'+s.id+'">'+T('hs.qr')+'</button><button class="chip" data-act="editsnap" data-id="'+s.id+'">'+T('hs.edit')+'</button><button class="chip" data-act="brewlater" data-id="'+s.id+'">'+T(s.brew&&(s.brew.tds||s.brew.yield)?'bl.edit':'bl.add')+'</button><button class="chip" data-act="cmp" data-id="'+s.id+'" aria-pressed="'+cmpSel.includes(s.id)+'">'+T('hs.cmp')+'</button>'+
+  const cb=curBarista(),shown=mineOnly('hs')?D.S.snaps.filter(s=>(s.barista||'')===cb):D.S.snaps;
+  const rows=shown.map(s=>'<tr><td>'+esc(D.fmtDate(s.createdAt))+'</td><td>'+esc(s.customer||'-')+'</td><td>'+esc(s.bean.name)+'</td><td>'+esc(D.dName(s.dripper))+'</td><td>'+esc(s.barista||'-')+'</td><td><div class="acts"><button class="chip" data-act="open" data-id="'+s.id+'">'+T('hs.view')+'</button><button class="chip" data-act="qr" data-id="'+s.id+'">'+T('hs.qr')+'</button><button class="chip" data-act="editsnap" data-id="'+s.id+'">'+T('hs.edit')+'</button><button class="chip" data-act="brewlater" data-id="'+s.id+'">'+T(s.brew&&(s.brew.tds||s.brew.yield)?'bl.edit':'bl.add')+'</button><button class="chip" data-act="cmp" data-id="'+s.id+'" aria-pressed="'+cmpSel.includes(s.id)+'">'+T('hs.cmp')+'</button>'+
     (D.caps.isOwner?'<button class="chip" data-act="del" data-id="'+s.id+'">'+T('hs.del')+'</button>':'')+'</div></td></tr>').join('');
-  return '<h2>'+T('hs.h')+' ('+D.S.snaps.length+')</h2>'+cmpHtml()+(rows?'<div class="scroll"><table class="hist"><thead><tr><th class="lbl">'+T('hs.time')+'</th><th class="lbl">'+T('hs.cust')+'</th><th class="lbl">'+T('hs.bean')+'</th><th class="lbl">'+T('hs.dripper')+'</th><th class="lbl">'+T('hs.barista')+'</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="cap">'+T('hs.empty')+'</p>');
+  return '<div class="hs-head"><h2>'+T('hs.h')+' ('+shown.length+')</h2>'+scopeBtns('hs')+'</div>'+cmpHtml()+(rows?'<div class="scroll"><table class="hist"><thead><tr><th class="lbl">'+T('hs.time')+'</th><th class="lbl">'+T('hs.cust')+'</th><th class="lbl">'+T('hs.bean')+'</th><th class="lbl">'+T('hs.dripper')+'</th><th class="lbl">'+T('hs.barista')+'</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="cap">'+T('hs.empty')+'</p>');
 };
 
 /* ---------- Admin ---------- */
@@ -3456,7 +3514,7 @@ const settingsHtml=()=>{
   '<h2 style="margin-top:20px">'+T('ad.theme.h')+'</h2><div class="set">'+TH.map(x=>'<div class="f"><label class="lbl" for="col-'+x[0]+'">'+x[1]+'</label><input id="col-'+x[0]+'" type="color" data-col="'+x[0]+'" value="'+(th[x[0]]||cs.getPropertyValue('--'+x[0]).trim()||'#ffffff')+'"></div>').join('')+'</div>'+
   '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div></section>';};
 const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
-const viewAdmin=()=>!D.caps.isOwner?loginHtml():adminTop()+'<section class="sec"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
+const viewAdmin=()=>!D.caps.isOwner?loginHtml():'<section class="sec"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span>'+esc(n)+'</span><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
   '<section class="sec dev"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
    '<div class="dev-grid"><canvas id="join-qr" width="240" height="240" aria-label="'+esc(D.T('jn.ad.qr'))+'"></canvas><div class="dev-main">'+
    '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><p class="cap" style="margin:0">'+T('jn.ad.linkhelp')+'</p></div>'+
@@ -3466,7 +3524,7 @@ const viewAdmin=()=>!D.caps.isOwner?loginHtml():adminTop()+'<section class="sec"
    '<div class="acts" style="margin-top:10px"><button class="btn" data-act="setcode">'+T('jn.ad.set')+'</button><button class="btn ghost" data-act="gencode">'+T('jn.ad.gen')+'</button></div></div></section>'+
   '<section class="sec"><h2>'+T('ad.pub.h')+'</h2><p class="cap">'+T('ad.pub.help')+'</p><div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="pubphotos">'+T('ad.pub.btn')+'</button></div></section>'+
   '<div class="banner">'+T('ad.ph.banner')+'</div>'+
-  BEANS.map(b=>{const p=D.S.photos[b.id]||{};return '<section class="sec"><h2>'+esc(b.name)+'</h2>'+KINDS.map(k=>'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T(k[1])+'</div><div class="photos">'+(p[k[0]]||[]).map((src,i)=>'<figure><img alt="" src="'+esc(src)+'"><figcaption><button class="chip" data-act="rmphoto" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('ad.delete')+'</button></figcaption></figure>').join('')+'</div><input type="file" accept="image/*" id="up-'+b.id+'-'+k[0]+'" data-up="'+b.id+':'+k[0]+'" aria-label="'+esc(D.T(k[1])+' · '+b.name)+'"></div>').join('')+'</section>';}).join('')+
+  BEANS.map(b=>{const p=D.S.photos[b.id]||{};return '<section class="sec"><h2>'+esc(b.name)+'</h2>'+((p.label||[])[0]?'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T('px.label')+'</div><div class="photos"><figure><img alt="" src="'+esc(p.label[0])+'"><figcaption><button class="chip" data-act="phadj" data-b="'+b.id+'" data-k="label" data-i="0">'+T('px.btn')+'</button></figcaption></figure></div></div>':'')+KINDS.map(k=>'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T(k[1])+'</div><div class="photos">'+(p[k[0]]||[]).map((src,i)=>'<figure><img alt="" src="'+esc(src)+'"><figcaption><button class="chip" data-act="phadj" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('px.btn')+'</button><button class="chip" data-act="rmphoto" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('ad.delete')+'</button></figcaption></figure>').join('')+'</div><input type="file" accept="image/*" id="up-'+b.id+'-'+k[0]+'" data-up="'+b.id+':'+k[0]+'" aria-label="'+esc(D.T(k[1])+' · '+b.name)+'"></div>').join('')+'</section>';}).join('')+
   '<div class="acts"><button class="btn" data-act="savephotos" '+(dirty?'':'disabled')+'>'+T('ad.ph.save')+'</button></div>';
 
 /* ---------- Result + customer ---------- */
@@ -3700,6 +3758,50 @@ const SAMPLES=clone(BEANS);
 const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D.S.beans:clone(SAMPLES)));D.S.folders=D.S.folders||[];D.S.photos=D.S.photos||{};D.S.snaps=D.S.snaps||[];};
 const safeToRender=()=>!dirty&&!busy&&!document.querySelector('[role="dialog"]')&&!(document.activeElement&&app.contains(document.activeElement)&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))&&!(CD&&CD.scanBusy);
 let pendingRender=false,lastPull=0;
+const openAdjust=(beanId,src)=>{if(!beanId||!src)return;const h=D.phash(src),cur=Object.assign({x:50,y:50,z:1},D.posOf(src)||{});let x=cur.x,y=cur.y,z=cur.z;
+  const d=ov('<div class="sec px-dlg" style="max-width:520px;margin:5vh auto 0"><h2>'+D.tt('px.h')+'</h2><p class="cap">'+D.tt('px.help')+'</p>'+
+    '<div class="px-frame"><img src="'+esc(src)+'" alt="" draggable="false"><span class="px-cross" aria-hidden="true"></span></div>'+
+    '<div class="px-prev"><div class="px-sq"><img src="'+esc(src)+'" alt=""></div><div class="px-wide"><img src="'+esc(src)+'" alt=""></div></div>'+
+    '<div class="f" style="margin-top:12px"><label class="lbl" for="px-z">'+D.tt('px.zoom')+'</label><input id="px-z" type="range" min="1" max="3" step="0.05" value="'+z+'"></div>'+
+    '<div class="acts" style="margin-top:12px"><button class="btn" data-y>'+D.tt('px.save')+'</button><button class="btn ghost" data-r>'+D.tt('px.reset')+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');
+  const fr=d.querySelector('.px-frame'),imgs=[...d.querySelectorAll('.px-frame img,.px-prev img')];
+  const paint=()=>{x=Math.round(Math.max(0,Math.min(100,x))*10)/10;y=Math.round(Math.max(0,Math.min(100,y))*10)/10;imgs.forEach(im=>{im.style.objectFit='cover';im.style.objectPosition=x+'% '+y+'%';im.style.transformOrigin=x+'% '+y+'%';im.style.transform=z>1?'scale('+z+')':'';});};
+  paint();let drag=null;
+  fr.addEventListener('pointerdown',e=>{drag={sx:e.clientX,sy:e.clientY,x,y};fr.setPointerCapture(e.pointerId);fr.classList.add('drag');});
+  fr.addEventListener('pointermove',e=>{if(!drag)return;const r=fr.getBoundingClientRect(),k=140/z;x=drag.x-(e.clientX-drag.sx)/r.width*k;y=drag.y-(e.clientY-drag.sy)/r.height*k;paint();});
+  const end=()=>{drag=null;fr.classList.remove('drag');};fr.addEventListener('pointerup',end);fr.addEventListener('pointercancel',end);
+  d.querySelector('#px-z').addEventListener('input',e=>{z=+e.target.value;paint();});
+  d.onclick=async e=>{if(e.target===d||e.target.closest('[data-n]')){d.remove();return;}
+    if(e.target.closest('[data-r]')){x=50;y=50;z=1;d.querySelector('#px-z').value=1;paint();return;}
+    if(!e.target.closest('[data-y]'))return;
+    const ph=D.S.photos[beanId]=D.S.photos[beanId]||{},old=ph.pos?clone(ph.pos):null;ph.pos=Object.assign({},ph.pos||{});
+    if(x===50&&y===50&&z===1)delete ph.pos[h];else ph.pos[h]={x,y,z};d.remove();
+    if(await doSave(D.T('px.saved'),()=>{if(old)ph.pos=old;else delete ph.pos;})){D.applyPos(document.body);render();}};};
+app.addEventListener('click',e=>{const b=e.target.closest('[data-act="phadj"]');if(!b)return;e.stopPropagation();const ph=D.S.photos[b.dataset.b]||{},src=b.dataset.k==='cd'?(CD&&CD.label[0]):(ph[b.dataset.k]||[])[+b.dataset.i];openAdjust(b.dataset.b,src);},true);
+/* ---------- Baristas: admin keeps the list, staff tap their name on Select Beans ---------- */
+const baristas=()=>Array.isArray(D.S.baristas)?D.S.baristas:[];
+let selMode=false;
+const pickKey=()=>curBarista()||'_';
+const myPicks=()=>{const m=D.S.picks&&typeof D.S.picks==='object'?D.S.picks:{};return (m[pickKey()]||[]).filter(id=>bean(id));};
+const setPicks=ids=>{const m=Object.assign({},D.S.picks||{});if(ids.length)m[pickKey()]=ids;else delete m[pickKey()];D.S.picks=m;return doSave(D.T('pk.count').replace('{n}',ids.length));};
+const curBarista=()=>{try{return localStorage.getItem('dp-barista')||'';}catch(e){return '';}};
+const setBarista=n=>{try{if(n)localStorage.setItem('dp-barista',n);else localStorage.removeItem('dp-barista');}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
+let scope={pr:'mine',hs:'mine'};try{Object.assign(scope,JSON.parse(localStorage.getItem('dp-scope')||'{}'));}catch(e){}
+const setScope=(k,v)=>{scope[k]=v;try{localStorage.setItem('dp-scope',JSON.stringify(scope));}catch(e){}};
+const mineOnly=k=>!!curBarista()&&scope[k]!=='all';
+const scopeBtns=k=>curBarista()?'<div class="seg2" role="group"><button data-act="scope" data-k="'+k+'" data-v="mine" aria-pressed="'+(scope[k]!=='all')+'">'+D.tt('sc.mine')+'</button><button data-act="scope" data-k="'+k+'" data-v="all" aria-pressed="'+(scope[k]==='all')+'">'+D.tt('sc.all')+'</button></div>':'';
+const visPresets=()=>presets().filter(p=>!mineOnly('pr')||p.owner===curBarista());
+const canEditPreset=p=>!p.owner||!curBarista()||p.owner===curBarista()||D.caps.isOwner;
+app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="bapick"],[data-act="scope"],[data-act="baadd"],[data-act="badel"]');if(!b)return;e.stopPropagation();const a=b.dataset.act;
+  if(a==='bapick'){setBarista(b.dataset.n);render();return;}
+  if(a==='scope'){setScope(b.dataset.k,b.dataset.v);render();return;}
+  if(!D.caps.isOwner)return;const list=baristas().slice(),old=D.S.baristas;
+  if(a==='baadd'){const i=$('#ba-new'),v=(i&&i.value||'').trim().slice(0,30);if(!v)return;if(list.some(x=>x.toLowerCase()===v.toLowerCase())){toast(D.T('ba.ad.dup'));return;}
+    D.S.baristas=list.concat([v]);if(await doSave(D.T('ba.ad.added'),()=>{D.S.baristas=old;}))render();return;}
+  if(a==='badel'){const n=b.dataset.n;if(!await ask(D.tt('ad.delete')+': <b>'+esc(n)+'</b>?',D.tt('ad.delete')))return;D.S.baristas=list.filter(x=>x!==n);
+    if(await doSave(D.T('ba.ad.removed'),()=>{D.S.baristas=old;})){if(curBarista()===n)setBarista('');render();}return;}
+},true);
+app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='ba-new'){const b=app.querySelector('[data-act="baadd"]');if(b)b.click();}});
 /* ---------- Stock: staff mark coffees out of stock with the stock PIN (default 123456, admin can change it) ---------- */
 let stockOk=false;try{stockOk=sessionStorage.getItem('dp-stock')==='1';}catch(e){}
 const stockPinOk=async v=>{const h=await hp(String(v||''));return h===(D.S.stockPin||await hp('123456'));};
@@ -3740,10 +3842,13 @@ const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.fla
    (b.farmer||b.farm?'<p class="sc-grown">'+(b.farmer?T('sc.grown')+' <b>'+esc(b.farmer)+'</b>':'')+(b.farm?(b.farmer?' '+T('sc.at')+' ':'')+'<b>'+esc(b.farm)+'</b>':'')+'</p>':'')+
    (notes.length?'<ul class="sc-notes">'+notes.map(n=>'<li><span aria-hidden="true">'+D.noteIcon(n)+'</span>'+esc(n)+'</li>').join('')+'</ul>':'')+
    (spec?'<dl class="sc-spec">'+spec+'</dl>':'')+(b.note?'<p class="sc-note">'+esc(b.note)+'</p>':'')+
-   (gal.length?'<h3 class="sc-h3">'+T('sc.photos')+'</h3><div class="sc-gal">'+gal.map(u=>'<img loading="lazy" src="'+esc(u)+'" alt="">').join('')+'</div>':'')+
+   (gal.length?'<h3 class="sc-h3">'+T('sc.photos')+'</h3><div class="sc-gal">'+gal.map(u=>'<figure class="sc-gi"><img loading="lazy" src="'+esc(u)+'" alt=""></figure>').join('')+'</div>':'')+
    '</div></div></article>';};
-const openShowcase=id=>{
-  const ids=[...app.querySelectorAll('.bean[data-id]')].map(x=>x.dataset.id).filter(i=>bean(i));if(!ids.length)return;let at=Math.max(0,ids.indexOf(id));
+const pickBar=()=>{const n=myPicks().length;
+  if(selMode)return '<div class="pk-bar on"><span>'+T('pk.help')+'</span></div>';
+  return '<div class="pk-bar">'+(n?'<button class="btn pk-go" data-act="pkpresent">'+T('pk.present')+' ('+n+') ›</button><button class="btn ghost" data-act="pkmode">'+T('pk.edit')+'</button>':'<button class="btn ghost" data-act="pkmode">'+T('pk.select')+'</button><span class="cap">'+T('sc.hint')+'</span>')+'</div>';};
+const openShowcase=(id,only)=>{
+  const ids=(only||[...app.querySelectorAll('.bean[data-id]')].map(x=>x.dataset.id)).filter(i=>bean(i));if(!ids.length)return;let at=Math.max(0,ids.indexOf(id));
   const prevFocus=document.activeElement;
   const el=document.createElement('div');el.className='sc';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',D.T('sc.title'));
   el.innerHTML='<header class="sc-top"><button class="sc-x" data-sc="close" aria-label="'+D.tt('sc.close')+'">✕</button><span class="sc-title">'+D.tt('sc.title')+'</span><span class="sc-count" aria-live="polite"></span></header>'+
@@ -3765,7 +3870,14 @@ const openShowcase=id=>{
     if(a==='close')close();else if(a==='prev')go(at-1,true);else if(a==='next')go(at+1,true);else if(a==='choose'){const id=ids[at],cb=bean(id);if(cb&&cb.oos)return;close();chooseBean(id);}});
   requestAnimationFrame(()=>{go(at,false);el.querySelector('.sc-choose').focus({preventScroll:true});});
 };
-app.addEventListener('click',e=>{const c=e.target.closest('[data-act="showbean"]');if(!c)return;e.stopPropagation();openShowcase(c.dataset.id);},true);
+app.addEventListener('click',async e=>{const c=e.target.closest('[data-act="showbean"],[data-act="pkmode"],[data-act="pkpresent"],[data-act="pkdone"],[data-act="pkclear"]');if(!c)return;e.stopPropagation();const a=c.dataset.act;
+  if(a==='pkmode'){selMode=true;render();return;}
+  if(a==='pkdone'){selMode=false;render();return;}
+  if(a==='pkclear'){await setPicks([]);render();return;}
+  if(a==='pkpresent'){const ids=myPicks();if(ids.length)openShowcase(ids[0],ids);return;}
+  if(selMode){const ids=myPicks(),i=ids.indexOf(c.dataset.id);if(i<0)ids.push(c.dataset.id);else ids.splice(i,1);
+    c.classList.toggle('picked',i<0);c.setAttribute('aria-pressed',String(i<0));await setPicks(ids);const f=$('#pk-float b');if(f)f.textContent=D.T('pk.count').replace('{n}',ids.length);return;}
+  openShowcase(c.dataset.id);},true);
 const askName=(title,val)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px;margin:12vh auto 0"><h2>'+esc(title)+'</h2><div class="f"><label class="lbl" for="nm">'+D.tt('pr.name')+'</label><input id="nm" maxlength="40" value="'+esc(val||'')+'"></div><div class="acts" style="margin-top:12px"><button class="btn" data-y>'+D.tt('bl.save')+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');
   const i=d.querySelector('#nm');i.select();i.addEventListener('keydown',e=>{if(e.key==='Enter')d.querySelector('[data-y]').click();});
   d.onclick=e=>{if(e.target===d||e.target.dataset.n!==undefined){d.remove();res(null);}else if(e.target.dataset.y!==undefined){const v=i.value.trim();if(!v){toast(D.T('pr.namebad'));return;}d.remove();res(v);}};});
@@ -3781,7 +3893,7 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="prne
     if(await doSave(D.T('pr.deleted'),()=>{D.S.presets=old;})){W=null;tab='beans';render();}return;}
   if(a==='prstore'){const name=String(W.name||'').trim();if(!name){toast(D.T('pr.namebad'));const n=$('#pr-name');if(n)n.focus();return;}
     if(!(+W.recipe.dose>0)){toast('Enter the coffee dose');return;}
-    const p={id:W.editPresetId||('pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)),name,dripper:W.dripper,recipe:Object.assign(clone(W.recipe),{waterTds:W.recipe.waterTds||''}),show:clone(W.show||{})};
+    const prev=presets().find(x=>x.id===W.editPresetId);const p={id:W.editPresetId||('pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)),owner:prev?prev.owner:(curBarista()||undefined),name,dripper:W.dripper,recipe:Object.assign(clone(W.recipe),{waterTds:W.recipe.waterTds||''}),show:clone(W.show||{})};
     const i=list.findIndex(x=>x.id===p.id);if(i<0)list.push(p);else list[i]=p;const old=D.S.presets;D.S.presets=list;
     if(await doSave(D.T(i<0?'pr.saved':'pr.updated'),()=>{D.S.presets=old;})){activePreset=p.id;try{localStorage.setItem('dp-preset',p.id);}catch(x){}W=null;tab='beans';render();window.scrollTo(0,0);}return;}
 },true);
@@ -3791,10 +3903,10 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="edit
   if(a==='editcancel'){const id=W&&W.editId;W=null;resultId=id&&D.S.snaps.some(x=>x.id===id)?id:null;if(!resultId)tab='history';render();return;}
   if(a==='prpick'){activePreset=b.dataset.p;try{localStorage.setItem('dp-preset',activePreset);}catch(x){}render();return;}
   if(!W)return;const list=presets().slice();
-  if(a==='prsave'){const n=await askName(D.T('pr.save'),'');if(!n)return;const p=Object.assign({id:'pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n},presetFromWork());
+  if(a==='prsave'){const n=await askName(D.T('pr.save'),'');if(!n)return;const p=Object.assign({id:'pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),owner:curBarista()||undefined,name:n},presetFromWork());
     const old=D.S.presets;D.S.presets=list.concat([p]);W.presetId=p.id;if(await doSave(D.T('pr.saved'),()=>{D.S.presets=old;}))render();return;}
   const i=list.findIndex(x=>x.id===W.presetId);if(i<0)return;
-  if(a==='prupdate'){const n=await askName(D.T('pr.update'),list[i].name);if(!n)return;const old=D.S.presets;list[i]=Object.assign({id:list[i].id,name:n},presetFromWork());D.S.presets=list;if(await doSave(D.T('pr.updated'),()=>{D.S.presets=old;}))render();return;}
+  if(a==='prupdate'){const n=await askName(D.T('pr.update'),list[i].name);if(!n)return;const old=D.S.presets;list[i]=Object.assign({id:list[i].id,owner:list[i].owner,name:n},presetFromWork());D.S.presets=list;if(await doSave(D.T('pr.updated'),()=>{D.S.presets=old;}))render();return;}
   if(a==='prdel'){if(!await ask(D.tt('pr.del')+': <b>'+esc(list[i].name)+'</b>?',D.tt('pr.del')))return;const old=D.S.presets,gone=list[i].id;list.splice(i,1);D.S.presets=list;W.presetId=null;if(activePreset===gone){activePreset='';try{localStorage.removeItem('dp-preset');}catch(x){}}if(await doSave(D.T('pr.deleted'),()=>{D.S.presets=old;}))render();return;}
 },true);
 app.addEventListener('change',e=>{if(e.target.id!=='pr-sel'||!W)return;e.stopPropagation();const p=presets().find(x=>x.id===e.target.value);if(p){applyPreset(W,p);toast(D.T('pr.h')+': '+p.name);}else W.presetId=null;render();},true);
