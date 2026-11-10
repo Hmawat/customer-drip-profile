@@ -2762,12 +2762,13 @@ D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
    Coffees, folders, photos, saved recipes and settings live in the shop's database, so every device sees the same list.
    Each device keeps a local copy: the app still opens without internet, and changes made offline are sent when it is back.
    Items are synced one by one, so two baristas adding coffees at the same time never overwrite each other. */
-D.SB={url:'https://uwauoaeixgscwaqjlnzw.supabase.co',key:'sb_publishable_fnXp8dyhk4M4vZEo-YwyWg_cZz6YKKo'};
+/* The shop's backend is the Cloudflare Worker that serves this page (src/worker.js). Copies of the page opened elsewhere use the live site. */
+D.SB={url:/\.workers\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)?location.origin:'https://customer-drip-profile.cbm-c52.workers.dev'};
 D.sync={code:'',last:{},dirty:new Set(),since:null,state:'off',busy:false,ready:false,onChange:null};
 const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin','baristas','picks','baPins'];
 const LS={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
 D.rpc=async(fn,body)=>{
-  let r;try{r=await fetch(D.SB.url+'/rest/v1/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json',apikey:D.SB.key},body:JSON.stringify(body)});}
+  let r;try{r=await fetch(D.SB.url+'/api/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
   catch(e){const x=new Error('offline');x.code='offline';throw x;}
   if(!r.ok){let m='';try{const j=await r.json();m=(j&&(j.message||j.hint))||'';}catch(e){}const x=new Error(m||('http '+r.status));x.code=/bad_code/.test(m)?'bad_code':'server';throw x;}
   const t=await r.text();return t?JSON.parse(t):null;
@@ -2873,21 +2874,17 @@ D.setCode=async v=>{const n=String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'')
   try{await D.rpc('drip_set_code',{p_code:D.sync.code,p_new:n});}catch(e){return e.code==='offline'?'offline':'fail';}
   D.sync.code=n;LS.set('dp-shop',n);D.rt.start();return 'ok';};
 D.newCode=()=>{const a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',r=new Uint32Array(12);crypto.getRandomValues(r);return Array.from(r,x=>a[x%a.length]).join('').replace(/(.{4})(?=.)/g,'$1-');};
-/* Instant sync: after sending changes, a device rings a shop-wide Realtime channel; the others fetch at once. Polling stays as a fallback. */
-D.rt={ws:null,ref:0,topic:'',hb:0,retry:0,onChange:null,ok:false,
-  async start(){if(!D.sync.code||D.cap||typeof WebSocket==='undefined')return;const t='realtime:drip-'+(await D.hashKey('rt:'+D.sync.code.replace(/[^A-Z0-9]/gi,'').toUpperCase()));
+/* Instant sync: after sending changes, a device rings the shop's WebSocket hub; the others fetch at once. Polling stays as a fallback. */
+D.rt={ws:null,topic:'',hb:0,retry:0,onChange:null,ok:false,
+  async start(){if(!D.sync.code||D.cap||typeof WebSocket==='undefined')return;const t='drip-'+(await D.hashKey('rt:'+D.sync.code.replace(/[^A-Z0-9]/gi,'').toUpperCase()));
     if(this.ws&&this.topic===t)return;this.stop();this.topic=t;
-    const ws=new WebSocket(D.SB.url.replace(/^http/,'ws')+'/realtime/v1/websocket?apikey='+encodeURIComponent(D.SB.key)+'&vsn=1.0.0');this.ws=ws;
-    const send=m=>{try{ws.send(JSON.stringify(m));}catch(e){}};
-    ws.onopen=()=>{this.retry=0;send({topic:t,event:'phx_join',payload:{config:{broadcast:{self:false,ack:false},presence:{key:''},private:false}},ref:String(++this.ref),join_ref:'1'});
-      this.hb=setInterval(()=>send({topic:'phoenix',event:'heartbeat',payload:{},ref:String(++this.ref)}),25000);};
-    ws.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch(x){return;}if(m.topic!==t)return;
-      if(m.event==='phx_reply'&&m.payload&&m.payload.status==='ok')this.ok=true;
-      if(m.event==='broadcast'&&m.payload&&m.payload.event==='changed'&&this.onChange)this.onChange();};
+    const ws=new WebSocket(D.SB.url.replace(/^http/,'ws')+'/api/rt?t='+encodeURIComponent(t));this.ws=ws;
+    ws.onopen=()=>{this.retry=0;this.ok=true;this.hb=setInterval(()=>{try{ws.send('ping');}catch(e){}},25000);};
+    ws.onmessage=e=>{if(e.data==='changed'&&this.onChange)this.onChange();};
     ws.onclose=()=>{clearInterval(this.hb);this.ok=false;if(this.ws!==ws)return;this.ws=null;const d=Math.min(30000,1000*Math.pow(2,this.retry++));setTimeout(()=>this.start(),d);};
     ws.onerror=()=>{try{ws.close();}catch(x){}};},
-  stop(){const w=this.ws;this.ws=null;clearInterval(this.hb);if(w)try{w.close();}catch(e){}},
-  ping(){const w=this.ws;if(!w||w.readyState!==1||!this.ok)return;try{w.send(JSON.stringify({topic:this.topic,event:'broadcast',payload:{type:'broadcast',event:'changed',payload:{}},ref:String(++this.ref),join_ref:'1'}));}catch(e){}}};
+  stop(){const w=this.ws;this.ws=null;this.ok=false;clearInterval(this.hb);if(w)try{w.close();}catch(e){}},
+  ping(){const w=this.ws;if(!w||w.readyState!==1)return;try{w.send('changed');}catch(e){}}};
 D.joinLink=()=>(D.pageUrl()||location.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
 D.saveError=e=>{
   if(e&&e.code==='storage')return 'The browser blocked saving (storage full or private mode). Remove photos or use a normal window.';

@@ -1,9 +1,18 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "customer-drip-profile",
+  "main": "src/worker.js",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./public",
-    "not_found_handling": "single-page-application"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "customer-drip-profile", "database_id": "dd158881-8762-4a83-a872-f9179e6c00d5" }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "RT", "class_name": "Hub" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Hub"] }]
 }
