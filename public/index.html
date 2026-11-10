@@ -1056,10 +1056,10 @@ html.sc-open,html.sc-open body{overflow:hidden}
 .sc-x{width:40px;height:40px;border:0;border-radius:50%;background:#e8e8ed;color:#1d1d1f;font-size:16px;cursor:pointer}
 .sc-title{text-align:center;font:600 16px/1.2 var(--font-s)}
 .sc-count{text-align:right;font:500 14px var(--font-b);color:#6e6e73}
-.sc-track{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior:contain;scrollbar-width:none}
+.sc-track{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:none}
 .sc-track::-webkit-scrollbar{display:none}
 .sc-page{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;min-width:0;height:100%}
-.sc-scroll{height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:120px}
+.sc-scroll{height:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;overscroll-behavior-x:auto;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;padding-bottom:120px}
 .sc-hero{position:relative;margin:0 auto;max-width:760px;aspect-ratio:4/3;background:#e8e8ed;overflow:hidden}
 .sc-hero img{width:100%;height:100%;object-fit:cover;display:block}
 .sc-hero figcaption{position:absolute;left:16px;top:16px;padding:6px 12px;border-radius:980px;background:rgba(255,255,255,.88);font:600 12px var(--font-b);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
@@ -3983,6 +3983,11 @@ const openShowcase=(id,only)=>{
   const ch=el.querySelector('.sc-choose');
   const mark=()=>{cnt.textContent=(at+1)+' / '+ids.length;const ob=bean(ids[at]);const o=!!(ob&&ob.oos);ch.disabled=o;ch.textContent=D.T(o?'st.out':'sc.choose');dots.forEach((d,i)=>d.classList.toggle('on',i===at));el.querySelector('.sc-l').disabled=at===0;el.querySelector('.sc-r').disabled=at===ids.length-1;};
   const go=(i,smooth)=>{at=Math.max(0,Math.min(ids.length-1,i));tr.scrollTo({left:at*tr.clientWidth,behavior:smooth?'smooth':'auto'});mark();};
+  let sw=null;
+  tr.addEventListener('touchstart',e=>{const t=e.touches[0];sw=t&&e.touches.length===1?{x:t.clientX,y:t.clientY,at,t:Date.now()}:null;},{passive:true});
+  tr.addEventListener('touchend',e=>{if(!sw)return;const t=e.changedTouches[0],dx=t.clientX-sw.x,dy=t.clientY-sw.y,s0=sw;sw=null;
+    if(Math.abs(dx)<45||Math.abs(dx)<Math.abs(dy)*1.3||Date.now()-s0.t>900)return;
+    setTimeout(()=>{if(at===s0.at)go(at+(dx<0?1:-1),true);},260);},{passive:true});
   let raf=0;tr.addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{const i=Math.round(tr.scrollLeft/Math.max(1,tr.clientWidth));if(i!==at){at=i;mark();}});},{passive:true});
   const close=()=>{document.removeEventListener('keydown',key);window.removeEventListener('resize',rs);el.remove();document.documentElement.classList.remove('sc-open');if(prevFocus&&prevFocus.focus)try{prevFocus.focus();}catch(x){}};
   const key=e=>{if(e.key==='Escape')close();else if(e.key==='ArrowRight')go(at+1,true);else if(e.key==='ArrowLeft')go(at-1,true);};
