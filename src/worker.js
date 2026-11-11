@@ -79,6 +79,12 @@ const F = {
     const v = (JSON.parse(r.data) || {}).v || {};
     return String(v.key ?? '').toLowerCase() === key.toLowerCase() ? (v.payload ?? null) : null;
   },
+  // Public: the shop's brand colour set, so customer pages (no shop code) match the shop.
+  async drip_theme(env) {
+    const r = await env.DB.prepare(`SELECT data FROM drip_items WHERE kind='setting' AND id='theme' AND deleted=0`).first();
+    let ci = 'apple'; try { const t = r && r.data ? JSON.parse(r.data) : null; if (t && /^native-(slate|mica)$/.test(t.ci)) ci = t.ci; } catch (e) {}
+    return { ci };
+  },
   async drip_set_code(env, a) {
     await check(env, a.p_code);
     const v = norm(a.p_new);
