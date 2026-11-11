@@ -3090,7 +3090,7 @@ D.recipeHtml=(s,T,dripper)=>{
     (r.pours||[]).forEach((p,i)=>{if(!(+p.w>0))return;cum+=+p.w;steps.push({n:L('cp.pour')+' '+(i+2),tl:p.t||'',w:+p.w,cum});});
     if(steps.length)right='<div class="cv-pours"><h3>'+T('cp.pourchart')+'</h3><ol class="cv-pr">'+steps.map(x=>'<li><time>'+esc(x.tl)+'</time><span class="n">'+esc(x.n)+'<span class="pb"><i style="width:'+Math.min(100,Math.round(x.cum/(water||x.cum)*100))+'%"></i></span></span><span class="w">'+D.num(x.w)+' g<small>→ '+D.num(x.cum)+' g</small></span></li>').join('')+'</ol></div>';
   }
-  return '<section class="cv-brew"><div class="cv-in"><div class="cv-bh"><h2>'+T('cp.recipe')+(/[.!?]$/.test(D.T('cp.recipe'))?'':'.')+' <span>'+T('cp.brew.tag')+'</span></h2><div class="cv-dn">'+D.ico('dripper')+'<b>'+esc(dripper)+'</b></div></div>'+
+  return '<section class="cv-brew"><div class="cv-in"><div class="cv-bh"><h2>'+T('cp.recipe')+'</h2><div class="cv-dn">'+D.ico('dripper')+'<b>'+esc(dripper)+'</b></div></div>'+
     '<div class="cv-bg">'+(left?'<div>'+left+'</div>':'')+right+'</div></div></section>';
 };
 
@@ -3141,7 +3141,8 @@ D.profileHtml=s=>{
     .filter(a=>a[1]!==''&&a[1]!=null).map(a=>'<div><dt>'+esc(T('cp.l.'+a[0]))+'</dt><dd>'+esc(a[1])+'</dd></div>').join('');
   const org=[b.country,b.region].filter(Boolean).join(' · ');
   const meta=[by?esc(D.T('cp.by'))+' <b>'+esc(by)+'</b>':'',s.customer?esc(D.T('cp.brewed'))+' <b>'+esc(s.customer)+'</b>':'',esc(D.fmtDate(s.createdAt))].filter(Boolean).join('<i aria-hidden="true">·</i>');
-  const head=(t,tag,extra)=>'<div class="cv-sh"><h2>'+t+(tag?(/[.!?]$/.test(t)?'':'.')+' <span>'+tag+'</span>':'')+'</h2>'+(extra||'')+'</div>';
+  /* Section titles only (the small taglines after them were removed). */
+  const head=(t,tag,extra)=>'<div class="cv-sh"><h2>'+t+'</h2>'+(extra||'')+'</div>';
   const hero='<header class="cv-hero"><div class="cv-in cv-hc"><p class="cv-kick">'+T('cp.kicker')+'</p><h1 class="cv-name">'+esc(b.name)+'</h1>'+(org?'<p class="cv-org">'+esc(org)+'</p>':'')+'<p class="cv-meta">'+meta+'</p></div>'+
     '<div class="cv-in"><figure class="cv-ph"><img alt="'+esc(b.name||'')+'" src="'+esc(src)+'">'+(b.process?'<figcaption class="cv-proc">'+esc(b.process)+'</figcaption>':'')+'</figure></div></header>';
   const specs=(spec||b.note)?'<section class="cv-specs"><div class="cv-in">'+head(T('cp.coffee'),T('cp.coffee.tag'))+(spec?'<dl class="cv-spec">'+spec+'</dl>':'')+(b.note?'<p class="cv-note">'+esc(b.note)+'</p>':'')+'</div></section>':'';
