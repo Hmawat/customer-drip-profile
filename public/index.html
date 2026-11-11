@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title><script>try{var c=localStorage.getItem("dp-ci");if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);}catch(e){}</script>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title><script>try{var c=localStorage.getItem("dp-ci");if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem("dp-cvb")==="light")document.documentElement.setAttribute("data-cvb","light");}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap">
 <style>
 /* Layout: one paper sheet, like the printed A6 brewing log. Black ink, dotted leaders, wheel colours only on flavour marks. */
@@ -1233,6 +1233,27 @@ html[data-ci^="native"]{--ci-ink:#2d2828;--ci-bg:#f3f0e8;--ci-fill:#e6e1d2;--ci-
 html[data-ci^="native"] body.cv{background:#faf8f3}
 html[data-ci="native-slate"]{--ci-accent:#2d2828;--ci-accent-h:#45403c}
 html[data-ci="native-mica"]{--ci-accent:#a09178;--ci-accent-h:#8f8068}
+/* Customer page recipe section for NATIVE sets: dark (Midnight Slate, default) or light (Ivory). */
+html[data-ci^="native"] .cv-brew{--paper:#2d2828;background:#2d2828;color:#e6e1d2}
+html[data-ci^="native"] .cv-bh h2,html[data-ci^="native"] .cv-res h3,html[data-ci^="native"] .cv-pours h3{color:#e6e1d2}
+html[data-ci^="native"] .cv-brew h2 span{color:#a09178}
+html[data-ci^="native"] .cv-dn{background:#3b3532}html[data-ci^="native"] .cv-dn .ico,html[data-ci^="native"] .cv-dn b{color:#e6e1d2}
+html[data-ci^="native"] .cv-t,html[data-ci^="native"] .cv-res .cv-t,html[data-ci^="native"] .cv-pours{--paper:#3b3532;background:#3b3532}
+html[data-ci^="native"] .cv-t b,html[data-ci^="native"] .cv-pr .n,html[data-ci^="native"] .cv-pr .w{color:#e6e1d2}
+html[data-ci^="native"] .cv-t .ico,html[data-ci^="native"] .cv-t b small,html[data-ci^="native"] .cv-t span,html[data-ci^="native"] .cv-pr .w small{color:#a09178}
+html[data-ci^="native"] .cv-pr li{border-top-color:#4a4440}html[data-ci^="native"] .cv-pr .pb{background:#4a4440}
+html[data-ci^="native"] .cv-pr time{color:#a09178}html[data-ci^="native"] .cv-pr .pb i{background:#a09178}
+html[data-ci^="native"] body.card .cv-brew{background:#2d2828}
+html[data-ci^="native"][data-cvb="light"] .cv-brew{--paper:#e6e1d2;background:#e6e1d2;color:#2d2828}
+html[data-ci^="native"][data-cvb="light"] .cv-bh h2,html[data-ci^="native"][data-cvb="light"] .cv-res h3,html[data-ci^="native"][data-cvb="light"] .cv-pours h3{color:#2d2828}
+html[data-ci^="native"][data-cvb="light"] .cv-brew h2 span{color:#8c8478}
+html[data-ci^="native"][data-cvb="light"] .cv-dn{background:#2d2828}html[data-ci^="native"][data-cvb="light"] .cv-dn .ico,html[data-ci^="native"][data-cvb="light"] .cv-dn b{color:#e6e1d2}
+html[data-ci^="native"][data-cvb="light"] .cv-t,html[data-ci^="native"][data-cvb="light"] .cv-res .cv-t,html[data-ci^="native"][data-cvb="light"] .cv-pours{--paper:#f6f3ec;background:#f6f3ec}
+html[data-ci^="native"][data-cvb="light"] .cv-t b,html[data-ci^="native"][data-cvb="light"] .cv-pr .n,html[data-ci^="native"][data-cvb="light"] .cv-pr .w{color:#2d2828}
+html[data-ci^="native"][data-cvb="light"] .cv-t .ico,html[data-ci^="native"][data-cvb="light"] .cv-t b small,html[data-ci^="native"][data-cvb="light"] .cv-t span,html[data-ci^="native"][data-cvb="light"] .cv-pr .w small{color:#8c8478}
+html[data-ci^="native"][data-cvb="light"] .cv-pr li{border-top-color:#ddd6c6}html[data-ci^="native"][data-cvb="light"] .cv-pr .pb{background:#ddd6c6}
+html[data-ci^="native"][data-cvb="light"] .cv-pr time{color:#7d6d52}html[data-ci^="native"][data-cvb="light"] .cv-pr .pb i{background:#a09178}
+html[data-ci^="native"][data-cvb="light"] body.card .cv-brew{background:#e6e1d2}
 .ci-sets{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:10px}
 .ci-set{display:block;text-align:left;border:1px solid var(--ci-line,#d2d2d7);background:#fff;border-radius:14px;padding:12px;cursor:pointer;font:inherit;color:inherit}
 .ci-set[aria-pressed="true"]{border-color:var(--ci-ink,#1d1d1f);box-shadow:0 0 0 1px var(--ci-ink,#1d1d1f)}
@@ -2747,7 +2768,7 @@ D.TXT=[
   ['ad.fo.new','New folder name'],['ad.fo.add','Add folder'],['ad.fo.none','No folders yet.'],
   ['ad.cdb','Coffee Database'],['ad.cadd','Add Coffee'],['ad.csearch','Search coffee'],['ad.cnone','No coffee found.'],['ad.edit','Edit'],['ad.delete','Delete'],
   ['ad.txt.h','Text and Labels'],['ad.txt.help','Change any word shown in the system. Leave a field empty to use the original text. Changes are saved and shown straight away. Text on the customer page is copied into each QR link when a recipe is saved, so recipes saved earlier keep their old wording.'],
-  ['ad.theme.h','Brand Colors'],['ad.ci.help','Choose the colour set for every screen, including the customer page. Only the admin can change it.'],['ci.apple','Original (blue)'],['ci.native-slate','NATIVE · Midnight Slate'],['ci.native-mica','NATIVE · Mica Dust'],['ad.set.save','Save settings'],['ad.set.reset','Reset to default'],
+  ['ad.theme.h','Brand Colors'],['ad.ci.help','Choose the colour set for every screen, including the customer page. Only the admin can change it.'],['ci.apple','Original (blue)'],['ci.native-slate','NATIVE · Midnight Slate'],['ci.native-mica','NATIVE · Mica Dust'],['ci.cvb','Recipe section on the customer page'],['ci.cvb.dark','Dark · Midnight Slate'],['ci.cvb.light','Light · Ivory'],['ad.set.save','Save settings'],['ad.set.reset','Reset to default'],
   ['ad.ph.banner','Link farm and origin photos to each bean. The Coffee Label image is managed in Edit Coffee. Photos are resized to JPEG and copied into the snapshot when a recipe is saved. After adding or removing photos, press Save photo links.'],
   ['ad.ph.farm','Farm photos'],['ad.ph.origin','Origin photos'],['ad.ph.save','Save photo links'],
   ['ad.pub.h','Backup'],
@@ -2912,8 +2933,9 @@ D.lum=h=>{const m=/^#?([0-9a-f]{6})$/i.exec(String(h||''));if(!m)return null;con
 D.contrast=(a,b)=>{const x=D.lum(a),y=D.lum(b);if(x==null||y==null)return 21;const hi=Math.max(x,y),lo=Math.min(x,y);return (hi+.05)/(lo+.05);};
 D.onColor=bg=>D.contrast(bg,'#ffffff')>=D.contrast(bg,'#141414')?'#ffffff':'#141414';
 D.ciOf=()=>{const c=(D.S.theme||{}).ci;return c==='native-slate'||c==='native-mica'?c:'apple';};
-D.setCi=c=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');try{localStorage.setItem('dp-ci',c||'apple');}catch(e){}};
-D.applyTheme=reset=>{D.setCi(reset?'apple':D.ciOf());const r=document.documentElement.style,t=D.S.theme||{};['paper','ink','accent','sage','soft','beige'].forEach(k=>t[k]&&!reset?r.setProperty('--'+k,t[k]):r.removeProperty('--'+k));
+D.cvbOf=()=>(D.S.theme||{}).cvb==='light'?'light':'dark';
+D.setCi=(c,v)=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');if(v==='light')h.setAttribute('data-cvb','light');else h.removeAttribute('data-cvb');try{localStorage.setItem('dp-ci',c||'apple');localStorage.setItem('dp-cvb',v||'dark');}catch(e){}};
+D.applyTheme=reset=>{D.setCi(reset?'apple':D.ciOf(),reset?'dark':D.cvbOf());const r=document.documentElement.style,t=D.S.theme||{};['paper','ink','accent','sage','soft','beige'].forEach(k=>t[k]&&!reset?r.setProperty('--'+k,t[k]):r.removeProperty('--'+k));
   /* text on filled colours is always chosen for contrast, so a selected item can never become unreadable */
   [['ink','on-ink','#fbfbf9'],['sage','on-sage','#ffffff'],['accent','on-accent','#ffffff']].forEach(x=>{if(!reset&&t[x[0]])r.setProperty('--'+x[1],D.onColor(t[x[0]]));else r.removeProperty('--'+x[1]);});};
 D.newId=()=>'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -3596,6 +3618,7 @@ const settingsHtml=()=>{
   return '<section class="sec"><h2>'+T('ad.txt.h')+'</h2><p class="cap">'+T('ad.txt.help')+'</p>'+
   '<div class="f" style="margin:10px 0 12px;max-width:360px"><label class="lbl" for="tq">'+T('sb.search')+'</label><input id="tq" type="search" value="'+esc(tq)+'" placeholder="'+T('sb.search')+'"></div>'+(det||'<p class="cap">'+T('ad.cnone')+'</p>')+
   '<h2 style="margin-top:20px">'+T('ad.theme.h')+'</h2><p class="cap">'+T('ad.ci.help')+'</p><div class="ci-sets">'+CI_SETS.map(x=>'<button type="button" class="ci-set" data-act="ciset" data-ci="'+x[0]+'" aria-pressed="'+(D.ciOf()===x[0])+'"><span class="ci-sw">'+x[2].map(c=>'<i style="background:'+c+'"></i>').join('')+'</span><b>'+T('ci.'+x[0])+'</b><small>'+x[1]+'</small></button>').join('')+'</div>'+
+  (D.ciOf()!=='apple'?'<div class="lbl" style="margin-top:16px">'+T('ci.cvb')+'</div><div class="ci-sets">'+[['dark','#2d2828','#3b3532'],['light','#e6e1d2','#f6f3ec']].map(x=>'<button type="button" class="ci-set" data-act="cvbset" data-v="'+x[0]+'" aria-pressed="'+(D.cvbOf()===x[0])+'"><span class="ci-sw"><i style="background:'+x[1]+'"></i><i style="background:'+x[2]+'"></i></span><b>'+T('ci.cvb.'+x[0])+'</b></button>').join('')+'</div>':'')+
   '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div></section>';};
 const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
 const viewAdmin=()=>!D.caps.isOwner?loginHtml():(setTimeout(optimizePhotos,600),'')+'<section class="sec"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span class="ba-nm">'+esc(n)+'<small>'+T(baPins()[n]&&baPins()[n].h?'ba.ad.pinset':'ba.ad.pintemp')+'</small></span><span class="ba-acts"><button class="chip" data-act="baren" data-n="'+esc(n)+'">'+T('ba.ad.rename')+'</button><button class="chip" data-act="bareset" data-n="'+esc(n)+'">'+T('ba.ad.reset')+'</button><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></span></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
@@ -3740,10 +3763,11 @@ const emptyFields=()=>({name:'',country:'',region:'',farm:'',farmer:'',variety:'
 app.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id;
-  if(['fadd','fup','fdown','fdel','cedit','cdel','savesettings','resetsettings','ciset','savephotos','rmphoto','chpin','pubphotos'].includes(a)&&!D.caps.isOwner){toast('Admin login required');return;}
+  if(['fadd','fup','fdown','fdel','cedit','cdel','savesettings','resetsettings','ciset','cvbset','savephotos','rmphoto','chpin','pubphotos'].includes(a)&&!D.caps.isOwner){toast('Admin login required');return;}
   switch(a){
    case 'savesettings':await doSave('Settings saved');render();break;
-   case 'ciset':{const c=el.dataset.ci;D.S.theme={ci:c};D.applyTheme();await doSave('Brand colors saved');render();break;}
+   case 'ciset':{const c=el.dataset.ci;D.S.theme={ci:c,cvb:D.cvbOf()};D.applyTheme();await doSave('Brand colors saved');render();break;}
+   case 'cvbset':{D.S.theme=Object.assign({},D.S.theme||{},{cvb:el.dataset.v==='light'?'light':'dark'});D.applyTheme();await doSave('Brand colors saved');render();break;}
    case 'resetsettings':{if(!await ask('Restore all original text, labels and colors?','Reset to default'))break;delete D.S.labels;delete D.S.theme;D.applyTheme(true);await doSave('Defaults restored');render();break;}
    case 'login':{if(Date.now()<lockUntil){toast('Too many attempts. Try again in '+Math.ceil((lockUntil-Date.now())/1000)+' s');return;}const v=$('#pin').value||'';if(v.length<4){toast('PIN needs at least 4 characters');return;}const h=await hp(v);if(!D.S.adminPin){D.S.adminPin=h;if(!await doSave('Admin PIN created',()=>{delete D.S.adminPin;}))return;}else if(h!==D.S.adminPin){if(++fails>=5){fails=0;lockUntil=Date.now()+30000;toast('Too many attempts. Locked for 30 seconds');}else toast('Incorrect PIN');return;}fails=0;D.caps.isOwner=true;try{sessionStorage.setItem('dp-admin','1');}catch(x){}render();break;}
    case 'logout':D.caps.isOwner=false;try{sessionStorage.removeItem('dp-admin');}catch(x){}tab='beans';render();break;
@@ -4093,7 +4117,7 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
   const jm=location.hash.match(/^#join=([^&]+)/);if(jm){const c=decodeURIComponent(jm[1]);try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}try{localStorage.setItem('dp-shop',c.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);D.applyTheme();
   /* Devices without the shop code (customers opening a QR) still get the shop's brand colours. */
-  if(!D.sync.code)D.rpc('drip_theme',{}).then(t=>{if(t&&!D.sync.code)D.setCi(t.ci||'apple');}).catch(()=>{});applyBeans();try{D.caps.isOwner=sessionStorage.getItem('dp-admin')==='1';}catch(x){D.caps.isOwner=false;}
+  if(!D.sync.code)D.rpc('drip_theme',{}).then(t=>{if(t&&!D.sync.code)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});applyBeans();try{D.caps.isOwner=sessionStorage.getItem('dp-admin')==='1';}catch(x){D.caps.isOwner=false;}
   const sync=async()=>{const cm=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/);
     if(cm){app.innerHTML='<div class="profile cv-msg"><p class="cap">…</p></div>';document.body.classList.add('cv');let pl=null;try{pl=await D.rpc('drip_snap',{p_ref:cm[1]});}catch(e){}
       try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||''));}catch(x){}}
