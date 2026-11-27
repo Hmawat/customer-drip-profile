@@ -45,13 +45,13 @@
     $('app').innerHTML = '<section class="sec account-pane '+type+'"><h1>'+heading+'</h1>'+body+'<p id="account-error" class="err" role="alert"></p></section>';
   };
   const showError = e => { const node=$('account-error');if(node)node.textContent=error(e); };
-  const onSubmit = (id, action) => {
+  const onSubmit = (id, action, onError = showError) => {
     $(id).addEventListener('submit', async event=>{
       event.preventDefault();
       const button=event.submitter;
       if(button)button.disabled=true;
       try { await action(new FormData(event.currentTarget)); }
-      catch(e){showError(e);}
+      catch(e){onError(e);}
       finally { if(button)button.disabled=false; }
     });
   };
@@ -76,24 +76,30 @@
     });
   }
 
-  function passwordForm(user, forced = false, recovery = false) {
+  function passwordForm(user, forced = false, recovery = false, mount = null) {
     const admin=recovery||user?.admin;
     const explanation=forced?'Change your temporary password before opening your branch.':admin?'Use at least six characters.':'Use exactly six characters without spaces.';
-    pane(recovery?'Reset admin password':'Change password','<p class="cap">'+explanation+'</p>'+
+    const heading=recovery?'Reset admin password':'Change password';
+    const content='<p class="cap">'+explanation+'</p>'+
       '<form id="manage-password">'+(forced?'':'<div class="f"><label class="lbl" for="current-secret">'+(recovery?'Admin recovery key':'Current password')+'</label>'+
       '<input id="current-secret" type="password" name="current" autocomplete="'+(recovery?'off':'current-password')+'" required></div>')+
       '<div class="f"><label class="lbl" for="replacement-password">New password</label><input id="replacement-password" type="password" name="password" autocomplete="new-password" minlength="6" maxlength="'+(admin?'128':'6')+'" required></div>'+
       '<div class="f"><label class="lbl" for="repeat-password">Confirm new password</label><input id="repeat-password" type="password" name="repeat" autocomplete="new-password" required></div>'+
       '<div class="acts"><button class="btn" type="submit">'+(recovery?'Reset password':'Change password')+'</button>'+
-      (forced?'<button id="account-logout" class="btn ghost" type="button">Sign out</button>':'<a class="lnk" href="'+accountHome+'">Back</a>')+'</div></form>','account-auth');
+      (forced?'<button id="account-logout" class="btn ghost" type="button">Sign out</button>':recovery?'<a class="lnk" href="'+accountHome+'">Back</a>':'')+'</div></form>';
+    if(mount)mount.innerHTML='<details><summary>'+heading+'</summary>'+content+'<p id="settings-password-status" class="err" role="status"></p></details>';
+    else pane(heading,content,'account-auth');
+    const feedback=()=>$(mount?'settings-password-status':'account-error');
     if(forced)$('account-logout').onclick=signOut;
     onSubmit('manage-password',async data=>{
-      if(data.get('password')!==data.get('repeat')){$('account-error').textContent='The passwords do not match.';return;}
+      feedback().textContent='';
+      if(data.get('password')!==data.get('repeat')){feedback().textContent='The passwords do not match.';return;}
       const password=data.get('password');
       if(recovery){await request('recover-admin',{recovery:data.get('current'),password});location.replace(accountHome);return;}
       await request('change-password',forced?{password}:{current:data.get('current'),password});
-      location.replace(accountHome);
-    });
+      if(mount){$('manage-password').reset();feedback().textContent='Password changed.';}
+      else location.replace(accountHome);
+    },e=>{feedback().textContent=error(e);});
   }
 
   function setup(token, enforced) {
@@ -114,7 +120,7 @@
     pane('Branches','<div class="account-branches">'+allowed.map(branch=>'<a class="account-branch" href="'+urls[branch]+'">'+branches[branch]+'</a>').join('')+'</div>'+
       (!allowed.length?'<p class="cap">Ask your admin to assign you a branch.</p>':'')+
       '<div class="acts">'+(user.admin?'<a class="btn" href="/?account=1&users=1">Users</a>':'')+
-      '<a class="lnk" href="/?account=1&password=1">Change password</a><button id="account-logout" class="btn ghost" type="button">Sign out</button></div>','account-home');
+      '<button id="account-logout" class="btn ghost" type="button">Sign out</button></div>','account-home');
     $('account-logout').onclick=signOut;
   }
 
@@ -131,9 +137,8 @@
     const model=await request('users');
     if(mount&&!mount.isConnected)return;
     const nativeNames=[...new Set(model.roster.native)].sort((a,b)=>a.localeCompare(b,'th'));
-    const actions='<div class="acts account-actions">'+(!mount?'<a class="lnk" href="'+accountHome+'">All branches</a>':'')+
-      '<a class="lnk" href="/?account=1&password=1">Change admin password</a>'+
-      (!mount?'<button id="account-logout" class="btn ghost" type="button">Sign out</button>':'')+'</div>';
+    const actions=mount?'':'<div class="acts account-actions"><a class="lnk" href="'+accountHome+'">All branches</a>'+
+      '<button id="account-logout" class="btn ghost" type="button">Sign out</button></div>';
     const contents=actions+'<p class="cap account-intro">Set branch permissions and a six-character temporary password. Staff choose a new password when they first sign in with it.</p>'+
       '<div class="accounts-layout"><div><h2>Staff accounts</h2><div id="accounts-list" class="account-list"></div></div><div id="account-editor"></div></div>'+
       '<section class="sec account-rollout"><h2>Sign-in mode</h2><p class="cap">'+(model.enforced?'Staff sign in with their own accounts.':'Shop codes still work while you set up staff accounts.')+'</p>'+
@@ -247,7 +252,6 @@
     if(invite){history.replaceState(null,'',accountHome);setup(invite,status.enforced);return true;}
     if(query.has('recover')){passwordForm(null,false,true);return true;}
     if(status.user?.mustChange){passwordForm(status.user,true);return true;}
-    if(query.has('password')&&status.user){passwordForm(status.user);return true;}
     if(query.has('shop-code') && !status.enforced)return false;
     if(!status.enforced && location.hash.startsWith('#join='))return false;
     const oldDevice=(()=>{try{return !!localStorage.getItem((branch==='fundamental'?'fundamental:':'')+'dp-shop');}catch(e){return false;}})();
@@ -266,6 +270,7 @@
     return true;
   }
 
-  window.DripAccounts={boot,signOut,home:accountHome,branches,
+  window.DripAccounts={boot,signOut,home:accountHome,branches,urls,
+    mountPassword:(mount,user)=>passwordForm(user,false,false,mount),
     mountUsers:(mount,branch)=>users(mount,branch).catch(e=>{if(mount.isConnected)mount.textContent=error(e);})};
 })();
