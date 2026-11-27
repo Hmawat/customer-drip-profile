@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-nLNkUCH14ZBF0/FnSqCRPiWasNKFu9E4tnnfUli1IAs=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-9zlxxKvzmzEjovyZgNNQA+//w2xD1INfXPBG9K45GoQ=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
 const BRANCH_PATH=/^\/fundamental\/?$/.test(location.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
@@ -1316,6 +1316,9 @@ body[data-account-role="viewer"] [data-act="editsnap"],
 body[data-account-role="viewer"] [data-act="brewlater"],
 body[data-account-role="viewer"] [data-act="tab"][data-t="addcoffee"],
 body:is([data-account-role="viewer"],[data-account-role="barista"]) :is(.quick,[data-act="pkmode"],[data-act="prnew"],[data-act="predit"],[data-act="prsave"],[data-act="prupdate"],[data-act="prdel"]){display:none!important}
+.plate-dialog{width:min(90%,460px);max-height:90vh;overflow:auto;padding:24px;border:1px solid var(--line);border-radius:var(--r);color:var(--ink);background:var(--paper)}
+.plate-dialog::backdrop{background:#0006}
+.plate-dialog .f{margin-bottom:12px}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -3468,6 +3471,7 @@ D.downloadJpeg=async(s,toast,showImage)=>{
 
 </script>
 <script src="/accounts.js"></script>
+<script src="/plates.js"></script>
 <script>/* Barista flow, Add Coffee, Admin Settings and customer view */
 (function(){
 'use strict';
@@ -3732,6 +3736,7 @@ const viewResult=()=>{
    '<h2 class="rs-name">'+esc(s.bean.name)+'</h2>'+(s.customer?'<p class="rs-sub">'+T('rs.brewed')+' '+esc(s.customer)+'</p>':'')+
    (url?'<figure class="rs-qr"><canvas id="qr" width="168" height="168" role="img" aria-label="'+esc(D.T('rs.scan'))+'"></canvas><figcaption>'+T('rs.lead')+'</figcaption></figure><div class="vh" id="url" aria-hidden="true">'+esc(url)+'</div>':'')+
    (form?'<div class="rs-form"><h2>'+T('rs.qr.h')+'</h2><div class="f"><label class="lbl" for="rs-base">'+T('rs.qr.l')+'</label><input id="rs-base" type="url" inputmode="url" value="'+esc(D.S.baseUrl||D.pageUrl())+'" placeholder="https://cafe-name.example/drip.html"></div><p class="cap">'+T('rs.qr.help')+'</p><div class="acts" style="margin-top:8px"><button class="btn" data-act="mkqr">'+T('rs.qr.btn')+'</button></div></div>':'')+
+   (D.accountRole!=='viewer'?'<div class="acts"><button class="btn ghost" data-act="plate">Link reusable QR plate</button></div>':'')+
    '<button class="btn rs-next" data-act="again">'+T('rs.next')+'</button>'+
    '<div class="rs-links"><button class="lnk" data-act="jpeg" data-id="'+s.id+'">'+T('rs.jpeg')+'</button>'+(url?'<button class="lnk" data-act="copy">'+T('rs.copy')+'</button>':'')+'<button class="lnk" data-act="open" data-id="'+s.id+'">'+T('rs.cview')+'</button><button class="lnk" data-act="editsnap" data-id="'+s.id+'">'+T('ed.btn')+'</button><button class="lnk" data-act="brewlater" data-id="'+s.id+'">'+T(s.brew&&(s.brew.tds||s.brew.yield)?'bl.edit':'bl.add')+'</button></div>'+(s.brew&&(s.brew.tds||s.brew.yield)?'<p class="rs-brew">TDS '+esc(s.brew.tds||'–')+'% · Yield '+esc(s.brew.yield||'–')+' g · EXT '+esc(s.brew.ext||'–')+'%</p>':'')+'</section>';
 };
@@ -3914,6 +3919,7 @@ app.addEventListener('click',async e=>{
      const diff=want-D.water(r);if(r.pours.length)r.pours[r.pours.length-1].w+=Math.round(diff);render();break;}
    case 'note':{const n=el.dataset.n,i=W.notes.indexOf(n);if(i<0)W.notes.push(n);else W.notes.splice(i,1);syncNoteChips();break;}
    case 'showtog':{const k=el.dataset.n;W.show=W.show||{};W.show[k]=!W.show[k];el.setAttribute('aria-pressed',!!W.show[k]);break;}
+   case 'plate':if(resultId&&D.accountRole!=='viewer')window.DripPlates.open(D,resultId);break;
    case 'saverecipe':{
      if(busy)return;
      const b=bean(W.beanId)||W.beanSnap;

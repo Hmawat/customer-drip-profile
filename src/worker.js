@@ -122,7 +122,57 @@ async function sharedSnap(env, shop, ref) {
   return String(v.key ?? '').toLowerCase() === key.toLowerCase() ? v : null;
 }
 
+const PLATE_DURATION = 30 * 60 * 1000;
+const plateRoute = /^(\/fundamental)?\/t\/([1-4])\/([a-f0-9]{32})\/?$/;
+const plateSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_plates (branch TEXT NOT NULL, slot INTEGER NOT NULL, ref TEXT NOT NULL, expires INTEGER NOT NULL, PRIMARY KEY(branch,slot))').run();
+
+async function validPlate(env,path) {
+  const match=plateRoute.exec(path);
+  if(!match)return null;
+  const shop=match[1]?FUNDAMENTAL:NATIVE,slot=Number(match[2]);
+  const expected=env.QR_PLATE_HASHES?.[shop.id]?.[slot-1];
+  return expected&&expected===await sha256(match[3])?{shop,slot}:null;
+}
+
+async function openPlate(env,req,url) {
+  const headers={'Cache-Control':'no-store','Content-Type':'text/html; charset=utf-8','Referrer-Policy':'no-referrer'};
+  if(req.method!=='GET'&&req.method!=='HEAD')return new Response(null,{status:405,headers});
+  const plate=await validPlate(env,url.pathname);
+  if(!plate)return new Response(null,{status:404,headers});
+  await plateSchema(env);
+  const record=await env.DB.prepare('SELECT ref FROM drip_plates WHERE branch=? AND slot=? AND expires>?')
+    .bind(plate.shop.id,plate.slot,Date.now()).first();
+  if(record){
+    await schema(env,plate.shop);
+    if(await sharedSnap(env,plate.shop,record.ref)){
+      headers.Location=(plate.shop===FUNDAMENTAL?'/fundamental/':'/')+'#c='+record.ref;
+      return new Response(null,{status:302,headers});
+    }
+  }
+  const page='<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>QR plate available</title><main style="max-width:32rem;margin:15vh auto;padding:1.5rem;text-align:center;font:16px system-ui"><h1>This QR plate is available</h1><p>Ask your barista to link your coffee profile, then scan again.</p></main></html>';
+  return new Response(req.method==='HEAD'?null:page,{status:410,headers});
+}
+
 const F = {
+  async drip_bind_plate(env,a,shop,req) {
+    const account=await access(env,shop,a,req,true);
+    const plate=await validPlate(env,String(a.p_plate??''));
+    if(!plate||plate.shop!==shop)fail('invalid_plate',400);
+    const ref=String(a.p_ref??'');
+    if(!/^[a-z0-9-]{1,100}\.[a-f0-9]{12,64}$/i.test(ref))fail('invalid_recipe',400);
+    const snap=await sharedSnap(env,shop,ref);
+    if(!snap?.payload)fail('invalid_recipe',404);
+    if(account?.role==='barista'){
+      await checkBaristaRows(env,shop,[{k:'snap',i:ref.split('.')[0],d:{v:snap}}],{
+        ...account.user,nativeName:shop===NATIVE?account.user.nativeName:'',
+      });
+    }
+    await plateSchema(env);
+    const expires=Date.now()+PLATE_DURATION;
+    await env.DB.prepare('INSERT INTO drip_plates(branch,slot,ref,expires) VALUES (?,?,?,?) ON CONFLICT(branch,slot) DO UPDATE SET ref=excluded.ref,expires=excluded.expires')
+      .bind(shop.id,plate.slot,ref,expires).run();
+    return {slot:plate.slot,expires};
+  },
   async drip_pull(env, a, shop, req) {
     const account=await access(env, shop, a, req);
     if (shop===FUNDAMENTAL && account?.user.admin) await seedFundamental(env);
@@ -210,6 +260,10 @@ const json = (o, status = 200) => new Response(o && typeof o === 'object' && 'ra
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
+    if(/^\/(?:fundamental\/)?t\//.test(url.pathname)){
+      try{return await openPlate(env,req,url);}
+      catch(e){console.error(String(e));return new Response('Could not open this plate.',{status:503,headers:{'Cache-Control':'no-store'}});}
+    }
     if (!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(req);
     const shop = url.pathname.startsWith('/api/fundamental/') ? FUNDAMENTAL : NATIVE;
     const path = shop === FUNDAMENTAL ? '/api' + url.pathname.slice('/api/fundamental'.length) : url.pathname;

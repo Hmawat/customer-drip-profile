@@ -2,18 +2,56 @@
   "name": "customer-drip-profile",
   "main": "src/worker.js",
   "compatibility_date": "2026-10-01",
-  "vars": {"FUNDAMENTAL_SETUP_SHA256": "deed503840e04419fb58908557064eb77a69d42e43fafd5794cd540759479a72", "ACCOUNT_OWNER_PASSWORD_HASH": "005db0a6a5cbd19ae123f8b949e16f15a7c956aa288648a3dc279c83f0de776a", "ACCOUNT_OWNER_RECOVERY_HASH": "ca9fd20d3025ebfbea8cf7413ea7d518d111c6e95e419ce846247c94239e81ba"},
+  "vars": {
+    "FUNDAMENTAL_SETUP_SHA256": "deed503840e04419fb58908557064eb77a69d42e43fafd5794cd540759479a72",
+    "ACCOUNT_OWNER_PASSWORD_HASH": "005db0a6a5cbd19ae123f8b949e16f15a7c956aa288648a3dc279c83f0de776a",
+    "ACCOUNT_OWNER_RECOVERY_HASH": "ca9fd20d3025ebfbea8cf7413ea7d518d111c6e95e419ce846247c94239e81ba",
+    "QR_PLATE_HASHES": {
+      "native": [
+        "7c31a301f1164b8c2aa90de008a1ed4d7437979e70d66818657d289ec1580033",
+        "3277854c23a6c477d0eeb148e21eb687661c5b8e15fdb2ea64cc14e20780b96c",
+        "b71b97f288c01575fef9a92306fbbf1361143b2191beddccf3e0c4bcd308ea22",
+        "ace2fbc8b13520ed6a67541fb8551b72f1e46cff1fb0e57608cb8ac90b8d1487"
+      ],
+      "fundamental": [
+        "0e1967c9e6353390b29af6bc8471810d78c3e94c632037097658de617eb464db",
+        "95983b4ee94877cb929a5999af5a88fde260bd9129ee2ebbc49366245b35c114",
+        "7d9e49b0cf0c88e10c747ba5f8d1e8375af6a71120a963b84db597f2163e6529",
+        "dc132a448f88485f32fefa4a57f22678957b48c9aa66016f890f9ac5a67158cb"
+      ]
+    }
+  },
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": [
+      "/api/*",
+      "/t/*",
+      "/fundamental/t/*"
+    ]
   },
   "d1_databases": [
-    { "binding": "DB", "database_name": "customer-drip-profile", "database_id": "dd158881-8762-4a83-a872-f9179e6c00d5" }
+    {
+      "binding": "DB",
+      "database_name": "customer-drip-profile",
+      "database_id": "dd158881-8762-4a83-a872-f9179e6c00d5"
+    }
   ],
   "durable_objects": {
-    "bindings": [{ "name": "RT", "class_name": "Hub" }]
+    "bindings": [
+      {
+        "name": "RT",
+        "class_name": "Hub"
+      }
+    ]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Hub"] }]
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "Hub"
+      ]
+    }
+  ]
 }
