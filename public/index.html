@@ -1,5 +1,9 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
-<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>try{var c=localStorage.getItem("dp-ci");if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem("dp-cvb")==="light")document.documentElement.setAttribute("data-cvb","light");}catch(e){}</script>
+<link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
+const BRANCH_PATH=/^\/fundamental\/?$/.test(location.pathname)?'/fundamental/':'';
+const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
+if(BRANCH_PATH)document.getElementById('drip-manifest').href='/fundamental.webmanifest';
+try{var c=localStorage.getItem(dripStorageKey("dp-ci"));if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem(dripStorageKey("dp-cvb"))==="light")document.documentElement.setAttribute("data-cvb","light");}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap">
 <style>
 /* Layout: one paper sheet, like the printed A6 brewing log. Black ink, dotted leaders, wheel colours only on flavour marks. */
@@ -2709,7 +2713,7 @@ const esc=D.esc;
    Keys starting with "cp." (and the dripper names "dr.") belong to the customer page; they are copied into the QR link when a recipe is saved. */
 D.TXT=[
  ['All pages',[
-  ['title','Customer Drip Profile'],['role','Barista'],
+  ['title',BRANCH_PATH?'Fundamental · Customer Drip Profile':'Customer Drip Profile'],['role','Barista'],
   ['beans','Select Beans'],['addcoffee','Add Green Coffee'],['recipe','Recipe'],['history','Saved Recipes'],['admin','Admin Settings']]],
  ['Select Beans',[
   ['sb.sample','These beans are sample data until the real Green Coffee Database is connected (same field names).'],
@@ -2748,7 +2752,7 @@ D.TXT=[
   ['hs.h','Saved recipes'],['hs.time','Time'],['hs.cust','Customer'],['hs.bean','Bean'],['hs.dripper','Dripper'],['hs.barista','Barista'],
   ['hs.view','View'],['hs.qr','QR'],['hs.del','Delete'],['hs.empty','No saved recipes yet.'],['hs.cmp','Compare'],['hs.cmp.h','Compare recipes'],['hs.cmp.pick','Pick one more saved recipe to compare.'],['hs.cmp.clear','Clear'],['hs.cmp.diff','Differences are highlighted.'],['hs.c.bean','Bean'],['hs.c.dripper','Dripper'],['hs.c.pours','Pours'],['hs.c.tds','TDS'],['hs.c.yield','Yield OUT'],['hs.c.ext','EXT']]],
  ['Recipe saved (QR screen)',[
-  ['qr.brand','Coffee with Native'],['op.done','Photos optimized: {n} made smaller'],['li.h','Who\u2019s brewing?'],['li.help','Tap your name to start.'],['li.pin','Enter your 4-digit PIN'],['li.first','First time? Enter the starting PIN from your admin.'],['li.bad','Wrong PIN. Try again.'],['li.locked','Too many tries. Wait {s} seconds.'],['li.back','Back'],['li.new','Create your own 4-digit PIN'],['li.newhelp','You\u2019ll use it every time you sign in.'],['li.again','Enter it again to confirm'],['li.nomatch','The PINs don\u2019t match. Start again.'],['li.same','Choose a PIN different from the starting PIN.'],['li.welcome','Welcome, {n}'],['li.offline','PIN saved on this device. Connect to the internet so your other devices get it.'],['li.out','Switch barista'],['ba.ad.pinset','PIN set'],['ba.ad.pintemp','Starting PIN 0000 \u00b7 not signed in yet'],['ba.ad.reset','Reset PIN'],['ba.ad.rename','Rename'],['ba.ad.renameh','Rename barista'],['ba.ad.renamed','Renamed to {n}'],['ba.ad.resetq','Reset the PIN for {n}? They sign in with 0000 and create a new PIN.'],['ba.ad.resetok','PIN reset to 0000'],['pr.emptymine','You have no presets yet. Tap All to use the team\u2019s, or create your own.'],['px.btn','Adjust'],['px.h','Adjust photo'],['px.help','Drag the photo to choose what stays in frame. Use the slider to zoom. Applies everywhere this photo is shown.'],['px.zoom','Zoom'],['px.reset','Reset'],['px.save','Save position'],['px.saved','Photo position saved'],['px.label','Coffee label'],['pk.select','Choose coffees to present'],['pk.present','Present'],['pk.edit','Edit selection'],['pk.done','Done'],['pk.count','{n} selected'],['pk.clear','Clear'],['pk.help','Tap the coffees you want to show this customer.'],['pk.mine','Your selection'],['ba.h','Who\u2019s brewing?'],['ba.help','Tap your name. It fills in Prepared by and shows your own presets and recipes.'],['ba.none','Not set'],['ba.ad.h','Baristas'],['ba.ad.help','Names staff tap on Select Beans. The name appears as Prepared by on the customer page.'],['ba.ad.add','Add barista'],['ba.ad.ph','Barista name'],['ba.ad.empty','No baristas yet.'],['ba.ad.dup','That name is already on the list'],['ba.ad.added','Barista added'],['ba.ad.removed','Barista removed'],['sc.mine','Mine'],['sc.all','All'],['st.btn','Manage stock'],['st.h','Manage stock'],['st.pin','Stock PIN'],['st.pinhelp','Enter the stock PIN set by the admin.'],['st.unlock','Unlock'],['st.bad','Wrong PIN. Try again.'],['st.s.in','In stock'],['st.s.out','Out of stock'],['st.a.in','Make available'],['st.a.out','Mark sold out'],['st.nowout','is now out of stock'],['st.nowin','is back in stock'],['st.n','{n} out of stock'],['st.all','All in stock'],['st.in','In stock'],['st.out','Out of stock'],['st.help','Out-of-stock coffees stay visible to customers but can\u2019t be chosen, and move to the end of the list.'],['st.done','Done'],['st.marked','Marked out of stock'],['st.back','Back in stock'],['st.ad.h','Stock PIN'],['st.ad.help','Staff use this PIN to mark coffees out of stock. Default is 123456 until you change it.'],['st.ad.new','New stock PIN (at least 4 characters)'],['st.ad.save','Change stock PIN'],['st.ad.ok','Stock PIN changed'],['st.ad.short','Use at least 4 characters'],['st.count','out of stock'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
+  ['qr.brand',BRANCH_PATH?'Coffee with Fundamental':'Coffee with Native'],['op.done','Photos optimized: {n} made smaller'],['li.h','Who\u2019s brewing?'],['li.help','Tap your name to start.'],['li.pin','Enter your 4-digit PIN'],['li.first','First time? Enter the starting PIN from your admin.'],['li.bad','Wrong PIN. Try again.'],['li.locked','Too many tries. Wait {s} seconds.'],['li.back','Back'],['li.new','Create your own 4-digit PIN'],['li.newhelp','You\u2019ll use it every time you sign in.'],['li.again','Enter it again to confirm'],['li.nomatch','The PINs don\u2019t match. Start again.'],['li.same','Choose a PIN different from the starting PIN.'],['li.welcome','Welcome, {n}'],['li.offline','PIN saved on this device. Connect to the internet so your other devices get it.'],['li.out','Switch barista'],['ba.ad.pinset','PIN set'],['ba.ad.pintemp','Starting PIN 0000 \u00b7 not signed in yet'],['ba.ad.reset','Reset PIN'],['ba.ad.rename','Rename'],['ba.ad.renameh','Rename barista'],['ba.ad.renamed','Renamed to {n}'],['ba.ad.resetq','Reset the PIN for {n}? They sign in with 0000 and create a new PIN.'],['ba.ad.resetok','PIN reset to 0000'],['pr.emptymine','You have no presets yet. Tap All to use the team\u2019s, or create your own.'],['px.btn','Adjust'],['px.h','Adjust photo'],['px.help','Drag the photo to choose what stays in frame. Use the slider to zoom. Applies everywhere this photo is shown.'],['px.zoom','Zoom'],['px.reset','Reset'],['px.save','Save position'],['px.saved','Photo position saved'],['px.label','Coffee label'],['pk.select','Choose coffees to present'],['pk.present','Present'],['pk.edit','Edit selection'],['pk.done','Done'],['pk.count','{n} selected'],['pk.clear','Clear'],['pk.help','Tap the coffees you want to show this customer.'],['pk.mine','Your selection'],['ba.h','Who\u2019s brewing?'],['ba.help','Tap your name. It fills in Prepared by and shows your own presets and recipes.'],['ba.none','Not set'],['ba.ad.h','Baristas'],['ba.ad.help','Names staff tap on Select Beans. The name appears as Prepared by on the customer page.'],['ba.ad.add','Add barista'],['ba.ad.ph','Barista name'],['ba.ad.empty','No baristas yet.'],['ba.ad.dup','That name is already on the list'],['ba.ad.added','Barista added'],['ba.ad.removed','Barista removed'],['sc.mine','Mine'],['sc.all','All'],['st.btn','Manage stock'],['st.h','Manage stock'],['st.pin','Stock PIN'],['st.pinhelp','Enter the stock PIN set by the admin.'],['st.unlock','Unlock'],['st.bad','Wrong PIN. Try again.'],['st.s.in','In stock'],['st.s.out','Out of stock'],['st.a.in','Make available'],['st.a.out','Mark sold out'],['st.nowout','is now out of stock'],['st.nowin','is back in stock'],['st.n','{n} out of stock'],['st.all','All in stock'],['st.in','In stock'],['st.out','Out of stock'],['st.help','Out-of-stock coffees stay visible to customers but can\u2019t be chosen, and move to the end of the list.'],['st.done','Done'],['st.marked','Marked out of stock'],['st.back','Back in stock'],['st.ad.h','Stock PIN'],['st.ad.help','Staff use this PIN to mark coffees out of stock. Default is 123456 until you change it.'],['st.ad.new','New stock PIN (at least 4 characters)'],['st.ad.save','Change stock PIN'],['st.ad.ok','Stock PIN changed'],['st.ad.short','Use at least 4 characters'],['st.count','out of stock'],['rs.resume','Continue recipe'],['rs.resume.edit','Continue editing'],['ed.btn','Edit recipe'],['ed.h','Editing a saved recipe'],['ed.help','Changes update the same customer link and QR code.'],['ed.save','Update recipe'],['ed.cancel','Cancel editing'],['ed.ok','Recipe updated. The customer link shows the changes.'],['hs.edit','Edit'],['pr.h','Preset'],['pr.list.h','Recipe presets'],['pr.new','New preset'],['pr.new.h','New recipe preset'],['pr.edit.h','Edit recipe preset'],['pr.new.help','Set the dripper, dose, ratio and pours once. Then choose the preset and pick any coffee.'],['pr.store','Save preset'],['pr.editbtn','Edit'],['pr.pours','pours'],['pr.empty','No presets yet. Create one ahead of time, then choose it before picking a coffee.'],['pr.none','No preset'],['pr.help','Choose a preset first, then pick a coffee: the recipe is filled in for you.'],['pr.apply','Apply a preset'],['pr.save','Save as preset'],['pr.update','Update preset'],['pr.del','Delete preset'],['pr.name','Preset name'],['pr.saved','Preset saved'],['pr.updated','Preset updated'],['pr.deleted','Preset deleted'],['pr.active','Preset'],['pr.namebad','Give the preset a name'],['bl.add','Add TDS / Yield'],['bl.edit','Edit TDS / Yield'],['bl.h','Brew result'],['bl.help','Measure after brewing. The customer\u2019s QR link shows the new values right away, no new QR needed.'],['bl.show','Show on the customer page'],['bl.save','Save result'],['bl.ok','Brew result saved. The customer link is updated.'],['bl.bad','Enter TDS and Yield as numbers.'],['rs.h','Recipe saved'],['rs.lead','Scan to see your coffee'],['rs.brewed','Brewed for'],['rs.scan','Scan to open the coffee profile'],
   ['rs.nourl','The page address is unknown, so no QR can be made. Enter it under Select Beans, in Page address.'],
   ['rs.jpeg','Download Image'],['rs.copy','Copy link'],['rs.cview','Customer view'],['rs.next','Next customer'],['rs.qr.h','Create QR code'],['rs.qr.l','Page address (https://)'],['rs.qr.help','The QR code opens this page on the phone of the customer, so it needs an online https:// address. Host this file (for example on your cafe website) and paste its address here. The recipe travels inside the QR link, so the customer needs no login.'],['rs.qr.btn','Create QR code'],['rs.qr.change','Change address'],['rs.qr.err','The address must start with https://']]],
  ['Customer page (QR)',[
@@ -2759,7 +2763,7 @@ D.TXT=[
   ['cp.recipe','Brew Log'],['cp.pourchart','Pour schedule'],['cp.cum','Cumulative water'],['cp.coffeeword','Coffee'],['cp.waterword','Water'],['cp.brewres','Brew result'],['cp.res.tds','TDS'],['cp.res.yield','Yield OUT'],['cp.res.ext','Extraction'],['cp.dose','Coffee dose'],['cp.ratio','Brew ratio'],['cp.tw','Total water'],['cp.temp','Temperature'],['cp.tds','Water TDS'],
   ['cp.grind','Grind size'],['cp.time','Total time'],['cp.step','Step'],['cp.t','Time'],['cp.w','Water'],['cp.total','Total'],['cp.bloom','Blooming'],['cp.pour','Pour'],
   ['cp.notes','Tasting Notes'],['cp.coffee.tag','Where it comes from.'],['cp.brew.tag','Exactly how it was poured.'],['cp.flavor.tag','What to look for in the cup.'],['cp.origin.tag','Meet the farm.'],['cp.notecount','notes'],['cp.flavor','Flavor Profile'],['cp.wheel.other','Other notes'],['cp.wheel.aria','Flavor wheel highlighting the selected notes'],['cp.origin','Farm & Origin'],['cp.ph.farm','Farm'],['cp.ph.origin','Origin'],['cp.soon','Photo coming soon'],
-  ['cp.enjoy','Enjoy your cup.'],['cp.review','Review today\u2019s visit'],['cp.review.lead','How was your coffee today? We\u2019d love to hear from you.'],['cp.review.url','https://dine-with-native-review.netlify.app/'],['cp.jpeg','Download Image'],['cp.back','← Back'],['cp.scan','Scan to open this profile'],['cp.profile','Profile'],
+  ['cp.enjoy','Enjoy your cup.'],['cp.review','Review today\u2019s visit'],['cp.review.lead','How was your coffee today? We\u2019d love to hear from you.'],['cp.review.url',BRANCH_PATH?'':'https://dine-with-native-review.netlify.app/'],['cp.jpeg','Download Image'],['cp.back','← Back'],['cp.scan','Scan to open this profile'],['cp.profile','Profile'],
   ['cp.nf.h','Profile not found'],['cp.nf.p','The link may be incomplete. Please scan the QR code again or ask your barista.'],
   ['cp.err.h','Cannot open profile'],['cp.err.p','The link may be cut off. Please scan the QR code again or ask your barista.']]],
  ['Admin Settings',[
@@ -2798,11 +2802,12 @@ D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
    Items are synced one by one, so two baristas adding coffees at the same time never overwrite each other. */
 /* The shop's backend is the Cloudflare Worker that serves this page (src/worker.js). Copies of the page opened elsewhere use the live site. */
 D.SB={url:/\.workers\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)?location.origin:'https://customer-drip-profile.cbm-c52.workers.dev'};
+D.apiPath=BRANCH_PATH?'/api/fundamental':'/api';
 D.sync={code:'',last:{},dirty:new Set(),since:null,state:'off',busy:false,ready:false,onChange:null};
 const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin','baristas','picks','baPins'];
-const LS={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
+const LS={get:k=>{try{return localStorage.getItem(dripStorageKey(k));}catch(e){return null;}},set:(k,v)=>{try{k=dripStorageKey(k);if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
 D.rpc=async(fn,body)=>{
-  let r;try{r=await fetch(D.SB.url+'/api/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
+  let r;try{r=await fetch(D.SB.url+D.apiPath+'/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
   catch(e){const x=new Error('offline');x.code='offline';throw x;}
   if(!r.ok){let m='';try{const j=await r.json();m=(j&&(j.message||j.hint))||'';}catch(e){}const x=new Error(m||('http '+r.status));x.code=/bad_code/.test(m)?'bad_code':'server';throw x;}
   const t=await r.text();return t?JSON.parse(t):null;
@@ -2827,7 +2832,7 @@ D.build=(m,base)=>{const S=Object.assign({v:1},base),beans=[],folders=[],snaps=[
   S.folders=folders.sort(ord).map(x=>x.v);S.photos=photos;S.snaps=snaps.sort((a,b)=>tm(b)-tm(a));S.baseUrl=S.baseUrl||'';
   return S;};
 /* Local copy lives in IndexedDB (localStorage is too small for photos); small markers stay in localStorage */
-D.idb={db:null,open(){if(this.db)return this.db;this.db=new Promise((res,rej)=>{try{const r=indexedDB.open('drip',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}});return this.db;},
+D.idb={db:null,open(){if(this.db)return this.db;this.db=new Promise((res,rej)=>{try{const r=indexedDB.open(dripStorageKey('drip'),1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}});return this.db;},
   async get(k){try{const db=await this.open();return await new Promise((res,rej)=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}catch(e){return undefined;}},
   async set(k,v){try{const db=await this.open();await new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);});return true;}catch(e){return false;}}};
 let saveT=0;
@@ -2912,7 +2917,7 @@ D.newCode=()=>{const a='ABCDEFGHJKMNPQRSTUVWXYZ23456789',r=new Uint32Array(12);c
 D.rt={ws:null,topic:'',hb:0,retry:0,onChange:null,ok:false,
   async start(){if(!D.sync.code||D.cap||typeof WebSocket==='undefined')return;const t='drip-'+(await D.hashKey('rt:'+D.sync.code.replace(/[^A-Z0-9]/gi,'').toUpperCase()));
     if(this.ws&&this.topic===t)return;this.stop();this.topic=t;
-    const ws=new WebSocket(D.SB.url.replace(/^http/,'ws')+'/api/rt?t='+encodeURIComponent(t));this.ws=ws;
+    const ws=new WebSocket(D.SB.url.replace(/^http/,'ws')+D.apiPath+'/rt?t='+encodeURIComponent(t));this.ws=ws;
     ws.onopen=()=>{this.retry=0;this.ok=true;this.hb=setInterval(()=>{try{ws.send('ping');}catch(e){}},25000);};
     ws.onmessage=e=>{if(e.data==='changed'&&this.onChange)this.onChange();};
     ws.onclose=()=>{clearInterval(this.hb);this.ok=false;if(this.ws!==ws)return;this.ws=null;const d=Math.min(30000,1000*Math.pow(2,this.retry++));setTimeout(()=>this.start(),d);};
@@ -2935,12 +2940,13 @@ D.contrast=(a,b)=>{const x=D.lum(a),y=D.lum(b);if(x==null||y==null)return 21;con
 D.onColor=bg=>D.contrast(bg,'#ffffff')>=D.contrast(bg,'#141414')?'#ffffff':'#141414';
 D.ciOf=()=>{const c=(D.S.theme||{}).ci;return c==='native-slate'||c==='native-mica'?c:'apple';};
 D.cvbOf=()=>(D.S.theme||{}).cvb==='light'?'light':'dark';
-D.setCi=(c,v)=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');if(v==='light')h.setAttribute('data-cvb','light');else h.removeAttribute('data-cvb');try{localStorage.setItem('dp-ci',c||'apple');localStorage.setItem('dp-cvb',v||'dark');}catch(e){}};
+D.setCi=(c,v)=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');if(v==='light')h.setAttribute('data-cvb','light');else h.removeAttribute('data-cvb');try{localStorage.setItem(dripStorageKey('dp-ci'),c||'apple');localStorage.setItem(dripStorageKey('dp-cvb'),v||'dark');}catch(e){}};
 D.applyTheme=reset=>{D.setCi(reset?'apple':D.ciOf(),reset?'dark':D.cvbOf());const r=document.documentElement.style,t=D.S.theme||{};['paper','ink','accent','sage','soft','beige'].forEach(k=>t[k]&&!reset?r.setProperty('--'+k,t[k]):r.removeProperty('--'+k));
   /* text on filled colours is always chosen for contrast, so a selected item can never become unreadable */
   [['ink','on-ink','#fbfbf9'],['sage','on-sage','#ffffff'],['accent','on-accent','#ffffff']].forEach(x=>{if(!reset&&t[x[0]])r.setProperty('--'+x[1],D.onColor(t[x[0]]));else r.removeProperty('--'+x[1]);});};
 D.newId=()=>'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 D.pageUrl=()=>{
+  if(BRANCH_PATH)return location.origin+BRANCH_PATH;
   const h=location.href.split('#')[0];
   if(/^https?:/.test(h))return h;
   return D.S.baseUrl?D.S.baseUrl.replace(/#.*$/,''):'';
@@ -2948,7 +2954,11 @@ D.pageUrl=()=>{
 D.hashKey=async t=>{try{const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(h).slice(0,8),x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return '';}};
 D.shortUrl=id=>{const s=D.S.snaps.find(x=>x.id===id),b=D.pageUrl();if(!s||!s.key||!b||!D.sync.code||D.sync.dirty.has('snap|'+id)||!D.sync.last['snap|'+id])return '';return b+'#c='+s.id+'.'+s.key;};
 D.qrUrl=id=>D.shortUrl(id)||D.snapUrl(id);
-D.snapUrl=id=>{const s=D.S.snaps.find(x=>x.id===id)||(D.shared&&D.shared.id===id?D.shared:null);const b=D.pageUrl();return b&&s&&s.payload?b+'#s='+s.payload:'';};
+D.snapHash=s=>{
+  const ref=s.shareRef||(s.key?s.id+'.'+s.key:'');
+  return '#s='+s.payload+(BRANCH_PATH&&ref?'&ref='+ref:'');
+};
+D.snapUrl=id=>{const s=D.S.snaps.find(x=>x.id===id)||(D.shared&&D.shared.id===id?D.shared:null);const b=D.pageUrl();return b&&s&&s.payload?b+D.snapHash(s):'';};
 const b64=u8=>{let t='';u8.forEach(c=>t+=String.fromCharCode(c));return btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');};
 const unb64=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const r=atob(t),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u;};
 const pipe=async(u8,S)=>new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(new S('deflate-raw'))).arrayBuffer());
@@ -3337,10 +3347,10 @@ D.capNow=async()=>{
 };
 D.captureProfile=s=>new Promise((res,rej)=>{
   const base=location.href.split('#')[0].split('?')[0];if(!/^https?:/.test(base))return rej(new Error('not hosted'));
-  const pl=s.payload||((location.hash.match(/^#s=(.+)$/)||[])[1]);if(!pl)return rej(new Error('no payload'));
+  const hash=s.payload?D.snapHash(s):location.hash;if(!hash.startsWith('#s=')||hash.length<4)return rej(new Error('no payload'));
   const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');f.tabIndex=-1;
   f.style.cssText='position:fixed;left:-10000px;top:0;width:430px;height:932px;border:0;opacity:0;pointer-events:none';
-  f.src=base+'?cap=1&card=1#s='+pl;document.body.appendChild(f);
+  f.src=base+'?cap=1&card=1'+hash;document.body.appendChild(f);
   const t0=Date.now();let over=false;const end=(v,e)=>{if(over)return;over=true;f.remove();e?rej(e):res(v);};
   const poll=async()=>{if(over)return;let w=null;try{w=f.contentWindow;}catch(e){}
     if(w&&w.DPcap){try{const u=await w.DPcap();const blob=await (await fetch(u)).blob();end({url:u,blob});}catch(e){end(null,e);}return;}
@@ -3360,8 +3370,9 @@ D.applyPos=root=>{if(!root||!root.querySelectorAll)return;const imgs=root.tagNam
     else if(im.dataset.pos){im.style.objectPosition=im.style.transform=im.style.transformOrigin='';delete im.dataset.pos;}});};
 try{new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)D.applyPos(n);}));}).observe(document.documentElement,{childList:true,subtree:true});}catch(e){}
 D.loadSharedPhotos=async s=>{
-  try{const id=s.bean&&s.bean.id;if(id){const p=await D.rpc('drip_photo',{p_bean:String(id)}).catch(()=>null);
+  try{const id=s.bean&&s.bean.id;if(id){const p=await D.rpc('drip_photo',{p_bean:String(id),p_ref:s.shareRef}).catch(()=>null);
       if(p){let any=false;if(p.pos&&typeof p.pos==='object')s.photos.pos=p.pos;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});if(any)return true;}}}catch(e){}
+  if(BRANCH_PATH)return false;
   try{
     const u=location.href.split('#')[0].replace(/[^\/]*$/,'')+'drip-data.json';
     const r=await fetch(u,{cache:'no-cache'});if(!r.ok)return false;
@@ -3428,11 +3439,11 @@ const beanImg=b=>{const p=D.S.photos[b.id]||{};return (p.label||[])[0]||(p.origi
 const workFromSnap=s=>({beanId:s.bean.id,beanSnap:clone(s.bean),dripper:s.dripper,customer:s.customer||'',barista:s.barista||'',recipe:clone(s.recipe),notes:(s.notes||[]).slice(),message:s.message||'',profile:clone(s.profile||{}),
   brew:Object.assign({tds:'',yield:'',ext:'',acidity:'',sweetness:'',body:''},clone(s.brew||{})),show:clone(s.show||{}),editId:s.id});
 const applyPreset=(w,p)=>{if(!w||!p)return;w.dripper=p.dripper||w.dripper;w.recipe=Object.assign(clone(p.recipe),{waterTds:(w.recipe&&w.recipe.waterTds)||p.recipe.waterTds||''});if(p.show)w.show=Object.assign({},w.show,clone(p.show));w.presetId=p.id;w._shares=null;};
-let activePreset='';try{activePreset=localStorage.getItem('dp-preset')||'';}catch(e){}
+let activePreset='';try{activePreset=localStorage.getItem(dripStorageKey('dp-preset'))||'';}catch(e){}
 const presets=()=>Array.isArray(D.S.presets)?D.S.presets:[];
 const newWork=(b,dr)=>{
   dr=dr||'v60';
-  let me='';try{me=localStorage.getItem('dp-barista')||'';}catch(e){}
+  let me='';try{me=localStorage.getItem(dripStorageKey('dp-barista'))||'';}catch(e){}
   return {beanId:b.id,dripper:dr,customer:'',barista:me,recipe:Object.assign(clone(STD[dr]),{waterTds:''}),notes:uniqNotes(b.flavors),message:'',profile:{},
     brew:{tds:'',yield:'',ext:'',acidity:'',sweetness:'',body:''},
     show:{dose:true,water:true,ratio:true,temp:true,grind:true,time:true,pours:true,wtds:true,brew:false}};
@@ -3678,12 +3689,12 @@ const joinHtml=()=>'<section class="sec join"><h1>'+T('title')+'</h1><h2>'+T('jn
   '<p class="err" id="join-err" role="alert"></p><div class="acts"><button class="btn" data-act="join">'+T('jn.btn')+'</button></div></section>';
 const render=()=>{
   D.L=null;document.title=D.T('title');
-  document.body.classList.toggle('cv',location.hash.indexOf('#s=')===0||!!hashId());
+  const id=hashId(),showHistoryRecipe=id&&(!BRANCH_PATH||(D.sync.code&&signedIn()));
+  document.body.classList.toggle('cv',location.hash.indexOf('#s=')===0||!!showHistoryRecipe);
   if(location.hash.indexOf('#s=')===0){
     D.L=D.shared?Object.assign({},D.S.labels||{},D.shared.labels||{}):null;
     app.innerHTML=D.shared?viewSnap(D.shared):'<div class="profile cv-msg"><h1>'+T('cp.err.h')+'</h1><p>'+T('cp.err.p')+'</p></div>';return;}
-  const id=hashId();
-  if(id){app.innerHTML=viewCustomer(id);return;}
+  if(showHistoryRecipe){app.innerHTML=viewCustomer(id);return;}
   if(!D.caps.canEdit){app.innerHTML='<div class="profile cv-msg"><h1>'+T('title')+'</h1></div>';return;}
   if(!D.sync.code){app.innerHTML=joinHtml();return;}
   if(!signedIn()){document.title=D.T('title');app.innerHTML=loginHtml2();const pi=$('#li-pin');if(pi&&!/iPhone|iPad|Android/i.test(navigator.userAgent))setTimeout(()=>pi.focus(),30);return;}
@@ -3710,7 +3721,7 @@ app.addEventListener('input',e=>{
     setPath(t.dataset.k,v);
     if(t.dataset.k==='recipe.dose'||t.dataset.k==='recipe.ratio')scaleRecipe();
     else if(/^pw:|^recipe\.bloomWater$/.test(t.dataset.k))W._shares=null;
-    if(t.dataset.k==='barista'&&!baristas().length){try{localStorage.setItem('dp-barista',v);}catch(x){}}
+    if(t.dataset.k==='barista'&&!baristas().length){try{localStorage.setItem(dripStorageKey('dp-barista'),v);}catch(x){}}
     refreshCalc();
   }
 });
@@ -3771,8 +3782,8 @@ app.addEventListener('click',async e=>{
    case 'ciset':{const c=el.dataset.ci;D.S.theme={ci:c,cvb:D.cvbOf()};D.applyTheme();await doSave('Brand colors saved');render();break;}
    case 'cvbset':{D.S.theme=Object.assign({},D.S.theme||{},{cvb:el.dataset.v==='light'?'light':'dark'});D.applyTheme();await doSave('Brand colors saved');render();break;}
    case 'resetsettings':{if(!await ask('Restore all original text, labels and colors?','Reset to default'))break;delete D.S.labels;delete D.S.theme;D.applyTheme(true);await doSave('Defaults restored');render();break;}
-   case 'login':{if(Date.now()<lockUntil){toast('Too many attempts. Try again in '+Math.ceil((lockUntil-Date.now())/1000)+' s');return;}const v=$('#pin').value||'';if(v.length<4){toast('PIN needs at least 4 characters');return;}const h=await hp(v);if(!D.S.adminPin){D.S.adminPin=h;if(!await doSave('Admin PIN created',()=>{delete D.S.adminPin;}))return;}else if(h!==D.S.adminPin){if(++fails>=5){fails=0;lockUntil=Date.now()+30000;toast('Too many attempts. Locked for 30 seconds');}else toast('Incorrect PIN');return;}fails=0;D.caps.isOwner=true;try{sessionStorage.setItem('dp-admin','1');}catch(x){}render();break;}
-   case 'logout':D.caps.isOwner=false;try{sessionStorage.removeItem('dp-admin');}catch(x){}tab='beans';render();break;
+   case 'login':{if(Date.now()<lockUntil){toast('Too many attempts. Try again in '+Math.ceil((lockUntil-Date.now())/1000)+' s');return;}const v=$('#pin').value||'';if(v.length<4){toast('PIN needs at least 4 characters');return;}const h=await hp(v);if(!D.S.adminPin){D.S.adminPin=h;if(!await doSave('Admin PIN created',()=>{delete D.S.adminPin;}))return;}else if(h!==D.S.adminPin){if(++fails>=5){fails=0;lockUntil=Date.now()+30000;toast('Too many attempts. Locked for 30 seconds');}else toast('Incorrect PIN');return;}fails=0;D.caps.isOwner=true;try{sessionStorage.setItem(dripStorageKey('dp-admin'),'1');}catch(x){}render();break;}
+   case 'logout':D.caps.isOwner=false;try{sessionStorage.removeItem(dripStorageKey('dp-admin'));}catch(x){}tab='beans';render();break;
    case 'chpin':{const d=ov('<div class="sec" style="max-width:420px;width:100%;margin:12vh 0 0"><h2>'+T('ad.chpin')+'</h2><div class="f"><label class="lbl">Current PIN</label><input type="password" data-p="old" autocomplete="current-password"></div><div class="f" style="margin-top:10px"><label class="lbl">New PIN (min 4 characters)</label><input type="password" data-p="new" autocomplete="new-password"></div><p class="cap err" id="perr" role="alert"></p><div class="acts"><button class="btn" data-y>Save PIN</button><button class="btn ghost" data-n>Cancel</button></div></div>');
      d.onclick=async ev=>{if(ev.target.dataset.n!==undefined||ev.target===d){d.remove();return;}if(ev.target.dataset.y===undefined)return;const o=d.querySelector('[data-p="old"]').value,n=d.querySelector('[data-p="new"]').value,er=m=>d.querySelector('#perr').textContent=m;if(n.length<4)return er('New PIN needs at least 4 characters');if(await hp(o)!==D.S.adminPin)return er('Current PIN is incorrect');const old=D.S.adminPin;D.S.adminPin=await hp(n);d.remove();await doSave('PIN changed',()=>{D.S.adminPin=old;});};break;}
    case 'fold':filt.f=el.dataset.f;render();break;
@@ -3867,7 +3878,7 @@ app.addEventListener('click',e=>{const l=e.target.closest('label[aria-disabled="
 app.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const k=e.target.id==='pin'?'login':e.target.id==='fnew'?'fadd':e.target.id==='cn-new'?'cnadd':'';if(!k)return;const b=app.querySelector('[data-act="'+k+'"]');if(b)b.click();});
 const loadQrLib=()=>window.qrcode?Promise.resolve():new Promise(res=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';s.onload=s.onerror=()=>res();document.head.appendChild(s);});
 const SAMPLES=clone(BEANS);
-const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D.S.beans:clone(SAMPLES)));D.S.folders=D.S.folders||[];D.S.photos=D.S.photos||{};D.S.snaps=D.S.snaps||[];};
+const applyBeans=()=>{BEANS.splice(0,BEANS.length,...(Array.isArray(D.S.beans)?D.S.beans:(BRANCH_PATH?[]:clone(SAMPLES))));D.S.folders=D.S.folders||[];D.S.photos=D.S.photos||{};D.S.snaps=D.S.snaps||[];};
 const safeToRender=()=>!dirty&&!busy&&!document.querySelector('[role="dialog"]')&&!(document.activeElement&&app.contains(document.activeElement)&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName))&&!(CD&&CD.scanBusy);
 let pendingRender=false,lastPull=0;
 /* Rename a barista: PIN, presets, selection and saved recipes move to the new name */
@@ -3880,7 +3891,7 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="bare
   D.S.presets=presets().map(x=>x.owner===from?Object.assign({},x,{owner:to}):x);
   if(D.S.picks&&D.S.picks[from]){const m=Object.assign({},D.S.picks);m[to]=m[from];delete m[from];D.S.picks=m;}
   for(const sn of D.S.snaps){if(sn.barista===from){sn.barista=to;sn.payload=await D.makePayload(sn);}}
-  if(curBarista()===from){try{localStorage.setItem('dp-barista',to);if(localStorage.getItem('dp-ba-auth')===from)localStorage.setItem('dp-ba-auth',to);}catch(x){}}
+  if(curBarista()===from){try{localStorage.setItem(dripStorageKey('dp-barista'),to);if(localStorage.getItem(dripStorageKey('dp-ba-auth'))===from)localStorage.setItem(dripStorageKey('dp-ba-auth'),to);}catch(x){}}
   if(await doSave(D.T('ba.ad.renamed').replace('{n}',to),()=>{D.S.baristas=old.b;D.S.baPins=old.p;D.S.presets=old.pr;D.S.picks=old.pk;old.sn.forEach(o=>{const x=D.S.snaps.find(y=>y.id===o.id);if(x){x.barista=o.barista;x.payload=o.payload;}});}))render();
 },true);
 /* Re-compress photos that are larger than needed (runs once per admin session, keeps each photo's position) */
@@ -3918,18 +3929,18 @@ const baristas=()=>Array.isArray(D.S.baristas)?D.S.baristas:[];
 const TEMP_PIN='0000';
 const baPins=()=>D.S.baPins&&typeof D.S.baPins==='object'?D.S.baPins:{};
 const pinHash=(n,p)=>hp('ba:'+n.toLowerCase()+':'+p);
-const signedIn=()=>{if(!baristas().length||D.caps.isOwner)return true;{const n0=curBarista();if(n0&&!baristas().includes(n0)){const nn=Object.keys(baPins()).find(k=>(baPins()[k].k||'')===n0);if(nn){try{localStorage.setItem('dp-barista',nn);if(localStorage.getItem('dp-ba-auth')===n0)localStorage.setItem('dp-ba-auth',nn);}catch(x){}}}}let a='';try{a=localStorage.getItem('dp-ba-auth')||'';}catch(e){}const n=curBarista();return !!n&&a===n&&baristas().includes(n);};
-const signIn=n=>{try{localStorage.setItem('dp-barista',n);localStorage.setItem('dp-ba-auth',n);}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
-const signOut=()=>{try{localStorage.removeItem('dp-ba-auth');localStorage.removeItem('dp-barista');}catch(e){}W=null;resultId=null;selMode=false;tab='beans';D.caps.isOwner=false;try{sessionStorage.removeItem('dp-admin');sessionStorage.removeItem('dp-stock');}catch(e){}stockOk=false;};
+const signedIn=()=>{if(!baristas().length||D.caps.isOwner)return true;{const n0=curBarista();if(n0&&!baristas().includes(n0)){const nn=Object.keys(baPins()).find(k=>(baPins()[k].k||'')===n0);if(nn){try{localStorage.setItem(dripStorageKey('dp-barista'),nn);if(localStorage.getItem(dripStorageKey('dp-ba-auth'))===n0)localStorage.setItem(dripStorageKey('dp-ba-auth'),nn);}catch(x){}}}}let a='';try{a=localStorage.getItem(dripStorageKey('dp-ba-auth'))||'';}catch(e){}const n=curBarista();return !!n&&a===n&&baristas().includes(n);};
+const signIn=n=>{try{localStorage.setItem(dripStorageKey('dp-barista'),n);localStorage.setItem(dripStorageKey('dp-ba-auth'),n);}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
+const signOut=()=>{try{localStorage.removeItem(dripStorageKey('dp-ba-auth'));localStorage.removeItem(dripStorageKey('dp-barista'));}catch(e){}W=null;resultId=null;selMode=false;tab='beans';D.caps.isOwner=false;try{sessionStorage.removeItem(dripStorageKey('dp-admin'));sessionStorage.removeItem(dripStorageKey('dp-stock'));}catch(e){}stockOk=false;};
 let LI={step:'names',name:'',first:'',tries:0,until:0,msg:''};
 let selMode=false;
 const pickKey=()=>curBarista()||'_';
 const myPicks=()=>{const m=D.S.picks&&typeof D.S.picks==='object'?D.S.picks:{};return (m[pickKey()]||[]).filter(id=>bean(id));};
 const setPicks=ids=>{const m=Object.assign({},D.S.picks||{});if(ids.length)m[pickKey()]=ids;else delete m[pickKey()];D.S.picks=m;return doSave(D.T('pk.count').replace('{n}',ids.length));};
-const curBarista=()=>{try{return localStorage.getItem('dp-barista')||'';}catch(e){return '';}};
-const setBarista=n=>{try{if(n)localStorage.setItem('dp-barista',n);else localStorage.removeItem('dp-barista');}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
-let scope={pr:'mine',hs:'mine'};try{Object.assign(scope,JSON.parse(localStorage.getItem('dp-scope')||'{}'));}catch(e){}
-const setScope=(k,v)=>{scope[k]=v;try{localStorage.setItem('dp-scope',JSON.stringify(scope));}catch(e){}};
+const curBarista=()=>{try{return localStorage.getItem(dripStorageKey('dp-barista'))||'';}catch(e){return '';}};
+const setBarista=n=>{try{if(n)localStorage.setItem(dripStorageKey('dp-barista'),n);else localStorage.removeItem(dripStorageKey('dp-barista'));}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
+let scope={pr:'mine',hs:'mine'};try{Object.assign(scope,JSON.parse(localStorage.getItem(dripStorageKey('dp-scope'))||'{}'));}catch(e){}
+const setScope=(k,v)=>{scope[k]=v;try{localStorage.setItem(dripStorageKey('dp-scope'),JSON.stringify(scope));}catch(e){}};
 const mineOnly=k=>!!curBarista()&&scope[k]!=='all';
 const scopeBtns=k=>curBarista()?'<div class="seg2" role="group"><button data-act="scope" data-k="'+k+'" data-v="mine" aria-pressed="'+(scope[k]!=='all')+'">'+D.tt('sc.mine')+'</button><button data-act="scope" data-k="'+k+'" data-v="all" aria-pressed="'+(scope[k]==='all')+'">'+D.tt('sc.all')+'</button></div>':'';
 const visPresets=()=>presets().filter(p=>!mineOnly('pr')||p.owner===curBarista());
@@ -3968,7 +3979,7 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="bapi
 },true);
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='ba-new'){const b=app.querySelector('[data-act="baadd"]');if(b)b.click();}});
 /* ---------- Stock: staff mark coffees out of stock with the stock PIN (default 123456, admin can change it) ---------- */
-let stockOk=false;try{stockOk=sessionStorage.getItem('dp-stock')==='1';}catch(e){}
+let stockOk=false;try{stockOk=sessionStorage.getItem(dripStorageKey('dp-stock'))==='1';}catch(e){}
 const stockPinOk=async v=>{const h=await hp(String(v||''));return h===(D.S.stockPin||await hp('123456'));};
 const stockList=()=>'<p class="cap">'+D.tt('st.help')+'</p><ul class="st-list">'+BEANS.map(b=>'<li class="st-row'+(b.oos?' is-out':'')+'"><img class="st-img" src="'+esc(beanImg(b))+'" alt=""><span class="st-info"><span class="st-title">'+esc(b.name)+'</span>'+
   '<span class="st-meta">'+esc([b.country,b.region].filter(Boolean).join(' · '))+(b.process?' · '+esc(b.process):'')+'</span>'+
@@ -3984,7 +3995,7 @@ const openStock=()=>{
   stockOk?list():lock();
   d.onclick=async e=>{
     if(e.target===d||e.target.closest('[data-n]')){d.remove();render();return;}
-    if(e.target.closest('[data-unlock]')){if(await stockPinOk(body.querySelector('#st-pin').value)){stockOk=true;try{sessionStorage.setItem('dp-stock','1');}catch(x){}list();}else{body.querySelector('#st-err').textContent=D.T('st.bad');}return;}
+    if(e.target.closest('[data-unlock]')){if(await stockPinOk(body.querySelector('#st-pin').value)){stockOk=true;try{sessionStorage.setItem(dripStorageKey('dp-stock'),'1');}catch(x){}list();}else{body.querySelector('#st-err').textContent=D.T('st.bad');}return;}
     const sw=e.target.closest('[data-st]');if(!sw||!stockOk||sw.disabled)return;const b=bean(sw.dataset.st);if(!b)return;
     /* update only this row, so the list keeps its scroll position */
     const li=sw.closest('li');sw.disabled=true;
@@ -3995,7 +4006,7 @@ const openStock=()=>{
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="stock"],[data-act="stpin"]');if(!b)return;e.stopPropagation();
   if(b.dataset.act==='stock'){openStock();return;}
   if(!D.caps.isOwner)return;const i=$('#st-new'),v=(i&&i.value||'').trim();if(v.length<4){toast(D.T('st.ad.short'));return;}
-  const old=D.S.stockPin;D.S.stockPin=await hp(v);if(await doSave(D.T('st.ad.ok'),()=>{D.S.stockPin=old;})){stockOk=false;try{sessionStorage.removeItem('dp-stock');}catch(x){}render();}},true);
+  const old=D.S.stockPin;D.S.stockPin=await hp(v);if(await doSave(D.T('st.ad.ok'),()=>{D.S.stockPin=old;})){stockOk=false;try{sessionStorage.removeItem(dripStorageKey('dp-stock'));}catch(x){}render();}},true);
 /* ---------- Coffee showcase: full-screen profiles the customer swipes through before choosing ---------- */
 const chooseBean=id=>{const b=bean(id);if(!b)return;W=newWork(b);const p=presets().find(x=>x.id===activePreset);if(p)applyPreset(W,p);tab='recipe';resultId=null;render();window.scrollTo(0,0);};
 const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.flavors);
@@ -4059,25 +4070,25 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="prne
   if(a==='prcancel'){W=null;tab='beans';render();return;}
   if(!W||!W.presetEdit)return;
   if(a==='prremove'){const i=list.findIndex(x=>x.id===W.editPresetId);if(i<0)return;if(!await ask(D.tt('pr.del')+': <b>'+esc(list[i].name)+'</b>?',D.tt('pr.del')))return;
-    const old=D.S.presets,gone=list[i].id;list.splice(i,1);D.S.presets=list;if(activePreset===gone){activePreset='';try{localStorage.removeItem('dp-preset');}catch(x){}}
+    const old=D.S.presets,gone=list[i].id;list.splice(i,1);D.S.presets=list;if(activePreset===gone){activePreset='';try{localStorage.removeItem(dripStorageKey('dp-preset'));}catch(x){}}
     if(await doSave(D.T('pr.deleted'),()=>{D.S.presets=old;})){W=null;tab='beans';render();}return;}
   if(a==='prstore'){const name=String(W.name||'').trim();if(!name){toast(D.T('pr.namebad'));const n=$('#pr-name');if(n)n.focus();return;}
     if(!(+W.recipe.dose>0)){toast('Enter the coffee dose');return;}
     const prev=presets().find(x=>x.id===W.editPresetId);const p={id:W.editPresetId||('pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)),owner:prev?prev.owner:(curBarista()||undefined),name,dripper:W.dripper,recipe:Object.assign(clone(W.recipe),{waterTds:W.recipe.waterTds||''}),show:clone(W.show||{})};
     const i=list.findIndex(x=>x.id===p.id);if(i<0)list.push(p);else list[i]=p;const old=D.S.presets;D.S.presets=list;
-    if(await doSave(D.T(i<0?'pr.saved':'pr.updated'),()=>{D.S.presets=old;})){activePreset=p.id;try{localStorage.setItem('dp-preset',p.id);}catch(x){}W=null;tab='beans';render();window.scrollTo(0,0);}return;}
+    if(await doSave(D.T(i<0?'pr.saved':'pr.updated'),()=>{D.S.presets=old;})){activePreset=p.id;try{localStorage.setItem(dripStorageKey('dp-preset'),p.id);}catch(x){}W=null;tab='beans';render();window.scrollTo(0,0);}return;}
 },true);
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="editsnap"],[data-act="editcancel"],[data-act="prpick"],[data-act="prsave"],[data-act="prupdate"],[data-act="prdel"]');if(!b)return;e.stopPropagation();
   const a=b.dataset.act;
   if(a==='editsnap'){const s=D.S.snaps.find(x=>x.id===b.dataset.id);if(!s)return;W=workFromSnap(s);resultId=null;tab='recipe';render();window.scrollTo(0,0);return;}
   if(a==='editcancel'){const id=W&&W.editId;W=null;resultId=id&&D.S.snaps.some(x=>x.id===id)?id:null;if(!resultId)tab='history';render();return;}
-  if(a==='prpick'){activePreset=b.dataset.p;try{localStorage.setItem('dp-preset',activePreset);}catch(x){}render();return;}
+  if(a==='prpick'){activePreset=b.dataset.p;try{localStorage.setItem(dripStorageKey('dp-preset'),activePreset);}catch(x){}render();return;}
   if(!W)return;const list=presets().slice();
   if(a==='prsave'){const n=await askName(D.T('pr.save'),'');if(!n)return;const p=Object.assign({id:'pr-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),owner:curBarista()||undefined,name:n},presetFromWork());
     const old=D.S.presets;D.S.presets=list.concat([p]);W.presetId=p.id;if(await doSave(D.T('pr.saved'),()=>{D.S.presets=old;}))render();return;}
   const i=list.findIndex(x=>x.id===W.presetId);if(i<0)return;
   if(a==='prupdate'){const n=await askName(D.T('pr.update'),list[i].name);if(!n)return;const old=D.S.presets;list[i]=Object.assign({id:list[i].id,owner:list[i].owner,name:n},presetFromWork());D.S.presets=list;if(await doSave(D.T('pr.updated'),()=>{D.S.presets=old;}))render();return;}
-  if(a==='prdel'){if(!await ask(D.tt('pr.del')+': <b>'+esc(list[i].name)+'</b>?',D.tt('pr.del')))return;const old=D.S.presets,gone=list[i].id;list.splice(i,1);D.S.presets=list;W.presetId=null;if(activePreset===gone){activePreset='';try{localStorage.removeItem('dp-preset');}catch(x){}}if(await doSave(D.T('pr.deleted'),()=>{D.S.presets=old;}))render();return;}
+  if(a==='prdel'){if(!await ask(D.tt('pr.del')+': <b>'+esc(list[i].name)+'</b>?',D.tt('pr.del')))return;const old=D.S.presets,gone=list[i].id;list.splice(i,1);D.S.presets=list;W.presetId=null;if(activePreset===gone){activePreset='';try{localStorage.removeItem(dripStorageKey('dp-preset'));}catch(x){}}if(await doSave(D.T('pr.deleted'),()=>{D.S.presets=old;}))render();return;}
 },true);
 app.addEventListener('change',e=>{if(e.target.id!=='pr-sel'||!W)return;e.stopPropagation();const p=presets().find(x=>x.id===e.target.value);if(p){applyPreset(W,p);toast(D.T('pr.h')+': '+p.name);}else W.presetId=null;render();},true);
 /* Add TDS / Yield to a recipe that was already saved. The customer's link stays the same and shows the new values. */
@@ -4116,14 +4127,17 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
-  const jm=location.hash.match(/^#join=([^&]+)/);if(jm){const c=decodeURIComponent(jm[1]);try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}try{localStorage.setItem('dp-shop',c.trim().toUpperCase());}catch(x){}}
-  await Promise.all([D.load(),D.initCaps(),loadQrLib()]);D.applyTheme();
+  let joinCode='';const jm=location.hash.match(/^#join=([^&]+)/);
+  if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
+  await Promise.all([D.load(),D.initCaps(),loadQrLib()]);
+  if(BRANCH_PATH&&joinCode&&!D.cap)await D.join(joinCode);
+  D.applyTheme();
   /* Devices without the shop code (customers opening a QR) still get the shop's brand colours. */
-  if(!D.sync.code)D.rpc('drip_theme',{}).then(t=>{if(t&&!D.sync.code)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});applyBeans();try{D.caps.isOwner=sessionStorage.getItem('dp-admin')==='1';}catch(x){D.caps.isOwner=false;}
+  if(!D.sync.code)D.rpc('drip_theme',{}).then(t=>{if(t&&!D.sync.code)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});applyBeans();try{D.caps.isOwner=sessionStorage.getItem(dripStorageKey('dp-admin'))==='1';}catch(x){D.caps.isOwner=false;}
   const sync=async()=>{const cm=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/);
     if(cm){app.innerHTML='<div class="profile cv-msg"><p class="cap">…</p></div>';document.body.classList.add('cv');let pl=null;try{pl=await D.rpc('drip_snap',{p_ref:cm[1]});}catch(e){}
-      try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||''));}catch(x){}}
-    D.shared=null;const m=location.hash.match(/^#s=(.+)$/);if(m){try{D.shared=await D.readPayload(m[1]);}catch(e){D.shared=null;}}render();
+      try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||'')+(BRANCH_PATH&&pl?'&ref='+cm[1]:''));}catch(x){}}
+    D.shared=null;const m=location.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);if(m){try{D.shared=await D.readPayload(m[1]);if(BRANCH_PATH)D.shared.shareRef=m[2];}catch(e){D.shared=null;}}render();
     const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();
   if(D.sync.bg)D.sync.bg.then(ch=>{if(!ch)return;applyBeans();D.applyTheme();if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender())render();else pendingRender=true;});
