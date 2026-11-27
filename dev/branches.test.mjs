@@ -17,7 +17,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
       ...process.env,
       ACCOUNT_OWNER_RECOVERY_HASH: createHash('sha256').update(recovery).digest('hex'),
       ACCOUNT_OWNER_PASSWORD_HASH: createHash('sha256').update(ownerPassword).digest('hex'),
-      QR_PLATE_HASHES: JSON.stringify({native:[createHash('sha256').update('0123456789abcdef0123456789abcdef').digest('hex')]}),
+      QR_PLATE_HASHES: JSON.stringify({native:Array(10).fill(null).map((_,i)=>createHash('sha256').update(i===0?'0123456789abcdef0123456789abcdef':String(i+1).padStart(32,'0')).digest('hex'))}),
       FUNDAMENTAL_SETUP_SHA256: createHash('sha256').update(fundamentalCode).digest('hex'),
     },
     stdio: ['ignore', 'pipe', 'inherit'],
@@ -75,7 +75,11 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const byNumber=await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',1);
   assert.equal(byNumber.status,200);
   assert.equal(byNumber.data.slot,1);
-  assert.equal((await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',5)).status,400);
+  assert.equal((await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',10)).status,200);
+  const tenthPlate=await fetch('http://127.0.0.1:'+port+'/t/10/'+String(10).padStart(32,'0'),{redirect:'manual'});
+  assert.equal(tenthPlate.status,302);
+  assert.equal(tenthPlate.headers.get('location'),'/#c=same-recipe.aaaaaaaaaaaaaaaa');
+  assert.equal((await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',11)).status,400);
   assert.equal((await bindSlot('',fundamentalCode,'same-recipe.aaaaaaaaaaaaaaaa',1)).status,403);
   assert.equal((await bindPlate('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa')).status,200);
   assert.equal((await bindPlate(fundamental,fundamentalCode,'same-recipe.bbbbbbbbbbbbbbbb')).status,400);

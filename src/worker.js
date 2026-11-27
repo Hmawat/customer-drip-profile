@@ -123,7 +123,7 @@ async function sharedSnap(env, shop, ref) {
 }
 
 const PLATE_DURATION = 30 * 60 * 1000;
-const plateRoute = /^(\/fundamental)?\/t\/([1-4])\/([a-f0-9]{32})\/?$/;
+const plateRoute = /^(\/fundamental)?\/t\/([1-9]|10)\/([a-f0-9]{32})\/?$/;
 const plateSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_plates (branch TEXT NOT NULL, slot INTEGER NOT NULL, ref TEXT NOT NULL, expires INTEGER NOT NULL, PRIMARY KEY(branch,slot))').run();
 
 async function validPlate(env,path) {
@@ -157,7 +157,7 @@ const F = {
   async drip_bind_plate(env,a,shop,req) {
     const account=await access(env,shop,a,req,true);
     const plate=a.p_plate?await validPlate(env,String(a.p_plate)):{shop,slot:a.p_slot};
-    if(!plate||plate.shop!==shop||!Number.isInteger(plate.slot)||plate.slot<1||plate.slot>4||
+    if(!plate||plate.shop!==shop||!Number.isInteger(plate.slot)||plate.slot<1||plate.slot>10||
       !env.QR_PLATE_HASHES?.[shop.id]?.[plate.slot-1])fail('invalid_plate',400);
     const ref=String(a.p_ref??'');
     if(!/^[a-z0-9-]{1,100}\.[a-f0-9]{12,64}$/i.test(ref))fail('invalid_recipe',400);

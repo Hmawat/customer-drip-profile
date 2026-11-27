@@ -10,7 +10,6 @@ const scriptsAndOcr = [
   ...hashes,
   "'self'",
   "'wasm-unsafe-eval'",
-  'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
   'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js',
   'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
   'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
