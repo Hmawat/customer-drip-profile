@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-vzAcxUepYXuDVpa7+h/FCyRpHrXzpbkncv/OqFeb9x4=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-gCnkjNUz5RsYSqLdGq6jk0XGGJ1+5f2Lnkatg1p7Wwg=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
 const BRANCH_PATH=/^\/fundamental\/?$/.test(location.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
@@ -3479,7 +3479,7 @@ D.downloadJpeg=async(s,toast,showImage)=>{
 
 </script>
 <script src="/accounts.js?v=2"></script>
-<script src="/plates.js?v=3"></script>
+<script src="/plates.js?v=4"></script>
 <script>/* Barista flow, Add Coffee, Admin Settings and customer view */
 (function(){
 'use strict';
@@ -3732,7 +3732,8 @@ const staffSettings=()=>D.account?.admin?
   '<section class="sec staff-settings"><h2>Staff account settings</h2><div id="staff-settings"><p class="cap">Loading staff accounts…</p></div></section>':
   !D.account?'<section class="sec staff-settings"><h2>Staff account settings</h2><a class="btn ghost" href="'+(BRANCH_PATH||'/')+'?account=1&amp;open=1&amp;settings=1">Sign in as admin to manage staff</a></section>':'';
 const passwordSettings=()=>D.account?'<section class="sec staff-settings account-password-settings"><h2>Account settings</h2><div id="settings-password"></div></section>':'';
-const viewAdmin=()=>passwordSettings()+(D.account&&!D.caps.isOwner?staffSettings():!D.caps.isOwner?loginHtml()+staffSettings():(setTimeout(optimizePhotos,600),'')+staffSettings()+'<section class="sec legacy-staff"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span class="ba-nm">'+esc(n)+'<small>'+T(baPins()[n]&&baPins()[n].h?'ba.ad.pinset':'ba.ad.pintemp')+'</small></span><span class="ba-acts"><button class="chip" data-act="baren" data-n="'+esc(n)+'">'+T('ba.ad.rename')+'</button><button class="chip" data-act="bareset" data-n="'+esc(n)+'">'+T('ba.ad.reset')+'</button><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></span></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec legacy-staff"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
+const plateSettings=()=>D.account?.admin?'<section class="sec staff-settings"><h2>Reusable QR plates</h2><div id="qr-plate-settings"></div></section>':'';
+const viewAdmin=()=>passwordSettings()+plateSettings()+(D.account&&!D.caps.isOwner?staffSettings():!D.caps.isOwner?loginHtml()+staffSettings():(setTimeout(optimizePhotos,600),'')+staffSettings()+'<section class="sec legacy-staff"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span class="ba-nm">'+esc(n)+'<small>'+T(baPins()[n]&&baPins()[n].h?'ba.ad.pinset':'ba.ad.pintemp')+'</small></span><span class="ba-acts"><button class="chip" data-act="baren" data-n="'+esc(n)+'">'+T('ba.ad.rename')+'</button><button class="chip" data-act="bareset" data-n="'+esc(n)+'">'+T('ba.ad.reset')+'</button><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></span></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec legacy-staff"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
   '<section class="sec dev legacy-staff"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
    '<div class="dev-grid"><canvas id="join-qr" width="240" height="240" aria-label="'+esc(D.T('jn.ad.qr'))+'"></canvas><div class="dev-main">'+
    '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><p class="cap" style="margin:0">'+T('jn.ad.linkhelp')+'</p></div>'+
@@ -3800,12 +3801,17 @@ const render=()=>{
   if(!signedIn()){document.title=D.T('title');app.innerHTML=loginHtml2()+'<div class="acts"><a class="lnk" href="/?account=1">Sign in with an account</a></div>';const pi=$('#li-pin');if(pi&&!/iPhone|iPad|Android/i.test(navigator.userAgent))setTimeout(()=>pi.focus(),30);return;}
   if(resultId){app.innerHTML=shell(viewResult());const c=$('#qr'),sh=D.shortUrl(resultId),u=sh||D.snapUrl(resultId);if(c&&u&&window.qrcode){D.qr(u,c,720,sh?D.T('qr.brand'):'');c.dataset.short=sh?'1':'';}return;}
   const v={beans:viewBeans,addcoffee:viewAdd,recipe:viewRecipe,history:viewHistory,admin:viewAdmin}[tab]||viewBeans;
-  const mountedStaff=$('#staff-settings'),mountedPassword=$('#settings-password');
+  const mountedStaff=$('#staff-settings'),mountedPassword=$('#settings-password'),mountedPlates=$('#qr-plate-settings');
   app.innerHTML=shell(v());refreshCalc();
   const passwordMount=$('#settings-password');
   if(passwordMount){
     if(mountedPassword)passwordMount.replaceWith(mountedPassword);
     else window.DripAccounts.mountPassword(passwordMount,D.account);
+  }
+  const plateMount=$('#qr-plate-settings');
+  if(plateMount){
+    if(mountedPlates)plateMount.replaceWith(mountedPlates);
+    else window.DripPlates.mountAdmin(D,plateMount);
   }
   const staffMount=$('#staff-settings');
   if(staffMount){

@@ -123,15 +123,26 @@ async function sharedSnap(env, shop, ref) {
 }
 
 const PLATE_DURATION = 30 * 60 * 1000;
-const plateRoute = /^(\/fundamental)?\/t\/([1-9]|10)\/([a-f0-9]{32})\/?$/;
+const plateRoute = /^(\/fundamental)?\/t\/([1-9][0-9]{0,15})\/([a-f0-9]{32})\/?$/;
 const plateSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_plates (branch TEXT NOT NULL, slot INTEGER NOT NULL, ref TEXT NOT NULL, expires INTEGER NOT NULL, PRIMARY KEY(branch,slot))').run();
+
+const generatedPlateSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_generated_plates (branch TEXT NOT NULL, slot INTEGER NOT NULL, token TEXT NOT NULL, PRIMARY KEY(branch,slot))').run();
+const platePath = (shop, row) => ({slot:row.slot, path:(shop===FUNDAMENTAL?'/fundamental':'')+'/t/'+row.slot+'/'+row.token});
+
+async function generatedPlate(env, shop, slot) {
+  await generatedPlateSchema(env);
+  return env.DB.prepare('SELECT slot,token FROM drip_generated_plates WHERE branch=? AND slot=?').bind(shop.id,slot).first();
+}
 
 async function validPlate(env,path) {
   const match=plateRoute.exec(path);
   if(!match)return null;
   const shop=match[1]?FUNDAMENTAL:NATIVE,slot=Number(match[2]);
-  const expected=env.QR_PLATE_HASHES?.[shop.id]?.[slot-1];
-  return expected&&expected===await sha256(match[3])?{shop,slot}:null;
+  if(!Number.isSafeInteger(slot))return null;
+  const hashes=env.QR_PLATE_HASHES?.[shop.id]||[];
+  const valid=slot<=10?hashes[slot-1]===await sha256(match[3]):
+    (await generatedPlate(env,shop,slot))?.token===match[3];
+  return valid?{shop,slot}:null;
 }
 
 async function openPlate(env,req,url) {
@@ -154,11 +165,30 @@ async function openPlate(env,req,url) {
 }
 
 const F = {
+  async drip_list_plates(env,a,shop,req) {
+    const account=await access(env,shop,a,req);
+    await generatedPlateSchema(env);
+    const {results}=await env.DB.prepare('SELECT slot,token FROM drip_generated_plates WHERE branch=? ORDER BY slot').bind(shop.id).all();
+    const slots=(env.QR_PLATE_HASHES?.[shop.id]||[]).flatMap((hash,index)=>hash?[index+1]:[]);
+    return {slots:slots.concat(results.map(row=>row.slot)),generated:account?.user.admin?results.map(row=>platePath(shop,row)):[]};
+  },
+  async drip_create_plate(env,a,shop,req) {
+    const {user}=await branchAccount(env,req,shop.id,true);
+    if(!user.admin)fail('not_allowed',403);
+    await generatedPlateSchema(env);
+    const token=crypto.randomUUID().replaceAll('-','');
+    const row=await env.DB.prepare('INSERT INTO drip_generated_plates(branch,slot,token) SELECT ?,COALESCE(MAX(slot),10)+1,? FROM drip_generated_plates WHERE branch=? RETURNING slot,token')
+      .bind(shop.id,token,shop.id).first();
+    return platePath(shop,row);
+  },
   async drip_bind_plate(env,a,shop,req) {
     const account=await access(env,shop,a,req,true);
     const plate=a.p_plate?await validPlate(env,String(a.p_plate)):{shop,slot:a.p_slot};
-    if(!plate||plate.shop!==shop||!Number.isInteger(plate.slot)||plate.slot<1||plate.slot>10||
-      !env.QR_PLATE_HASHES?.[shop.id]?.[plate.slot-1])fail('invalid_plate',400);
+    if(!plate||plate.shop!==shop||!Number.isSafeInteger(plate.slot)||plate.slot<1)fail('invalid_plate',400);
+    if(!a.p_plate){
+      const exists=plate.slot<=10?env.QR_PLATE_HASHES?.[shop.id]?.[plate.slot-1]:await generatedPlate(env,shop,plate.slot);
+      if(!exists)fail('invalid_plate',400);
+    }
     const ref=String(a.p_ref??'');
     if(!/^[a-z0-9-]{1,100}\.[a-f0-9]{12,64}$/i.test(ref))fail('invalid_recipe',400);
     const snap=await sharedSnap(env,shop,ref);
