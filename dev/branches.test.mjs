@@ -78,7 +78,9 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',10)).status,200);
   const tenthPlate=await fetch('http://127.0.0.1:'+port+'/t/10/'+String(10).padStart(32,'0'),{redirect:'manual'});
   assert.equal(tenthPlate.status,302);
-  assert.equal(tenthPlate.headers.get('location'),'/?profile=same-recipe.aaaaaaaaaaaaaaaa');
+  assert.equal(tenthPlate.headers.get('location'),'/customer/same-recipe.aaaaaaaaaaaaaaaa');
+  assert.match(await (await fetch('http://127.0.0.1:'+port+'/fundamental/customer/same-recipe.bbbbbbbbbbbbbbbb',{redirect:'manual'})).text(),/Customer Drip Profile/);
+  assert.match(await (await fetch('http://127.0.0.1:'+port+'/customer/same-recipe.aaaaaaaaaaaaaaaa',{redirect:'manual'})).text(),/Customer Drip Profile/);
   assert.equal((await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',11)).status,400);
   assert.equal((await bindSlot('',fundamentalCode,'same-recipe.aaaaaaaaaaaaaaaa',1)).status,403);
   assert.equal((await bindPlate('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa')).status,200);
@@ -86,7 +88,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await bindPlate('',fundamentalCode,'same-recipe.aaaaaaaaaaaaaaaa')).status,403);
   const plateResponse=await fetch('http://127.0.0.1:'+port+plate,{redirect:'manual'});
   assert.equal(plateResponse.status,302);
-  assert.match(plateResponse.headers.get('location'),/\/\?profile=same-recipe\.aaaaaaaaaaaaaaaa$/);
+  assert.match(plateResponse.headers.get('location'),/\/customer\/same-recipe\.aaaaaaaaaaaaaaaa$/);
   assert.equal(plateResponse.headers.get('cache-control'),'no-store');
 
   assert.equal((await snap('', 'bbbbbbbbbbbbbbbb')).data, null);
@@ -128,7 +130,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert(listPlates.data.slots.includes(11));
   assert(listPlates.data.generated.some(x=>x.path===generatedPlate.path));
   assert.equal((await request('rpc/drip_bind_plate',{p_account:true,p_slot:11,p_ref:'same-recipe.aaaaaaaaaaaaaaaa'},owner.cookie)).status,200);
-  assert.equal((await generatePublic(generatedPlate.path)).headers.get('location'),'/?profile=same-recipe.aaaaaaaaaaaaaaaa');
+  assert.equal((await generatePublic(generatedPlate.path)).headers.get('location'),'/customer/same-recipe.aaaaaaaaaaaaaaaa');
   assert.deepEqual(Object.keys(owner.data.user.roles).sort(), ['fundamental', 'native']);
   const invitation = await accounts('save-user', { username:'staff.test', name:'Native Staff', roles:{native:'barista'} }, owner.cookie);
   assert.equal(invitation.status, 200);

@@ -92,15 +92,15 @@
         status.textContent = 'Linking plate…';
         try {
           await D.flush();
-          const short = D.shortUrl(id);
-          if (!short) {
+          const ref = D.shortRef(id);
+          if (!ref) {
             status.textContent = 'Wait for the recipe to sync, then try again.';
             return;
           }
           const result = await D.rpc('drip_bind_plate', {
             p_code: D.sync.code,
             p_slot: selected,
-            p_ref: new URL(short).hash.slice(3),
+            p_ref: ref,
           });
           status.textContent = 'Plate ' + number(result.slot) + ' linked. Hand it to your customer to scan within 30 minutes.';
           link.textContent = 'Linked';

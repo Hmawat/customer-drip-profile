@@ -156,7 +156,7 @@ async function openPlate(env,req,url) {
   if(record){
     await schema(env,plate.shop);
     if(await sharedSnap(env,plate.shop,record.ref)){
-      headers.Location=(plate.shop===FUNDAMENTAL?'/fundamental/':'/')+'?profile='+encodeURIComponent(record.ref);
+      headers.Location=(plate.shop===FUNDAMENTAL?'/fundamental/':'/')+'customer/'+encodeURIComponent(record.ref);
       return new Response(null,{status:302,headers});
     }
   }
@@ -294,6 +294,9 @@ export default {
     if(/^\/(?:fundamental\/)?t\//.test(url.pathname)){
       try{return await openPlate(env,req,url);}
       catch(e){console.error(String(e));return new Response('Could not open this plate.',{status:503,headers:{'Cache-Control':'no-store'}});}
+    }
+    if (/^\/(?:fundamental\/)?customer\/[A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64}\/?$/.test(url.pathname)) {
+      return env.ASSETS.fetch(new Request(new URL('/',url),req));
     }
     if (!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(req);
     const shop = url.pathname.startsWith('/api/fundamental/') ? FUNDAMENTAL : NATIVE;

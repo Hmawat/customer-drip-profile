@@ -1,6 +1,6 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-Vx3Te2N+aigppLPpsalS3YU4YfI69XfhWK8C7yGK3kY=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-+3ZEPoMpNfB7SGHJ/s/JxVBofh0/AAOGxa2Wep5zC/w=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-N8fqcaCoLO+P5LgGwi1eNjMQI7HXEnW2ChntW/FtprM=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-Q82BDuE+SgtXHVRCyVvoiPealg/Tlk5jie3Mt/WzapI=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
-const BRANCH_PATH=/^\/fundamental\/?$/.test(location.pathname)?'/fundamental/':'';
+const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(location.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
 if(BRANCH_PATH)document.getElementById('drip-manifest').href='/fundamental.webmanifest';
 try{var c=localStorage.getItem(dripStorageKey("dp-ci"));if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem(dripStorageKey("dp-cvb"))==="light")document.documentElement.setAttribute("data-cvb","light");}catch(e){}</script>
@@ -3032,7 +3032,15 @@ D.pageUrl=()=>{
   return D.S.baseUrl?D.S.baseUrl.replace(/#.*$/,''):'';
 };
 D.hashKey=async t=>{try{const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(h).slice(0,8),x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return '';}};
-D.shortUrl=id=>{const s=D.S.snaps.find(x=>x.id===id),b=D.pageUrl();if(!s||!s.key||!b||!D.connected()||D.sync.dirty.has('snap|'+id)||!D.sync.last['snap|'+id])return '';return b+'#c='+s.id+'.'+s.key;};
+D.shortRef=id=>{
+  const s=D.S.snaps.find(x=>x.id===id);
+  if(!s?.key||!D.connected()||D.sync.dirty.has('snap|'+id)||!D.sync.last['snap|'+id])return '';
+  return s.id+'.'+s.key;
+};
+D.shortUrl=id=>{
+  const ref=D.shortRef(id),base=D.pageUrl();
+  return base&&ref?new URL((BRANCH_PATH||'/')+'customer/'+ref,base).href:'';
+};
 D.qrUrl=id=>D.shortUrl(id)||D.snapUrl(id);
 D.snapHash=s=>{
   const ref=s.shareRef||(s.key?s.id+'.'+s.key:'');
@@ -3479,7 +3487,7 @@ D.downloadJpeg=async(s,toast,showImage)=>{
 
 </script>
 <script src="/accounts.js?v=2"></script>
-<script src="/plates.js?v=4"></script>
+<script src="/plates.js?v=5"></script>
 <script>/* Barista flow, Add Coffee, Admin Settings and customer view */
 (function(){
 'use strict';
@@ -3790,8 +3798,8 @@ const joinHtml=()=>'<section class="sec join"><h1>'+T('title')+'</h1><h2>'+T('jn
 const render=()=>{
   D.L=null;document.title=D.T('title');
   const id=hashId(),showHistoryRecipe=id&&D.connected()&&signedIn();
-  document.body.classList.toggle('cv',location.hash.indexOf('#s=')===0||!!showHistoryRecipe);
-  if(location.hash.indexOf('#s=')===0){
+  document.body.classList.toggle('cv',D.publicProfile||!!showHistoryRecipe);
+  if(D.publicProfile){
     D.L=D.shared?Object.assign({},D.S.labels||{},D.shared.labels||{}):null;
     app.innerHTML=D.shared?viewSnap(D.shared):'<div class="profile cv-msg"><h1>'+T('cp.err.h')+'</h1><p>'+T('cp.err.p')+'</p></div>';return;}
   if(showHistoryRecipe){app.innerHTML=viewCustomer(id);return;}
@@ -4249,9 +4257,45 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
-  const profileRef=new URLSearchParams(location.search).get('profile');
-  const isPlateProfile=/^[A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64}$/.test(profileRef||'');
-  if(!isPlateProfile&&await window.DripAccounts.boot(D,BRANCH_PATH?'fundamental':'native'))return;
+  const pathRef=location.pathname.match(/^\/(?:fundamental\/)?customer\/([A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64})\/?$/)?.[1];
+  const queryRef=new URLSearchParams(location.search).get('profile');
+  const isQueryProfile=/^[A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64}$/.test(queryRef||'');
+  const sync=async()=>{
+    const short=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/)?.[1];
+    const full=location.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);
+    const ref=pathRef||short||(isQueryProfile?queryRef:null);
+    D.publicProfile=!!ref||location.hash.startsWith('#s=');
+    D.shared=null;
+    if(D.publicProfile){
+      app.innerHTML='<div class="profile cv-msg"><p class="cap" role="status">Opening coffee profile…</p></div>';
+      document.body.classList.add('cv');
+      try {
+        const payload=full?.[1]||(ref?await D.rpc('drip_snap',{p_ref:ref}):null);
+        if(payload){
+          D.shared=await D.readPayload(payload);
+          D.shared.shareRef=full?.[2]||ref;
+        }
+      }catch(e){}
+    }
+    render();
+    const cur=D.shared;
+    if(cur&&!D.hasPhotos(cur)){
+      const ok=await D.loadSharedPhotos(cur);
+      if(ok&&D.shared===cur&&D.publicProfile)render();
+    }
+  };
+  if(pathRef||isQueryProfile||/^#(?:c|s)=/.test(location.hash)){
+    D.applyTheme();
+    if(!D.cap)D.rpc('drip_theme',{}).then(t=>{if(t)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});
+    await sync();
+    if(D.cap){
+      document.body.classList.add('cap');
+      if(/[?&]card=1(&|$)/.test(location.search)){document.body.classList.add('card');D.cardPrep();}
+      window.DPcap=D.capNow;
+    }else window.addEventListener('hashchange',sync);
+    return;
+  }
+  if(await window.DripAccounts.boot(D,BRANCH_PATH?'fundamental':'native'))return;
   let joinCode='';const jm=location.hash.match(/^#join=([^&]+)/);
   if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);
@@ -4267,13 +4311,6 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
     scope.pr='all';
     if(D.caps.isOwner)stockOk=true;
   }else try{D.caps.isOwner=sessionStorage.getItem(dripStorageKey('dp-admin'))==='1';}catch(x){D.caps.isOwner=false;}
-  const sync=async()=>{
-    const ref=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/)?.[1]||
-      (isPlateProfile&&!location.hash.startsWith('#s=')?profileRef:null);
-    if(ref){app.innerHTML='<div class="profile cv-msg"><p class="cap">…</p></div>';document.body.classList.add('cv');let pl=null;try{pl=await D.rpc('drip_snap',{p_ref:ref});}catch(e){}
-      try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||'')+(BRANCH_PATH&&pl?'&ref='+ref:''));}catch(x){}}
-    D.shared=null;const m=location.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);if(m){try{D.shared=await D.readPayload(m[1]);if(BRANCH_PATH)D.shared.shareRef=m[2];}catch(e){D.shared=null;}}render();
-    const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();
   if(D.sync.bg)D.sync.bg.then(ch=>{if(!ch)return;applyBeans();D.applyTheme();if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender())render();else pendingRender=true;});
   if(D.cap){document.body.classList.add('cap');if(/[?&]card=1(&|$)/.test(location.search)){document.body.classList.add('card');D.cardPrep();}window.DPcap=D.capNow;return;}

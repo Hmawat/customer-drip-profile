@@ -40,7 +40,9 @@
     "run_worker_first": [
       "/api/*",
       "/t/*",
-      "/fundamental/t/*"
+      "/fundamental/t/*",
+      "/customer/*",
+      "/fundamental/customer/*"
     ]
   },
   "d1_databases": [
