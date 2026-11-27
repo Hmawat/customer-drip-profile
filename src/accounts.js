@@ -6,12 +6,12 @@ const POSITIONS = ['Trainee','Service','Barista','Senior Barista','Captain','Sup
 const validPassword = (value, admin = false) => typeof value === 'string' &&
   (admin ? value.length >= 6 && value.length <= 128 : /^\S{6}$/u.test(value));
 const ROLES = new Set(['viewer', 'barista', 'manager']);
-const USERNAME = /^[a-z0-9][a-z0-9._-]{2,31}$/;
+const USERNAME = /^[\p{L}\p{Nd}][\p{L}\p{M}\p{Nd}._-]{2,31}$/u;
 const encoder = new TextEncoder();
 const hex = bytes => Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
 const random = size => hex(crypto.getRandomValues(new Uint8Array(size)));
 const sha = async value => hex(new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(value))));
-const usernameOf = value => String(value ?? '').trim().toLowerCase();
+const usernameOf = value => String(value ?? '').trim().toLowerCase().normalize('NFC');
 
 export class AccountError extends Error {
   constructor(code, status = 400) { super(code); this.code = code; this.status = status; }

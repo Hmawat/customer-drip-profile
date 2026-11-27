@@ -23,6 +23,8 @@
   const $ = id => document.getElementById(id);
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const accountHome = '/?account=1';
+  const usernameOf = value => value.trim().toLowerCase().normalize('NFC');
+  const validUsername = value => /^[\p{L}\p{Nd}][\p{L}\p{M}\p{Nd}._-]{2,31}$/u.test(value);
   const request = async (action, data = {}, signal) => {
     let response;
     try {
@@ -36,9 +38,9 @@
   };
   const error = e => messages[e.message] || 'The request could not be completed. Try again.';
   const title = value => { document.title = value+' · Customer Drip Profile'; };
-  const pane = (heading, body) => {
+  const pane = (heading, body, type = '') => {
     title(heading);
-    $('app').innerHTML = '<section class="sec account-pane"><h1>'+heading+'</h1>'+body+'<p id="account-error" class="err" role="alert"></p></section>';
+    $('app').innerHTML = '<section class="sec account-pane '+type+'"><h1>'+heading+'</h1>'+body+'<p id="account-error" class="err" role="alert"></p></section>';
   };
   const showError = e => { const node=$('account-error');if(node)node.textContent=error(e); };
   const onSubmit = (id, action) => {
@@ -62,12 +64,12 @@
       '<input id="user-name" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required value="'+escape(username)+'"></div>'+
       '<div class="f"><label class="lbl" for="user-password">Password</label><input type="password" id="user-password" name="password" autocomplete="current-password" required></div>'+
       '<div class="acts"><button class="btn" type="submit">Sign in</button>'+
-      (enforced?'':'<a class="lnk" href="/?shop-code=1">Use a shop code</a>')+'</div>'+
-      '<p><a class="lnk" href="/?account=1&recover=1">Reset admin password</a></p></form>');
+      (enforced?'':'<a class="lnk" href="/?shop-code=1">Use a shop code</a>')+'</div></form>','account-auth');
     onSubmit('user-login', async data=>{
       const {user}=await request('login',Object.fromEntries(data));
       if(!(await request('status')).user)throw new Error('account_required');
       if(user.mustChange){passwordForm(user,true);return;}
+      if(new URLSearchParams(location.search).get('settings')==='1'){location.reload();return;}
       openHome(user);
     });
   }
@@ -81,7 +83,7 @@
       '<div class="f"><label class="lbl" for="replacement-password">New password</label><input id="replacement-password" type="password" name="password" autocomplete="new-password" minlength="6" maxlength="'+(admin?'128':'6')+'" required></div>'+
       '<div class="f"><label class="lbl" for="repeat-password">Confirm new password</label><input id="repeat-password" type="password" name="repeat" autocomplete="new-password" required></div>'+
       '<div class="acts"><button class="btn" type="submit">'+(recovery?'Reset password':'Change password')+'</button>'+
-      (forced?'<button id="account-logout" class="btn ghost" type="button">Sign out</button>':'<a class="lnk" href="'+accountHome+'">Back</a>')+'</div></form>');
+      (forced?'<button id="account-logout" class="btn ghost" type="button">Sign out</button>':'<a class="lnk" href="'+accountHome+'">Back</a>')+'</div></form>','account-auth');
     if(forced)$('account-logout').onclick=signOut;
     onSubmit('manage-password',async data=>{
       if(data.get('password')!==data.get('repeat')){$('account-error').textContent='The passwords do not match.';return;}
@@ -96,7 +98,7 @@
     pane('Set your password','<form id="account-setup"><div class="f"><label class="lbl" for="new-password">New password</label>'+
       '<input id="new-password" name="password" type="password" autocomplete="new-password" minlength="6" maxlength="6" required></div>'+
       '<div class="f"><label class="lbl" for="confirm-password">Confirm password</label><input id="confirm-password" name="confirm" type="password" autocomplete="new-password" required></div>'+
-      '<div class="acts"><button class="btn" type="submit">Set password</button><a class="lnk" href="'+accountHome+'">Back to sign in</a></div></form>');
+      '<div class="acts"><button class="btn" type="submit">Set password</button><a class="lnk" href="'+accountHome+'">Back to sign in</a></div></form>','account-auth');
     onSubmit('account-setup', async data=>{
       if(data.get('password')!==data.get('confirm')){$('account-error').textContent='The passwords do not match.';return;}
       const {username}=await request('activate',{token,password:data.get('password')});
@@ -117,20 +119,28 @@
   const roleSelect = (branch,user) => '<div class="f"><label class="lbl" for="role-'+branch+'">'+branches[branch]+'</label><select id="role-'+branch+'" name="'+branch+'">'+
     Object.entries(roles).map(([key,text])=>'<option value="'+key+'"'+((user?.roles[branch]||'')===key?' selected':'')+'>'+text+'</option>').join('')+'</select></div>';
 
-  async function users() {
+  async function users(mount, branch) {
     const model=await request('users');
-    const nativeNames=[...new Set(model.roster.native)].sort();
-    pane('Users','<div class="acts"><a class="lnk" href="'+accountHome+'">All branches</a><a class="lnk" href="/?account=1&password=1">Change admin password</a><button id="account-logout" class="btn ghost" type="button">Sign out</button></div>'+
-      '<p class="cap">Set branch permissions and a six-character temporary password for each person. Staff choose a new password on their first sign-in.</p>'+
-      '<div class="row"><div><h2>Staff accounts</h2><div id="accounts-list" class="account-list"></div></div><div id="account-editor"></div></div>'+
+    if(mount&&!mount.isConnected)return;
+    const nativeNames=[...new Set(model.roster.native)].sort((a,b)=>a.localeCompare(b,'th'));
+    const actions='<div class="acts account-actions">'+(!mount?'<a class="lnk" href="'+accountHome+'">All branches</a>':'')+
+      '<a class="lnk" href="/?account=1&password=1">Change admin password</a>'+
+      (!mount?'<button id="account-logout" class="btn ghost" type="button">Sign out</button>':'')+'</div>';
+    const contents=actions+'<p class="cap account-intro">Set branch permissions and a six-character temporary password. Staff choose a new password when they first sign in with it.</p>'+
+      '<div class="accounts-layout"><div><h2>Staff accounts</h2><div id="accounts-list" class="account-list"></div></div><div id="account-editor"></div></div>'+
       '<section class="sec account-rollout"><h2>Sign-in mode</h2><p class="cap">'+(model.enforced?'Staff sign in with their own accounts.':'Shop codes still work while you set up staff accounts.')+'</p>'+
-      '<button id="toggle-access" class="btn ghost" type="button">'+(model.enforced?'Restore shop-code access':'Require staff accounts')+'</button></section>');
-    $('account-logout').onclick=signOut;
-    function select(selected) {
+      '<button id="toggle-access" class="btn ghost" type="button">'+(model.enforced?'Restore shop-code access':'Require staff accounts')+'</button></section>';
+    if(mount)mount.innerHTML='<div class="account-pane account-embedded">'+contents+'<p id="account-error" class="err" role="alert"></p></div>';
+    else{pane('Users',contents);$('account-logout').onclick=signOut;}
+    function select(selected, existingName = '') {
+      const visible=model.users.filter(user=>!branch||user.roles[branch]||(branch==='native'&&user.nativeName));
+      const unlinked=branch==='fundamental'?[]:nativeNames.filter(name=>!model.users.some(user=>user.nativeName===name));
       $('accounts-list').innerHTML='<button class="btn ghost" id="add-user" type="button">Add user</button>'+
-        model.users.map(user=>'<button class="btn ghost" type="button" data-user="'+escape(user.username)+'"><b>'+escape(user.name)+'</b> · '+escape(user.username)+(user.position?' · '+escape(user.position):'')+' <small>('+ (user.disabled?'Disabled':user.mustChange?'Password change pending':user.active?'Active':'Setup pending')+')</small></button>').join('');
+        visible.map(user=>'<button class="btn ghost" type="button" data-user="'+escape(user.username)+'"><b>'+escape(user.name)+'</b> · '+escape(user.username)+(user.position?' · '+escape(user.position):'')+' <small>('+ (user.disabled?'Disabled':user.mustChange?'Password change pending':user.active?'Active':'Setup pending')+')</small></button>').join('')+
+        (unlinked.length?'<h3>Existing Native staff</h3>'+unlinked.map(name=>'<button class="btn ghost" type="button" data-native-name="'+escape(name)+'">'+escape(name)+'</button>').join(''):'');
       $('add-user').onclick=()=>select(null);
       for(const button of $('accounts-list').querySelectorAll('[data-user]'))button.onclick=()=>select(model.users.find(user=>user.username===button.dataset.user));
+      for(const button of $('accounts-list').querySelectorAll('[data-native-name]'))button.onclick=()=>select(null,button.dataset.nativeName);
       $('account-editor').innerHTML='<h2>'+(selected?'Edit user':'New user')+'</h2><form id="edit-user">'+
         '<div class="f"><label class="lbl" for="edit-username">Username</label><input id="edit-username" name="username" required minlength="3" maxlength="32" autocapitalize="none" value="'+escape(selected?.username)+'"'+(selected?' readonly':'')+'></div>'+
         '<div class="f"><label class="lbl" for="edit-name">Display name</label><input id="edit-name" name="name" maxlength="80" required value="'+escape(selected?.name)+'"></div>'+
@@ -145,15 +155,20 @@
         Object.keys(branches).map(branch=>roleSelect(branch,selected)).join('')+
         (selected?'<label class="account-check"><input type="checkbox" name="disabled"'+(selected.disabled?' checked':'')+'> Disable account</label>':'')+
         '<div class="acts"><button class="btn" type="submit">'+(selected?'Save permissions':'Create user')+'</button></div></form><div id="account-invite"></div>';
-      $('edit-native').onchange=event=>{
-        const nativeName=event.currentTarget.value;
-        if(nativeName&&!$('edit-name').value)$('edit-name').value=nativeName;
-        if(nativeName&&!$('role-native').value)$('role-native').value='barista';
+      const prefillNative = nativeName => {
+        if(!nativeName)return;
+        if(!$('edit-name').value)$('edit-name').value=nativeName;
+        const username=usernameOf(nativeName);
+        if(!$('edit-username').value&&validUsername(username))$('edit-username').value=username;
+        if(!$('role-native').value)$('role-native').value='barista';
       };
+      $('edit-native').onchange=event=>prefillNative(event.currentTarget.value);
+      if(existingName){$('edit-native').value=existingName;prefillNative(existingName);}
+      else if(!selected&&branch)$('role-'+branch).value='barista';
       onSubmit('edit-user',async data=>{
         $('account-error').textContent='';
         const values=Object.fromEntries(data);
-        if(!selected && model.users.some(user=>user.username===values.username.trim().toLowerCase()))throw new Error('username_taken');
+        if(!selected && model.users.some(user=>user.username===usernameOf(values.username)))throw new Error('username_taken');
         if(selected?.active&&values.temporaryPassword&&!values.disabled&&!confirm('Reset this password and sign the user out?'))return;
         const result=await request('save-user',{username:values.username,name:values.name,position:values.position,nativeName:values.nativeName,
           roles:{native:values.native,fundamental:values.fundamental},disabled:!!values.disabled,temporaryPassword:values.temporaryPassword});
@@ -168,7 +183,7 @@
       const prompt=enforced?'Switch to staff accounts? Check that both teams can sign in before turning off shop codes.':'Restore shop-code access for both branches?';
       if(!confirm(prompt))return;
       const button=event.currentTarget;button.disabled=true;
-      try{await request('mode',{enforced});await users();}
+      try{await request('mode',{enforced});await users(mount,branch);}
       catch(e){showError(e);button.disabled=false;}
     };
   }
@@ -202,5 +217,6 @@
     return true;
   }
 
-  window.DripAccounts={boot,signOut,home:accountHome,branches};
+  window.DripAccounts={boot,signOut,home:accountHome,branches,
+    mountUsers:(mount,branch)=>users(mount,branch).catch(e=>{if(mount.isConnected)mount.textContent=error(e);})};
 })();
