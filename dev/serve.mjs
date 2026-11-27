@@ -30,11 +30,11 @@ const ASSETS = { async fetch(req) {
   if (!f.startsWith(pub) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) f = path.join(pub, 'index.html');
   return new Response(fs.readFileSync(f), { headers: { 'Content-Type': types[path.extname(f)] || 'application/octet-stream' } });
 } };
-const env = { DB, ASSETS, FUNDAMENTAL_SETUP_SHA256: process.env.FUNDAMENTAL_SETUP_SHA256,
+const env = { DB, ASSETS, ACCOUNT_OWNER_PASSWORD_HASH: process.env.ACCOUNT_OWNER_PASSWORD_HASH, FUNDAMENTAL_SETUP_SHA256: process.env.FUNDAMENTAL_SETUP_SHA256,
   RT: { idFromName: (n) => n, get: () => ({ fetch: async () => new Response('no ws in test', { status: 501 }) }) } };
 http.createServer(async (q, s) => {
   const chunks = []; for await (const c of q) chunks.push(c);
-  const req = new Request('http://localhost:' + q.socket.localPort + q.url, { method: q.method, headers: q.headers, body: ['GET', 'HEAD'].includes(q.method) ? undefined : Buffer.concat(chunks) });
+  const req = new Request('http://' + q.headers.host + q.url, { method: q.method, headers: q.headers, body: ['GET', 'HEAD'].includes(q.method) ? undefined : Buffer.concat(chunks) });
   const waits = [];
   try {
     const r = await worker.fetch(req, env, { waitUntil: (p) => waits.push(p) });

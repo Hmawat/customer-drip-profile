@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-TTAlQUGbWMhzFzUeURWJ+HwlnZCI+X2BbinxgzosgUA=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
 const BRANCH_PATH=/^\/fundamental\/?$/.test(location.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
@@ -1264,6 +1264,26 @@ html[data-ci^="native"][data-cvb="light"] body.card .cv-brew{background:#e6e1d2}
 .ci-set[aria-pressed="true"]{border-color:var(--ci-ink,#1d1d1f);box-shadow:0 0 0 1px var(--ci-ink,#1d1d1f)}
 .ci-sw{display:flex;gap:6px;margin-bottom:10px}.ci-sw i{flex:1;height:34px;border-radius:8px;border:1px solid rgba(0,0,0,.08)}
 .ci-set b{display:block;font-size:15px}.ci-set small{display:block;color:var(--ci-mute2,#6e6e73);font-size:12px;margin-top:2px}
+.account-pane{max-width:760px;margin:5vh auto 0}
+.account-pane h1{margin-bottom:16px}
+.account-pane .f{margin-bottom:12px}
+.account-pane form{max-width:400px}
+.account-branches{margin-bottom:18px;gap:12px}
+.account-branch{justify-content:center;min-height:82px;padding:18px;color:var(--ink);font-weight:700;text-decoration:none}
+.account-list{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.account-list button{text-align:left;white-space:normal;max-width:100%}
+.account-rollout{margin-top:22px}
+.account-check{display:block;margin:8px 0}
+.account-nav{align-items:center;gap:12px;margin-bottom:12px}
+.account-nav .lnk{padding-block:8px}
+@media(max-width:600px){.account-pane>.row{grid-template-columns:1fr;gap:20px}}
+body[data-account-role] .legacy-staff{display:none!important}
+body[data-account-role="viewer"] [data-sc="choose"],
+body[data-account-role="viewer"] [data-act="saverecipe"],
+body[data-account-role="viewer"] [data-act="editsnap"],
+body[data-account-role="viewer"] [data-act="brewlater"],
+body[data-account-role="viewer"] [data-act="tab"][data-t="addcoffee"],
+body:is([data-account-role="viewer"],[data-account-role="barista"]) :is(.quick,[data-act="pkmode"],[data-act="prnew"],[data-act="predit"],[data-act="prsave"],[data-act="prupdate"],[data-act="prdel"]){display:none!important}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2803,13 +2823,16 @@ D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
 /* The shop's backend is the Cloudflare Worker that serves this page (src/worker.js). Copies of the page opened elsewhere use the live site. */
 D.SB={url:/\.workers\.dev$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)?location.origin:'https://customer-drip-profile.cbm-c52.workers.dev'};
 D.apiPath=BRANCH_PATH?'/api/fundamental':'/api';
+D.account=null;
+D.connected=()=>!!(D.account||D.sync.code);
+D.returnToSignIn=()=>{D.account=null;location.replace('/?account=1');};
 D.sync={code:'',last:{},dirty:new Set(),since:null,state:'off',busy:false,ready:false,onChange:null};
 const SKEYS=['baseUrl','labels','adminPin','theme','presets','stockPin','baristas','picks','baPins'];
 const LS={get:k=>{try{return localStorage.getItem(dripStorageKey(k));}catch(e){return null;}},set:(k,v)=>{try{k=dripStorageKey(k);if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);return true;}catch(e){return false;}}};
 D.rpc=async(fn,body)=>{
-  let r;try{r=await fetch(D.SB.url+D.apiPath+'/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
+  let r;try{r=await fetch(D.SB.url+D.apiPath+'/rpc/'+fn,{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify(D.account?{...body,p_account:true}:body)});}
   catch(e){const x=new Error('offline');x.code='offline';throw x;}
-  if(!r.ok){let m='';try{const j=await r.json();m=(j&&(j.message||j.hint))||'';}catch(e){}const x=new Error(m||('http '+r.status));x.code=/bad_code/.test(m)?'bad_code':'server';throw x;}
+  if(!r.ok){let m='';try{const j=await r.json();m=(j&&(j.message||j.hint))||'';}catch(e){}const x=new Error(m||('http '+r.status));x.code=m||'server';throw x;}
   const t=await r.text();return t?JSON.parse(t):null;
 };
 /* State -> flat map of 'kind|id' -> JSON text */
@@ -2836,11 +2859,12 @@ D.idb={db:null,open(){if(this.db)return this.db;this.db=new Promise((res,rej)=>{
   async get(k){try{const db=await this.open();return await new Promise((res,rej)=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}catch(e){return undefined;}},
   async set(k,v){try{const db=await this.open();await new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);});return true;}catch(e){return false;}}};
 let saveT=0;
-D.saveLocal=()=>{LS.set('dp-dirty',JSON.stringify([...D.sync.dirty]));clearTimeout(saveT);const snap=JSON.stringify(D.S);
+D.saveLocal=()=>{if(D.account)return true;LS.set('dp-dirty',JSON.stringify([...D.sync.dirty]));clearTimeout(saveT);const snap=JSON.stringify(D.S);
   saveT=setTimeout(async()=>{const ok=await D.idb.set('state',snap);if(ok){LS.set('dp-state',null);LS.set('dp-cache','idb');}else{LS.set('dp-state',snap);}},250);return true;};
 D.setSync=st=>{D.sync.state=st;const n=document.getElementById('sync');if(n){n.dataset.s=st;n.textContent=D.T('sync.'+st);n.title=D.T('sync.'+st+'.t');}};
 
 D.load=async()=>{
+  if(D.account){await D.pull(true);return;}
   let raw=null;if(LS.get('dp-cache')==='idb')raw=await D.idb.get('state');if(!raw)raw=LS.get('dp-state');
   let cached=false;try{const j=JSON.parse(raw||'null');if(j){D.S=Object.assign({v:1,baseUrl:'',photos:{},snaps:[]},j);cached=true;}}catch(e){}
   if(D.cap)return;
@@ -2856,9 +2880,14 @@ D.load=async()=>{
 };
 /* Fetch changes from the shop. Items changed on this device and not sent yet are kept. Returns true when anything changed. */
 D.pull=async full=>{
-  if(!D.sync.code)return false;
+  if(!D.connected())return false;
   let res;try{res=await D.rpc('drip_pull',{p_code:D.sync.code,p_since:full?null:D.sync.since});}
-  catch(e){if(e.code==='bad_code'){D.sync.code='';D.sync.kicked=true;LS.set('dp-shop',null);D.setSync('off');}else D.setSync('offline');return false;}
+  catch(e){
+    if(e.code==='account_required'||(D.account&&e.code==='not_allowed'))D.returnToSignIn();
+    else if(e.code==='bad_code'){D.sync.code='';D.sync.kicked=true;LS.set('dp-shop',null);D.setSync('off');}
+    else D.setSync('offline');
+    return false;
+  }
   const cur=D.items(D.S),L=D.sync.last,dirty=D.sync.dirty;let changed=false;
   const seen=new Set();
   (res&&res.rows||[]).forEach(r=>{const key=r.k+'|'+r.i;seen.add(key);
@@ -2871,7 +2900,8 @@ D.pull=async full=>{
     D.sync.migrate=false;LS.set('dp-synced','1');changed=true;}
   if(full){/* a full read also tells us what the shop deleted while this device was away */
     Object.keys(cur).forEach(k=>{if(!seen.has(k)&&!dirty.has(k)&&(k in L)){delete cur[k];delete L[k];changed=true;}});}
-  D.sync.since=res&&res.now||D.sync.since;if(D.sync.since)LS.set('dp-since',D.sync.since);if(full)LS.set('dp-full',String(Date.now()));
+  D.sync.since=res&&res.now||D.sync.since;
+  if(!D.account){if(D.sync.since)LS.set('dp-since',D.sync.since);if(full)LS.set('dp-full',String(Date.now()));}
   if(changed)D.S=D.build(cur,D.S);
   D.saveLocal();D.sync.ready=true;
   if(dirty.size)await D.flush();else D.setSync('ok');
@@ -2879,7 +2909,7 @@ D.pull=async full=>{
 };
 /* Send local changes (in batches, photos can be large) */
 D.flush=async()=>{
-  const s=D.sync;if(!s.code||s.busy)return;s.busy=true;
+  const s=D.sync;if(!D.connected()||s.busy)return;s.busy=true;
   try{
     const cur=D.items(D.S);let keys=[...s.dirty];
     while(keys.length){
@@ -2891,13 +2921,20 @@ D.flush=async()=>{
       const now=D.items(D.S);Object.keys(sent).forEach(k=>{if(sent[k]==null)delete s.last[k];else s.last[k]=sent[k];if(now[k]===sent[k])s.dirty.delete(k);});
     }
     D.saveLocal();D.setSync(s.dirty.size?'offline':'ok');D.rt.ping();if(D.sync.onFlush)try{D.sync.onFlush();}catch(x){}
-  }catch(e){if(e.code==='bad_code'){s.code='';s.kicked=true;LS.set('dp-shop',null);D.setSync('off');}else D.setSync('offline');}
-  finally{s.busy=false;}
+    return true;
+  }catch(e){
+    if(e.code==='account_required')D.returnToSignIn();
+    else if(e.code==='bad_code'){s.code='';s.kicked=true;LS.set('dp-shop',null);D.setSync('off');}
+    else D.setSync('offline');
+    if(D.account)throw e;
+    return false;
+  }finally{s.busy=false;}
 };
 D.save=()=>{
   if(D.cap)return Promise.resolve();
   const cur=D.items(D.S),L=D.sync.last;
   new Set(Object.keys(cur).concat(Object.keys(L))).forEach(k=>{if(cur[k]!==L[k])D.sync.dirty.add(k);});
+  if(D.account)return D.flush().then(ok=>{if(!ok)throw {code:'offline'};});
   if(!D.saveLocal()&&!D.sync.code)return Promise.reject({code:'storage'});
   D.flush();return Promise.resolve();
 };
@@ -2905,7 +2942,7 @@ D.save=()=>{
 D.join=async code=>{
   code=String(code||'').trim().toUpperCase().replace(/\s+/g,'');if(code===D.sync.code)return 'ok';
   if(!code)return 'empty';
-  try{await D.rpc('drip_pull',{p_code:code,p_since:new Date().toISOString()});}catch(e){return e.code==='bad_code'?'bad':'offline';}
+  try{await D.rpc('drip_pull',{p_code:code,p_since:new Date().toISOString()});}catch(e){if(e.code==='account_required')D.returnToSignIn();return e.code==='bad_code'?'bad':'offline';}
   D.sync.code=code;D.sync.kicked=false;LS.set('dp-shop',code);D.sync.migrate=!LS.get('dp-synced');if(D.sync.migrate)D.sync.last={};
   await D.pull(true);D.rt.start();return 'ok';
 };
@@ -2928,7 +2965,7 @@ D.joinLink=()=>(D.pageUrl()||location.href.split('#')[0])+'#join='+encodeURIComp
 D.saveError=e=>{
   if(e&&e.code==='storage')return 'The browser blocked saving (storage full or private mode). Remove photos or use a normal window.';
   const c=e&&e.code;
-  if(c==='not_writer'||c==='not_granted')return 'This account cannot edit this page.';
+  if(c==='not_writer'||c==='not_granted'||c==='not_allowed')return 'This account cannot edit this page.';
   if(c==='capability_disabled'||c==='unavailable')return 'Saving is unavailable in this view. Open the page from the cafe account and try again.';
   if(c==='conflict')return 'Someone saved at the same time. Please retry.';
   if(c==='rate_limited')return 'Saving too fast. Wait a moment and retry.';
@@ -2940,19 +2977,19 @@ D.contrast=(a,b)=>{const x=D.lum(a),y=D.lum(b);if(x==null||y==null)return 21;con
 D.onColor=bg=>D.contrast(bg,'#ffffff')>=D.contrast(bg,'#141414')?'#ffffff':'#141414';
 D.ciOf=()=>{const c=(D.S.theme||{}).ci;return c==='native-slate'||c==='native-mica'?c:'apple';};
 D.cvbOf=()=>(D.S.theme||{}).cvb==='light'?'light':'dark';
-D.setCi=(c,v)=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');if(v==='light')h.setAttribute('data-cvb','light');else h.removeAttribute('data-cvb');try{localStorage.setItem(dripStorageKey('dp-ci'),c||'apple');localStorage.setItem(dripStorageKey('dp-cvb'),v||'dark');}catch(e){}};
+D.setCi=(c,v)=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');if(v==='light')h.setAttribute('data-cvb','light');else h.removeAttribute('data-cvb');if(!D.account)try{localStorage.setItem(dripStorageKey('dp-ci'),c||'apple');localStorage.setItem(dripStorageKey('dp-cvb'),v||'dark');}catch(e){}};
 D.applyTheme=reset=>{D.setCi(reset?'apple':D.ciOf(),reset?'dark':D.cvbOf());const r=document.documentElement.style,t=D.S.theme||{};['paper','ink','accent','sage','soft','beige'].forEach(k=>t[k]&&!reset?r.setProperty('--'+k,t[k]):r.removeProperty('--'+k));
   /* text on filled colours is always chosen for contrast, so a selected item can never become unreadable */
   [['ink','on-ink','#fbfbf9'],['sage','on-sage','#ffffff'],['accent','on-accent','#ffffff']].forEach(x=>{if(!reset&&t[x[0]])r.setProperty('--'+x[1],D.onColor(t[x[0]]));else r.removeProperty('--'+x[1]);});};
 D.newId=()=>'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 D.pageUrl=()=>{
-  if(BRANCH_PATH)return location.origin+BRANCH_PATH;
+  if(BRANCH_PATH||D.account||new URLSearchParams(location.search).has('shop-code'))return location.origin+(BRANCH_PATH||'/');
   const h=location.href.split('#')[0];
   if(/^https?:/.test(h))return h;
   return D.S.baseUrl?D.S.baseUrl.replace(/#.*$/,''):'';
 };
 D.hashKey=async t=>{try{const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(h).slice(0,8),x=>x.toString(16).padStart(2,'0')).join('');}catch(e){return '';}};
-D.shortUrl=id=>{const s=D.S.snaps.find(x=>x.id===id),b=D.pageUrl();if(!s||!s.key||!b||!D.sync.code||D.sync.dirty.has('snap|'+id)||!D.sync.last['snap|'+id])return '';return b+'#c='+s.id+'.'+s.key;};
+D.shortUrl=id=>{const s=D.S.snaps.find(x=>x.id===id),b=D.pageUrl();if(!s||!s.key||!b||!D.connected()||D.sync.dirty.has('snap|'+id)||!D.sync.last['snap|'+id])return '';return b+'#c='+s.id+'.'+s.key;};
 D.qrUrl=id=>D.shortUrl(id)||D.snapUrl(id);
 D.snapHash=s=>{
   const ref=s.shareRef||(s.key?s.id+'.'+s.key:'');
@@ -3398,6 +3435,7 @@ D.downloadJpeg=async(s,toast,showImage)=>{
 })();
 
 </script>
+<script src="/accounts.js"></script>
 <script>/* Barista flow, Add Coffee, Admin Settings and customer view */
 (function(){
 'use strict';
@@ -3459,8 +3497,11 @@ const loginHtml2=()=>{const bl=baristas(),st=LI.step;
    '<label class="vh" for="li-pin">'+title+'</label><input id="li-pin" class="li-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="one-time-code" autofocus>'+
    '<div class="li-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div><p class="err" id="li-err" role="alert">'+esc(LI.msg)+'</p>'+
    '<div class="li-pad">'+['1','2','3','4','5','6','7','8','9','','0','del'].map(k=>k===''?'<span></span>':'<button class="li-k'+(k==='del'?' del':'')+'" data-act="lik" data-k="'+k+'" aria-label="'+(k==='del'?'Delete':k)+'">'+(k==='del'?'⌫':k)+'</button>').join('')+'</div></section>';};
-const shell=inner=>'<div class="top"><div><div class="lbl" id="t-role">'+T('role')+'</div><h1 id="t-title">'+T('title')+' '+(baristas().length&&curBarista()?'<button class="who" data-act="liout" title="'+esc(D.T('li.out'))+'"><span class="li-av sm" aria-hidden="true">'+esc(Array.from(curBarista())[0].toUpperCase())+'</span>'+esc(curBarista())+'</button>':'')+'<span class="sync" id="sync" role="status" data-s="'+D.sync.state+'" title="'+esc(D.T('sync.'+D.sync.state+'.t'))+'">'+esc(D.T('sync.'+D.sync.state))+'</span></h1></div><div class="tabs" role="tablist">'+
-  TABS.map(t=>'<button class="tab" role="tab" data-act="tab" data-t="'+t+'" aria-selected="'+(tab===t)+'">'+T(t)+'</button>').join('')+'</div></div>'+inner;
+const staffNav=()=>!D.account?'':'<div class="acts account-nav"><span class="lbl">'+(BRANCH_PATH?'Fundamental':'Native Onsen Hotel')+' · '+esc(D.account.name)+'</span>'+
+  ((D.account.admin||Object.keys(D.account.roles).length>1)?'<a class="lnk" href="/?account=1">Branches</a>':'')+
+  (D.account.admin?'<a class="lnk" href="/?account=1&users=1">Users</a>':'')+'<button class="btn ghost" data-act="accountout">Sign out</button></div>';
+const shell=inner=>staffNav()+'<div class="top"><div><div class="lbl" id="t-role">'+T('role')+'</div><h1 id="t-title">'+T('title')+' '+(baristas().length&&curBarista()?'<button class="who" data-act="liout" title="'+esc(D.T('li.out'))+'"><span class="li-av sm" aria-hidden="true">'+esc(Array.from(curBarista())[0].toUpperCase())+'</span>'+esc(curBarista())+'</button>':'')+'<span class="sync" id="sync" role="status" data-s="'+D.sync.state+'" title="'+esc(D.T('sync.'+D.sync.state+'.t'))+'">'+esc(D.T('sync.'+D.sync.state))+'</span></h1></div><div class="tabs" role="tablist">'+
+  TABS.filter(t=>!D.account||D.caps.isOwner||t==='beans'||t==='history').map(t=>'<button class="tab" role="tab" data-act="tab" data-t="'+t+'" aria-selected="'+(tab===t)+'">'+T(t)+'</button>').join('')+'</div></div>'+inner;
 const refreshChrome=()=>{document.title=D.T('title');const r=$('#t-role'),h=$('#t-title');if(r)r.textContent=D.T('role');if(h)h.textContent=D.T('title');
   app.querySelectorAll('.tab').forEach(b=>b.textContent=D.T(b.dataset.t));};
 const field=(l,k,v,type,u,list,ro)=>{const id='f-'+k.replace(/\W/g,'_');return '<div class="f"><label class="lbl" for="'+id+'">'+l+'</label><input id="'+id+'" data-k="'+k+'" type="'+(type||'text')+'" '+(type==='number'?'step="any" inputmode="decimal" ':'')+'value="'+esc(v)+'"'+(list?' list="'+list+'" autocomplete="off"':'')+(ro?' readonly tabindex="-1"':'')+'>'+(u?'<span class="u">'+u+'</span>':'')+'</div>';};
@@ -3614,7 +3655,7 @@ const adminTop=()=>{
   const frows=F.map((f,i)=>'<div class="acts" style="margin-bottom:8px;align-items:center"><div class="f" style="flex:1;min-width:150px"><input data-fn="'+f.id+'" value="'+esc(f.name)+'" aria-label="'+esc(D.T('ad.fo.h'))+'"></div><span class="cap">'+BEANS.filter(b=>b.folder===f.id).length+' coffees</span><button class="chip" data-act="fup" data-id="'+f.id+'" aria-label="Move up"'+(i===0?' disabled':'')+'>&#9650;</button><button class="chip" data-act="fdown" data-id="'+f.id+'" aria-label="Move down"'+(i===F.length-1?' disabled':'')+'>&#9660;</button><button class="chip" data-act="fdel" data-id="'+f.id+'">'+T('ad.delete')+'</button></div>').join('')||'<p class="cap">'+T('ad.fo.none')+'</p>';
   const groups=F.map(f=>[f.name,BEANS.filter(b=>b.folder===f.id&&hit(b))]).concat([[D.T('sb.unfiled'),BEANS.filter(b=>!F.some(f=>f.id===b.folder)&&hit(b))]]);
   const rows=groups.filter(g=>g[1].length).map(g=>'<tr><th colspan="3" class="lbl">'+esc(g[0])+' ('+g[1].length+')</th></tr>'+g[1].map(coffeeRow).join('')).join('');
-  return '<div class="acts" style="justify-content:space-between;align-items:center;margin-bottom:14px"><span class="lbl">'+T('ad.signed')+'</span><div class="acts"><button class="btn ghost" data-act="chpin">'+T('ad.chpin')+'</button><button class="btn ghost" data-act="logout">'+T('ad.logout')+'</button></div></div>'+
+  return '<div class="acts" style="justify-content:space-between;align-items:center;margin-bottom:14px"><span class="lbl">'+T('ad.signed')+'</span><div class="acts legacy-staff"><button class="btn ghost" data-act="chpin">'+T('ad.chpin')+'</button><button class="btn ghost" data-act="logout">'+T('ad.logout')+'</button></div></div>'+
   '<section class="sec"><h2>'+T('ad.fo.h')+'</h2>'+frows+
   '<p class="cap">'+T('ad.fo.help')+'</p>'+
   '<div class="acts" style="margin-top:10px"><div class="f" style="flex:1;min-width:150px"><input id="fnew" placeholder="'+T('ad.fo.new')+'" aria-label="'+T('ad.fo.new')+'"></div><button class="btn ghost" data-act="fadd">'+T('ad.fo.add')+'</button></div></section>'+
@@ -3634,8 +3675,8 @@ const settingsHtml=()=>{
   (D.ciOf()!=='apple'?'<div class="lbl" style="margin-top:16px">'+T('ci.cvb')+'</div><div class="ci-sets">'+[['dark','#2d2828','#3b3532'],['light','#e6e1d2','#f6f3ec']].map(x=>'<button type="button" class="ci-set" data-act="cvbset" data-v="'+x[0]+'" aria-pressed="'+(D.cvbOf()===x[0])+'"><span class="ci-sw"><i style="background:'+x[1]+'"></i><i style="background:'+x[2]+'"></i></span><b>'+T('ci.cvb.'+x[0])+'</b></button>').join('')+'</div>':'')+
   '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div></section>';};
 const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
-const viewAdmin=()=>!D.caps.isOwner?loginHtml():(setTimeout(optimizePhotos,600),'')+'<section class="sec"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span class="ba-nm">'+esc(n)+'<small>'+T(baPins()[n]&&baPins()[n].h?'ba.ad.pinset':'ba.ad.pintemp')+'</small></span><span class="ba-acts"><button class="chip" data-act="baren" data-n="'+esc(n)+'">'+T('ba.ad.rename')+'</button><button class="chip" data-act="bareset" data-n="'+esc(n)+'">'+T('ba.ad.reset')+'</button><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></span></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
-  '<section class="sec dev"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
+const viewAdmin=()=>!D.caps.isOwner?loginHtml():(setTimeout(optimizePhotos,600),'')+'<section class="sec legacy-staff"><h2>'+T('ba.ad.h')+'</h2><p class="cap">'+T('ba.ad.help')+'</p>'+(baristas().length?'<ul class="ba-list">'+baristas().map(n=>'<li><span class="ba-av" aria-hidden="true">'+esc(Array.from(n)[0].toUpperCase())+'</span><span class="ba-nm">'+esc(n)+'<small>'+T(baPins()[n]&&baPins()[n].h?'ba.ad.pinset':'ba.ad.pintemp')+'</small></span><span class="ba-acts"><button class="chip" data-act="baren" data-n="'+esc(n)+'">'+T('ba.ad.rename')+'</button><button class="chip" data-act="bareset" data-n="'+esc(n)+'">'+T('ba.ad.reset')+'</button><button class="chip" data-act="badel" data-n="'+esc(n)+'">'+T('ad.delete')+'</button></span></li>').join('')+'</ul>':'<p class="cap">'+T('ba.ad.empty')+'</p>')+'<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="ba-new">'+T('ba.ad.ph')+'</label><input id="ba-new" maxlength="30" autocomplete="off"></div></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="baadd">'+T('ba.ad.add')+'</button></div></section>'+adminTop()+'<section class="sec legacy-staff"><h2>'+T('st.ad.h')+'</h2><p class="cap">'+T('st.ad.help')+'</p><div class="f" style="margin-top:10px"><label class="lbl" for="st-new">'+T('st.ad.new')+'</label><input id="st-new" type="password" autocomplete="new-password" inputmode="numeric"></div><div class="acts" style="margin-top:10px"><button class="btn" data-act="stpin">'+T('st.ad.save')+'</button></div></section>'+settingsHtml()+
+  '<section class="sec dev legacy-staff"><h2>'+T('jn.ad.h')+'</h2><p class="cap">'+T('jn.ad.help')+'</p>'+
    '<div class="dev-grid"><canvas id="join-qr" width="240" height="240" aria-label="'+esc(D.T('jn.ad.qr'))+'"></canvas><div class="dev-main">'+
    '<div class="f"><span class="lbl">'+T('jn.ad.link')+'</span><p class="cap" style="margin:0">'+T('jn.ad.linkhelp')+'</p></div>'+
    '<div class="acts" style="margin-top:12px"><button class="btn" data-act="copyjoin">'+T('jn.ad.copy')+'</button><button class="btn ghost" data-act="syncnow">'+T('jn.ad.sync')+'</button></div></div></div>'+
@@ -3686,18 +3727,19 @@ const calcExt=()=>{const b=W.brew,t=parseFloat(b.tds),y=parseFloat(b.yield),d=pa
 const refreshCalc=()=>{if(!W)return;calcExt();const w=D.water(W.recipe),a=$('#tw'),r=$('#ar');if(a)a.textContent=D.num(w)+' g';if(r)r.textContent='1 : '+D.num(W.recipe.dose?w/W.recipe.dose:0)+'  ('+D.T('rc.target')+' 1 : '+W.recipe.ratio+')';};
 const joinHtml=()=>'<section class="sec join"><h1>'+T('title')+'</h1><h2>'+T('jn.h')+'</h2>'+(D.sync.kicked?'<p class="banner">'+T('jn.changed')+'</p>':'')+'<p class="cap">'+T('jn.help')+'</p>'+
   '<div class="f"><label class="lbl" for="join-code">'+T('jn.l')+'</label><input id="join-code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX"></div>'+
-  '<p class="err" id="join-err" role="alert"></p><div class="acts"><button class="btn" data-act="join">'+T('jn.btn')+'</button></div></section>';
+  '<p class="err" id="join-err" role="alert"></p><div class="acts"><button class="btn" data-act="join">'+T('jn.btn')+'</button><a class="lnk" href="/?account=1">Sign in with an account</a></div></section>';
 const render=()=>{
   D.L=null;document.title=D.T('title');
-  const id=hashId(),showHistoryRecipe=id&&(!BRANCH_PATH||(D.sync.code&&signedIn()));
+  const id=hashId(),showHistoryRecipe=id&&D.connected()&&signedIn();
   document.body.classList.toggle('cv',location.hash.indexOf('#s=')===0||!!showHistoryRecipe);
   if(location.hash.indexOf('#s=')===0){
     D.L=D.shared?Object.assign({},D.S.labels||{},D.shared.labels||{}):null;
     app.innerHTML=D.shared?viewSnap(D.shared):'<div class="profile cv-msg"><h1>'+T('cp.err.h')+'</h1><p>'+T('cp.err.p')+'</p></div>';return;}
   if(showHistoryRecipe){app.innerHTML=viewCustomer(id);return;}
   if(!D.caps.canEdit){app.innerHTML='<div class="profile cv-msg"><h1>'+T('title')+'</h1></div>';return;}
-  if(!D.sync.code){app.innerHTML=joinHtml();return;}
-  if(!signedIn()){document.title=D.T('title');app.innerHTML=loginHtml2();const pi=$('#li-pin');if(pi&&!/iPhone|iPad|Android/i.test(navigator.userAgent))setTimeout(()=>pi.focus(),30);return;}
+  if(D.account&&!D.sync.ready){app.innerHTML='<section class="sec join"><h1>Could not load branch</h1><a class="lnk" href="/?account=1">Back to sign in</a></section>';return;}
+  if(!D.connected()){app.innerHTML=joinHtml();return;}
+  if(!signedIn()){document.title=D.T('title');app.innerHTML=loginHtml2()+'<div class="acts"><a class="lnk" href="/?account=1">Sign in with an account</a></div>';const pi=$('#li-pin');if(pi&&!/iPhone|iPad|Android/i.test(navigator.userAgent))setTimeout(()=>pi.focus(),30);return;}
   if(resultId){app.innerHTML=shell(viewResult());const c=$('#qr'),sh=D.shortUrl(resultId),u=sh||D.snapUrl(resultId);if(c&&u&&window.qrcode){D.qr(u,c,720,sh?D.T('qr.brand'):'');c.dataset.short=sh?'1':'';}return;}
   const v={beans:viewBeans,addcoffee:viewAdd,recipe:viewRecipe,history:viewHistory,admin:viewAdmin}[tab]||viewBeans;
   app.innerHTML=shell(v());refreshCalc();
@@ -3721,12 +3763,14 @@ app.addEventListener('input',e=>{
     setPath(t.dataset.k,v);
     if(t.dataset.k==='recipe.dose'||t.dataset.k==='recipe.ratio')scaleRecipe();
     else if(/^pw:|^recipe\.bloomWater$/.test(t.dataset.k))W._shares=null;
-    if(t.dataset.k==='barista'&&!baristas().length){try{localStorage.setItem(dripStorageKey('dp-barista'),v);}catch(x){}}
+    if(t.dataset.k==='barista'&&D.account){W.barista=D.account.name;return;}
+    if(t.dataset.k==='barista'&&!D.account&&!baristas().length){try{localStorage.setItem(dripStorageKey('dp-barista'),v);}catch(x){}}
     refreshCalc();
   }
 });
 const shrink=(file,max,q)=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,(max||900)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q||0.72));};im.onerror=rej;im.src=fr.result;};fr.onerror=rej;fr.readAsDataURL(file);});
-const loadOcr=()=>window.Tesseract?Promise.resolve(true):new Promise(res=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=()=>res(!!window.Tesseract);s.onerror=()=>{s.remove();res(false);};document.head.appendChild(s);});
+const OCR_BASE='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/';
+const loadOcr=()=>window.Tesseract?Promise.resolve(true):new Promise(res=>{const s=document.createElement('script');s.src=OCR_BASE+'tesseract.min.js';s.onload=()=>res(!!window.Tesseract);s.onerror=()=>{s.remove();res(false);};document.head.appendChild(s);});
 const scanSt=(m,p)=>{CD.scanMsg=m;if(p!=null)CD.scanP=p;const n=$('#scanst');if(n)n.textContent=m;const b=$('#scanbar');if(b&&p!=null)b.style.width=Math.round(p*100)+'%';};
 const scanPhoto=async file=>{
   const cd=CD;cd.scanBusy=true;cd.scanP=0;cd.scanText='';cd.scanMsg=D.T('ac.scan.load');render();
@@ -3734,7 +3778,7 @@ const scanPhoto=async file=>{
     const img=await shrink(file,1800,0.92);
     if(!cd.label.length)cd.label=[await shrink(file,1000,0.72)];
     if(!await loadOcr())throw new Error('ocr');
-    const w=await Tesseract.createWorker('eng+tha',1,{logger:m=>{if(CD!==cd)return;if(m.status==='recognizing text')scanSt(D.T('ac.scan.busy')+' '+Math.round(m.progress*100)+'%',.15+m.progress*.85);else if(m.progress!=null)scanSt(D.T('ac.scan.load'),Math.min(.15,m.progress*.15));}});
+    const w=await Tesseract.createWorker('eng+tha',1,{workerPath:OCR_BASE+'worker.min.js',corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',logger:m=>{if(CD!==cd)return;if(m.status==='recognizing text')scanSt(D.T('ac.scan.busy')+' '+Math.round(m.progress*100)+'%',.15+m.progress*.85);else if(m.progress!=null)scanSt(D.T('ac.scan.load'),Math.min(.15,m.progress*.15));}});
     let text='';try{const r=await w.recognize(img);text=(r&&r.data&&r.data.text)||'';}finally{try{await w.terminate();}catch(x){}}
     const r=parseLabel(text);cd.scanText=text.trim();
     const filled=[];Object.keys(r.fields).forEach(k=>{const v=String(r.fields[k]||'').trim();if(v&&CF.includes(k)&&!String(cd.v[k]||'').trim()){cd.v[k]=v;filled.push(k);}});
@@ -3749,7 +3793,7 @@ const recode=(src,max,q)=>new Promise(res=>{const im=new Image();im.onload=()=>{
 const doSave=async(okMsg,undo)=>{
   busy=true;
   try{await D.save();busy=false;dirty=false;toast(okMsg);return true;}
-  catch(e){busy=false;if(undo)undo();toast(D.saveError(e));return false;}
+  catch(e){busy=false;if(undo)undo();if(D.account)D.sync.dirty.clear();toast(D.saveError(e));return false;}
 };
 app.addEventListener('change',async e=>{
   const t=e.target;
@@ -3817,6 +3861,7 @@ app.addEventListener('click',async e=>{
      },ed?'Coffee updated':'Coffee added');
      if(ok){if(ed){if(W&&W.beanId===ed.id)W.notes=syncNotes(W.notes,oldF,flavors);CD=null;tab='admin';}else CD={id:null,v:{},notes:[],label:[],done:nid};render();window.scrollTo(0,0);}
      break;}
+   case 'accountout':window.DripAccounts.signOut();break;
    case 'tab':{const t=el.dataset.t;if(t==='addcoffee'&&CD&&(CD.id||CD.done))CD=null;tab=t;resultId=null;render();break;}
    case 'proc':filt.p=el.dataset.p;render();break;
    case 'pick':W=newWork(bean(id));{const p=presets().find(x=>x.id===activePreset);if(p)applyPreset(W,p);}tab='recipe';render();window.scrollTo(0,0);break;
@@ -3831,15 +3876,16 @@ app.addEventListener('click',async e=>{
    case 'saverecipe':{
      if(busy)return;
      const b=bean(W.beanId)||W.beanSnap;
+     if(D.account&&!W.editId)W.barista=D.account.name;
      if(!(+W.recipe.dose>0)){toast('Enter the coffee dose before saving');return;}
-     if(!W.barista.trim()){toast('Enter the barista name before saving');return;}
+     if(!W.barista.trim()&&(!D.account||!W.editId)){toast('Enter the barista name before saving');return;}
      if(W.editId){const s=D.S.snaps.find(x=>x.id===W.editId);if(!s){toast('This saved recipe no longer exists');W.editId=null;render();return;}
        const old=clone(s);Object.assign(s,{customer:W.customer.trim(),barista:W.barista.trim(),dripper:W.dripper,bean:clone(Object.assign({},b,{sample:undefined})),photos:{},recipe:clone(W.recipe),std:clone(STD[W.dripper]),
          brew:clone(W.brew),show:clone(W.show||{}),notes:W.notes.slice(),message:W.message.trim(),profile:clone(W.profile),updatedAt:Date.now()});
        s.payload=await D.makePayload(s);if(!s.key)s.key=await D.hashKey(s.payload);
        const ok=await doSave(D.T('ed.ok'),()=>{Object.keys(s).forEach(k=>delete s[k]);Object.assign(s,old);render();});
        if(ok){resultId=s.id;W=null;render();window.scrollTo(0,0);}break;}
-     const snap={id:D.newId(),createdAt:Date.now(),customer:W.customer.trim(),barista:W.barista.trim(),dripper:W.dripper,
+     const snap={id:D.newId(),createdAt:Date.now(),customer:W.customer.trim(),barista:W.barista.trim(),ownerUsername:D.account?.username,dripper:W.dripper,
        bean:clone(Object.assign({},b,{sample:undefined})),photos:{},recipe:clone(W.recipe),std:clone(STD[W.dripper]),
        brew:clone(W.brew),show:clone(W.show||{}),notes:W.notes.slice(),message:W.message.trim(),profile:clone(W.profile)};
      snap.payload=await D.makePayload(snap);snap.key=await D.hashKey(snap.payload);
@@ -3929,7 +3975,7 @@ const baristas=()=>Array.isArray(D.S.baristas)?D.S.baristas:[];
 const TEMP_PIN='0000';
 const baPins=()=>D.S.baPins&&typeof D.S.baPins==='object'?D.S.baPins:{};
 const pinHash=(n,p)=>hp('ba:'+n.toLowerCase()+':'+p);
-const signedIn=()=>{if(!baristas().length||D.caps.isOwner)return true;{const n0=curBarista();if(n0&&!baristas().includes(n0)){const nn=Object.keys(baPins()).find(k=>(baPins()[k].k||'')===n0);if(nn){try{localStorage.setItem(dripStorageKey('dp-barista'),nn);if(localStorage.getItem(dripStorageKey('dp-ba-auth'))===n0)localStorage.setItem(dripStorageKey('dp-ba-auth'),nn);}catch(x){}}}}let a='';try{a=localStorage.getItem(dripStorageKey('dp-ba-auth'))||'';}catch(e){}const n=curBarista();return !!n&&a===n&&baristas().includes(n);};
+const signedIn=()=>{if(D.account||!baristas().length||D.caps.isOwner)return true;{const n0=curBarista();if(n0&&!baristas().includes(n0)){const nn=Object.keys(baPins()).find(k=>(baPins()[k].k||'')===n0);if(nn){try{localStorage.setItem(dripStorageKey('dp-barista'),nn);if(localStorage.getItem(dripStorageKey('dp-ba-auth'))===n0)localStorage.setItem(dripStorageKey('dp-ba-auth'),nn);}catch(x){}}}}let a='';try{a=localStorage.getItem(dripStorageKey('dp-ba-auth'))||'';}catch(e){}const n=curBarista();return !!n&&a===n&&baristas().includes(n);};
 const signIn=n=>{try{localStorage.setItem(dripStorageKey('dp-barista'),n);localStorage.setItem(dripStorageKey('dp-ba-auth'),n);}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
 const signOut=()=>{try{localStorage.removeItem(dripStorageKey('dp-ba-auth'));localStorage.removeItem(dripStorageKey('dp-barista'));}catch(e){}W=null;resultId=null;selMode=false;tab='beans';D.caps.isOwner=false;try{sessionStorage.removeItem(dripStorageKey('dp-admin'));sessionStorage.removeItem(dripStorageKey('dp-stock'));}catch(e){}stockOk=false;};
 let LI={step:'names',name:'',first:'',tries:0,until:0,msg:''};
@@ -3937,8 +3983,8 @@ let selMode=false;
 const pickKey=()=>curBarista()||'_';
 const myPicks=()=>{const m=D.S.picks&&typeof D.S.picks==='object'?D.S.picks:{};return (m[pickKey()]||[]).filter(id=>bean(id));};
 const setPicks=ids=>{const m=Object.assign({},D.S.picks||{});if(ids.length)m[pickKey()]=ids;else delete m[pickKey()];D.S.picks=m;return doSave(D.T('pk.count').replace('{n}',ids.length));};
-const curBarista=()=>{try{return localStorage.getItem(dripStorageKey('dp-barista'))||'';}catch(e){return '';}};
-const setBarista=n=>{try{if(n)localStorage.setItem(dripStorageKey('dp-barista'),n);else localStorage.removeItem(dripStorageKey('dp-barista'));}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
+const curBarista=()=>{if(D.account)return D.account.name;try{return localStorage.getItem(dripStorageKey('dp-barista'))||'';}catch(e){return '';}};
+const setBarista=n=>{if(D.account)return;try{if(n)localStorage.setItem(dripStorageKey('dp-barista'),n);else localStorage.removeItem(dripStorageKey('dp-barista'));}catch(e){}if(W&&!W.editId&&!W.presetEdit)W.barista=n;};
 let scope={pr:'mine',hs:'mine'};try{Object.assign(scope,JSON.parse(localStorage.getItem(dripStorageKey('dp-scope'))||'{}'));}catch(e){}
 const setScope=(k,v)=>{scope[k]=v;try{localStorage.setItem(dripStorageKey('dp-scope'),JSON.stringify(scope));}catch(e){}};
 const mineOnly=k=>!!curBarista()&&scope[k]!=='all';
@@ -4111,8 +4157,8 @@ const brewLater=id=>{const s=D.S.snaps.find(x=>x.id===id);if(!s)return;const b=s
     const ok=await doSave(D.T('bl.ok'),()=>{s.brew=old.brew;s.show=old.show;s.payload=old.payload;});render();};};
 app.addEventListener('click',e=>{const b=e.target.closest('[data-act="brewlater"]');if(b){e.stopPropagation();brewLater(b.dataset.id);}},true);
 D.sync.onFlush=()=>{const c=$('#qr');if(resultId&&c&&!c.dataset.short&&D.shortUrl(resultId)&&safeToRender())render();};
-const refreshShared=async()=>{if(!D.sync.code||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
-  if(!D.sync.code){if(safeToRender())render();else pendingRender=true;return;}
+const refreshShared=async()=>{if(!D.connected()||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
+  if(!D.connected()){if(safeToRender())render();else pendingRender=true;return;}
   if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!W.presetEdit&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join"],[data-act="copyjoin"],[data-act="syncnow"],[data-act="gencode"],[data-act="setcode"]');if(!b)return;
   if(b.dataset.act==='gencode'){const i=$('#new-code');if(i){i.value=D.newCode();i.focus();}return;}
@@ -4127,13 +4173,21 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
+  if(await window.DripAccounts.boot(D,BRANCH_PATH?'fundamental':'native'))return;
   let joinCode='';const jm=location.hash.match(/^#join=([^&]+)/);
   if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);
-  if(BRANCH_PATH&&joinCode&&!D.cap)await D.join(joinCode);
+  if(BRANCH_PATH&&joinCode&&!D.cap&&!D.account)await D.join(joinCode);
   D.applyTheme();
   /* Devices without the shop code (customers opening a QR) still get the shop's brand colours. */
-  if(!D.sync.code)D.rpc('drip_theme',{}).then(t=>{if(t&&!D.sync.code)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});applyBeans();try{D.caps.isOwner=sessionStorage.getItem(dripStorageKey('dp-admin'))==='1';}catch(x){D.caps.isOwner=false;}
+  if(!D.connected())D.rpc('drip_theme',{}).then(t=>{if(t&&!D.connected())D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});
+  applyBeans();
+  if(D.account){
+    D.caps.isOwner=D.accountRole==='manager';document.body.dataset.accountRole=D.accountRole;
+    if(D.accountRole!=='barista')scope.hs='all';
+    scope.pr='all';
+    if(D.caps.isOwner)stockOk=true;
+  }else try{D.caps.isOwner=sessionStorage.getItem(dripStorageKey('dp-admin'))==='1';}catch(x){D.caps.isOwner=false;}
   const sync=async()=>{const cm=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/);
     if(cm){app.innerHTML='<div class="profile cv-msg"><p class="cap">…</p></div>';document.body.classList.add('cv');let pl=null;try{pl=await D.rpc('drip_snap',{p_ref:cm[1]});}catch(e){}
       try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||'')+(BRANCH_PATH&&pl?'&ref='+cm[1]:''));}catch(x){}}
@@ -4145,10 +4199,10 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
   window.addEventListener('hashchange',sync);
   D.rt.onChange=()=>{lastPull=0;refreshShared();};D.rt.start();
   setInterval(()=>{if(!D.rt.ws&&D.sync.code)D.rt.start();refreshShared();},20000);
-  window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
+  if(!D.account)window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshShared();});
   window.addEventListener('focus',refreshShared);
-  window.addEventListener('online',()=>{D.flush().then(refreshShared);});
+  window.addEventListener('online',()=>{D.flush().catch(()=>{}).then(refreshShared);});
   app.addEventListener('focusout',()=>{if(pendingRender)setTimeout(()=>{if(pendingRender&&safeToRender()){pendingRender=false;render();}},300);});
 })();
 })();

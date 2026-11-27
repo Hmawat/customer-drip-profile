@@ -1,10 +1,12 @@
+import { AccountError, accountEndpoint, accountOnly, branchAccount } from './accounts.js';
+
 // Customer Drip Profile backend on Cloudflare.
 // POST /api/rpc/<name> answers like the old Supabase functions (drip_pull, drip_push, drip_photo, drip_snap, drip_set_code).
 // GET  /api/rt?t=<topic> is a WebSocket: a device sends "changed" after saving and every other device on the topic is told at once.
 // Data lives in D1 (binding DB); the WebSocket hub is a Durable Object (binding RT).
 
-const NATIVE = { items: 'drip_items', config: 'drip_config' };
-const FUNDAMENTAL = { items: 'fundamental_drip_items', config: 'fundamental_drip_config' };
+const NATIVE = { id: 'native', items: 'drip_items', config: 'drip_config' };
+const FUNDAMENTAL = { id: 'fundamental', items: 'fundamental_drip_items', config: 'fundamental_drip_config' };
 const KINDS = new Set(['bean', 'folder', 'photo', 'snap', 'setting']);
 
 class Fail extends Error { constructor(code, status = 400) { super(code); this.code = code; this.status = status; } }
@@ -43,7 +45,7 @@ async function check(env, shop, code) {
 }
 
 // Splits upserts into batches of roughly 1 MB so large photos never hit D1 request limits.
-async function upsert(env, shop, rows, keepTime) {
+async function upsert(env, shop, rows, keepTime, author = null) {
   const t0 = Date.now(); let batch = [], size = 0;
   const flush = async () => { if (batch.length) await env.DB.batch(batch); batch = []; size = 0; };
   for (const r of rows) {
@@ -53,11 +55,62 @@ async function upsert(env, shop, rows, keepTime) {
     const ms = keepTime && r.t ? Date.parse(r.t) || t0 : t0;
     batch.push(env.DB.prepare(`INSERT INTO ${shop.items}(kind, id, data, deleted, updated_ms) VALUES (?,?,?,?,?)
       ON CONFLICT(kind, id) DO UPDATE SET data=excluded.data, deleted=excluded.deleted, updated_ms=excluded.updated_ms
-      WHERE ${shop.items}.data IS NOT excluded.data OR ${shop.items}.deleted IS NOT excluded.deleted`).bind(k, id, data, del ? 1 : 0, ms));
+      WHERE (${shop.items}.data IS NOT excluded.data OR ${shop.items}.deleted IS NOT excluded.deleted)
+      AND (? IS NULL OR COALESCE(json_extract(${shop.items}.data, '$.v.ownerUsername')=?,json_extract(${shop.items}.data, '$.v.barista')=?))`)
+      .bind(k, id, data, del ? 1 : 0, ms, author?.username ?? null, author?.username ?? null, author?.name ?? null));
     size += (data ? data.length : 0) + 200;
     if (size > 900000 || batch.length >= 50) await flush();
   }
   await flush();
+}
+
+async function access(env, shop, body, req, write = false) {
+  if (body.p_account === true) return branchAccount(env, req, shop.id, write);
+  if (await accountOnly(env)) fail('account_required', 401);
+  await check(env, shop, body.p_code);
+  return null;
+}
+
+const authSetting = row => row.k === 'setting' &&
+  (['adminPin','stockPin','baristas','baPins'].includes(row.i) || String(row.i).startsWith('baPin.'));
+
+async function checkBaristaRows(env, shop, rows, user) {
+  if (rows.some(row => row.k !== 'snap' || row.x === true || row.x === 'true' || row.d?.v?.barista !== user.name)) fail('not_allowed', 403);
+  for (let offset=0;offset<rows.length;offset+=50) {
+    const ids=rows.slice(offset,offset+50).map(row=>String(row.i ?? ''));
+    const found=await env.DB.prepare(`SELECT data FROM ${shop.items} WHERE kind='snap' AND id IN (${ids.map(()=>'?').join(',')})`).bind(...ids).all();
+    if (found.results.some(row => {
+      const snap = JSON.parse(row.data || 'null')?.v;
+      return snap?.ownerUsername ? snap.ownerUsername !== user.username : snap?.barista !== user.name;
+    })) fail('not_allowed', 403);
+  }
+}
+
+async function readRoster(env) {
+  const entries=await Promise.all([NATIVE,FUNDAMENTAL].map(async shop=>{
+    await schema(env,shop);
+    const row=await env.DB.prepare(`SELECT data FROM ${shop.items} WHERE kind='setting' AND id='baristas' AND deleted=0`).first();
+    const names=JSON.parse(row?.data || '[]');
+    return [shop.id,Array.isArray(names) ? names.filter(name=>typeof name==='string') : []];
+  }));
+  return Object.fromEntries(entries);
+}
+
+const SAMPLE_BEANS = [
+  {id:'sample-fund-thai',name:'Sample · Thailand Washed',country:'Thailand',region:'Chiang Mai',farm:'Example lot',farmer:'',variety:'Bourbon',process:'Washed',roast:'Light',altitude:'1,400 m',harvest:'',note:'Example coffee. Edit this entry in Admin Settings.',flavors:['Orange','Honey','Jasmine'],hue:28,sample:true},
+  {id:'sample-fund-ethiopia',name:'Sample · Ethiopia Natural',country:'Ethiopia',region:'Guji',farm:'Example lot',farmer:'',variety:'Heirloom',process:'Natural',roast:'Light',altitude:'1,950 m',harvest:'',note:'Example coffee. Edit this entry in Admin Settings.',flavors:['Blueberry','Peach','Black tea'],hue:265,sample:true},
+  {id:'sample-fund-colombia',name:'Sample · Colombia Honey',country:'Colombia',region:'Huila',farm:'Example lot',farmer:'',variety:'Caturra',process:'Honey',roast:'Light',altitude:'1,650 m',harvest:'',note:'Example coffee. Edit this entry in Admin Settings.',flavors:['Red apple','Caramelized','Almond'],hue:14,sample:true},
+];
+
+async function seedFundamental(env) {
+  const rows = SAMPLE_BEANS.map((bean,o) => ['bean',bean.id,JSON.stringify({o,v:bean})]);
+  rows.push(['setting','beansSet','true']);
+  const terms = rows.map(() => '(?,?,?)').join(',');
+  await env.DB.prepare(`WITH samples(kind,id,data) AS (VALUES ${terms})
+    INSERT INTO ${FUNDAMENTAL.items}(kind,id,data,deleted,updated_ms)
+    SELECT kind,id,data,0,? FROM samples
+    WHERE NOT EXISTS (SELECT 1 FROM ${FUNDAMENTAL.items} WHERE kind='bean' OR (kind='setting' AND id='beansSet'))
+    ON CONFLICT(kind,id) DO NOTHING`).bind(...rows.flat(),Date.now()).run();
 }
 
 async function sharedSnap(env, shop, ref) {
@@ -70,8 +123,9 @@ async function sharedSnap(env, shop, ref) {
 }
 
 const F = {
-  async drip_pull(env, a, shop) {
-    await check(env, shop, a.p_code);
+  async drip_pull(env, a, shop, req) {
+    const account=await access(env, shop, a, req);
+    if (shop===FUNDAMENTAL && account?.user.admin) await seedFundamental(env);
     const now = Date.now();
     const since = a.p_since ? Date.parse(a.p_since) : NaN;
     const q = Number.isFinite(since)
@@ -79,13 +133,20 @@ const F = {
       : env.DB.prepare(`SELECT kind, id, data, deleted, updated_ms FROM ${shop.items}`);
     const { results } = await q.all();
     // Rows are written as text so the stored JSON is not parsed and re-encoded.
-    const parts = results.map((r) => `{"k":${JSON.stringify(r.kind)},"i":${JSON.stringify(r.id)},"d":${r.data ?? 'null'},"x":${r.deleted ? 'true' : 'false'},"t":"${iso(r.updated_ms)}"}`);
+    const rows=account ? results.filter(r => !authSetting({k:r.kind,i:r.id})) : results;
+    const parts = rows.map((r) => `{"k":${JSON.stringify(r.kind)},"i":${JSON.stringify(r.id)},"d":${r.data ?? 'null'},"x":${r.deleted ? 'true' : 'false'},"t":"${iso(r.updated_ms)}"}`);
     return { raw: `{"now":"${iso(now)}","rows":[${parts.join(',')}]}` };
   },
-  async drip_push(env, a, shop) {
-    await check(env, shop, a.p_code);
-    if (!Array.isArray(a.p_rows) || a.p_rows.length > 500) fail('bad_rows');
-    await upsert(env, shop, a.p_rows, false);
+  async drip_push(env, a, shop, req) {
+    const account=await access(env, shop, a, req, true);
+    if (!Array.isArray(a.p_rows) || a.p_rows.length > 500 || a.p_rows.some(row => !row || typeof row !== 'object')) fail('bad_rows');
+    if (account && a.p_rows.some(authSetting)) fail('not_allowed', 403);
+    const barista=account?.role==='barista' ? account.user : null;
+    if (barista) {
+      await checkBaristaRows(env, shop, a.p_rows, barista);
+      for (const row of a.p_rows) row.d.v.ownerUsername=barista.username;
+    }
+    await upsert(env, shop, a.p_rows, false, barista);
     return iso(Date.now());
   },
   async drip_photo(env, a, shop) {
@@ -107,8 +168,9 @@ const F = {
     try { const t = r && r.data ? JSON.parse(r.data) : null; if (t && /^native-(slate|mica)$/.test(t.ci)) ci = t.ci; if (t && t.cvb === 'light') cvb = 'light'; } catch (e) {}
     return { ci, cvb };
   },
-  async drip_set_code(env, a, shop) {
-    await check(env, shop, a.p_code);
+  async drip_set_code(env, a, shop, req) {
+    const account=await access(env, shop, a, req, true);
+    if (account && !account.user.admin) fail('not_allowed', 403);
     const v = norm(a.p_new);
     if (v.length < 6 || v.length > 40) fail('bad_new_code');
     const other = shop === NATIVE ? FUNDAMENTAL : NATIVE;
@@ -123,6 +185,7 @@ const F = {
 
 // One-time copy from the old database: {code, rows:[{k,i,d,x,t}]}. Sets the shop code if none is stored yet.
 async function importRows(env, b) {
+  if (await accountOnly(env)) fail('account_required', 401);
   const have = await codeHash(env, NATIVE);
   if (have) await check(env, NATIVE, b.code);
   if (!Array.isArray(b.rows)) fail('bad_rows');
@@ -157,15 +220,18 @@ export default {
     }
     if (req.method !== 'POST') return json({ message: 'method' }, 405);
     try {
-      await schema(env, shop);
       const body = (await req.json().catch(() => ({}))) || {};
+      if (url.pathname.startsWith('/api/accounts/')) {
+        return await accountEndpoint(env,req,url.pathname.slice('/api/accounts/'.length),body,()=>readRoster(env));
+      }
+      await schema(env, shop);
       if (shop === NATIVE && path === '/api/import') return json(await importRows(env, body));
       const m = /^\/api\/rpc\/([a-z_]+)$/.exec(path);
       const fn = m && Object.prototype.hasOwnProperty.call(F, m[1]) ? F[m[1]] : null;
       if (!fn) return json({ message: 'not_found' }, 404);
-      return json(await fn(env, body, shop));
+      return json(await fn(env, body, shop, req));
     } catch (e) {
-      if (e instanceof Fail) return json({ message: e.code }, e.status);
+      if (e instanceof Fail || e instanceof AccountError) return json({ message: e.code }, e.status);
       console.error(e && e.stack || String(e));
       return json({ message: 'server_error' }, 500);
     }

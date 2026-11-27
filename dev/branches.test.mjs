@@ -9,10 +9,12 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const repo = fileURLToPath(new URL('../', import.meta.url));
   const nativeCode = 'TESTNATIVE';
   const fundamentalCode = 'TESTFUNDAMENTAL';
+  const ownerPassword = 'Test owner password, not production';
   const server = spawn(process.execPath, ['--no-warnings', 'dev/serve.mjs', '.', '0'], {
     cwd: repo,
     env: {
       ...process.env,
+      ACCOUNT_OWNER_PASSWORD_HASH: createHash('sha256').update(ownerPassword).digest('hex'),
       FUNDAMENTAL_SETUP_SHA256: createHash('sha256').update(fundamentalCode).digest('hex'),
     },
     stdio: ['ignore', 'pipe', 'inherit'],
@@ -23,11 +25,11 @@ test('Native and Fundamental authenticate, store and share profiles separately',
     once(server, 'exit').then(([code]) => { throw new Error('Local server exited with ' + code); }),
   ]);
   const port = Number(String(startup).trim().split(' ').at(-1));
-  const request = async (path, data) => {
+  const request = async (path, data, cookie = '') => {
     const r = await fetch(`http://127.0.0.1:${port}/api/${path}`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie } : {}) }, body: JSON.stringify(data),
     });
-    return { status: r.status, data: await r.json() };
+    return { status: r.status, data: await r.json(), ...(r.headers.has('Set-Cookie') ? { cookie: r.headers.get('Set-Cookie').split(';')[0] } : {}) };
   };
   const rpc = (branch, name, data) => request(branch + 'rpc/' + name, data);
   const nativeRows = [
@@ -82,5 +84,38 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await rotate(fundamental, fundamentalCode, 'TESTNEWFUNDAMENTAL')).status, 200);
   assert.equal((await pull(fundamental, fundamentalCode)).status, 403);
   assert.deepEqual(await staff(fundamental, 'TESTNEWFUNDAMENTAL'), ['Fundamental Staff']);
+  assert.deepEqual(await staff('', nativeCode), ['Native Staff']);
+  const accounts = (route, data, cookie) => request('accounts/' + route, data, cookie);
+  const owner = await accounts('login', { username: 'admin', password: ownerPassword });
+  assert.equal(owner.status, 200);
+  assert.equal(owner.data.user.admin, true);
+  assert.deepEqual(Object.keys(owner.data.user.roles).sort(), ['fundamental', 'native']);
+  const invitation = await accounts('save-user', { username:'staff.test', name:'Native Staff', roles:{native:'barista'} }, owner.cookie);
+  assert.equal(invitation.status, 200);
+  assert.match(invitation.data.token, /^[a-f0-9]{64}$/);
+  const password = 'Staff test phrase 123!';
+  assert.equal((await accounts('activate', { token: invitation.data.token, password })).status, 200);
+  assert.equal((await accounts('activate', { token: invitation.data.token, password })).status, 400);
+  const member = await accounts('login', { username:'staff.test', password });
+  assert.deepEqual(member.data.user.roles, {native:'barista'});
+  const read = (branch, cookie) => request(branch + 'rpc/drip_pull', {p_account:true}, cookie);
+  assert.equal((await read('', member.cookie)).status, 200);
+  assert.equal((await read(fundamental, member.cookie)).status, 403);
+  assert.equal((await accounts('users', {}, member.cookie)).status, 403);
+  const write = (branch, rows, cookie) => request(branch + 'rpc/drip_push', {p_account:true,p_rows:rows}, cookie);
+  assert.equal((await write('', [{k:'setting',i:'baristas',d:['Changed']}], member.cookie)).status, 403);
+  assert.equal((await write('', [{k:'snap',i:'member-snap',d:{v:{barista:'Native Staff'}}}], member.cookie)).status, 200);
+  assert.equal((await read(fundamental, owner.cookie)).status, 200);
+  assert.equal((await accounts('mode', {enforced:true}, owner.cookie)).status, 200);
+  assert.equal((await pull('', nativeCode)).status, 401);
+  assert.equal((await request('import', {code:nativeCode, rows:[]})).status, 401);
+  assert.equal((await snap('', 'aaaaaaaaaaaaaaaa')).data, 'native-recipe');
+  assert.equal((await accounts('save-user', {username:'staff.test',name:'Native Staff',roles:{fundamental:'viewer'}}, owner.cookie)).status, 200);
+  assert.equal((await read('', member.cookie)).status, 403);
+  assert.equal((await read(fundamental, member.cookie)).status, 200);
+  assert.equal((await write(fundamental, [], member.cookie)).status, 403);
+  assert.equal((await accounts('logout', {}, member.cookie)).status, 200);
+  assert.equal((await read(fundamental, member.cookie)).status, 401);
+  assert.equal((await accounts('mode', {enforced:false}, owner.cookie)).status, 200);
   assert.deepEqual(await staff('', nativeCode), ['Native Staff']);
 });
