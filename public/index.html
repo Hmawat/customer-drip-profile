@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-gCnkjNUz5RsYSqLdGq6jk0XGGJ1+5f2Lnkatg1p7Wwg=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-4vC7bsdy8H+7DhyTRhZ3MfIUeyvg4ROnj51EtmDBi8E=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-FRO8mMeSWOjskU8Gsw46zHNwbzonXNWZOIE8HBuc52M=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-Vx3Te2N+aigppLPpsalS3YU4YfI69XfhWK8C7yGK3kY=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
 const BRANCH_PATH=/^\/fundamental\/?$/.test(location.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
@@ -4249,7 +4249,9 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
-  if(await window.DripAccounts.boot(D,BRANCH_PATH?'fundamental':'native'))return;
+  const profileRef=new URLSearchParams(location.search).get('profile');
+  const isPlateProfile=/^[A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64}$/.test(profileRef||'');
+  if(!isPlateProfile&&await window.DripAccounts.boot(D,BRANCH_PATH?'fundamental':'native'))return;
   let joinCode='';const jm=location.hash.match(/^#join=([^&]+)/);
   if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);
@@ -4265,9 +4267,11 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
     scope.pr='all';
     if(D.caps.isOwner)stockOk=true;
   }else try{D.caps.isOwner=sessionStorage.getItem(dripStorageKey('dp-admin'))==='1';}catch(x){D.caps.isOwner=false;}
-  const sync=async()=>{const cm=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/);
-    if(cm){app.innerHTML='<div class="profile cv-msg"><p class="cap">…</p></div>';document.body.classList.add('cv');let pl=null;try{pl=await D.rpc('drip_snap',{p_ref:cm[1]});}catch(e){}
-      try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||'')+(BRANCH_PATH&&pl?'&ref='+cm[1]:''));}catch(x){}}
+  const sync=async()=>{
+    const ref=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/)?.[1]||
+      (isPlateProfile&&!location.hash.startsWith('#s=')?profileRef:null);
+    if(ref){app.innerHTML='<div class="profile cv-msg"><p class="cap">…</p></div>';document.body.classList.add('cv');let pl=null;try{pl=await D.rpc('drip_snap',{p_ref:ref});}catch(e){}
+      try{history.replaceState(null,'',location.pathname+location.search+'#s='+(pl||'')+(BRANCH_PATH&&pl?'&ref='+ref:''));}catch(x){}}
     D.shared=null;const m=location.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);if(m){try{D.shared=await D.readPayload(m[1]);if(BRANCH_PATH)D.shared.shareRef=m[2];}catch(e){D.shared=null;}}render();
     const cur=D.shared;if(cur&&!D.hasPhotos(cur)){const ok=await D.loadSharedPhotos(cur);if(ok&&D.shared===cur&&location.hash.indexOf('#s=')===0)render();}};
   await sync();

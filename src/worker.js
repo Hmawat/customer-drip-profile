@@ -156,7 +156,7 @@ async function openPlate(env,req,url) {
   if(record){
     await schema(env,plate.shop);
     if(await sharedSnap(env,plate.shop,record.ref)){
-      headers.Location=(plate.shop===FUNDAMENTAL?'/fundamental/':'/')+'#c='+record.ref;
+      headers.Location=(plate.shop===FUNDAMENTAL?'/fundamental/':'/')+'?profile='+encodeURIComponent(record.ref);
       return new Response(null,{status:302,headers});
     }
   }
