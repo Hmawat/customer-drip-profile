@@ -14,6 +14,8 @@
     invalid_position:'Choose a position from the list.',
     invalid_user:'Enter a display name and a username of 3–32 letters, numbers, dots, dashes or underscores.',
     username_taken:'That username already exists. Select it from the list to edit it.',
+    user_archived:'That username belongs to a deleted account. Restore it first.',
+    user_not_found:'This staff account could not be found.',
     choose_role:'Choose at least one branch permission or disable the account.',
     retry_later:'Too many attempts. Try again in a few minutes.',
     account_required:'Sign in again to continue.',
@@ -78,8 +80,8 @@
     const admin=recovery||user?.admin;
     const explanation=forced?'Change your temporary password before opening your branch.':admin?'Use at least six characters.':'Use exactly six characters without spaces.';
     pane(recovery?'Reset admin password':'Change password','<p class="cap">'+explanation+'</p>'+
-      '<form id="manage-password"><div class="f"><label class="lbl" for="current-secret">'+(recovery?'Admin recovery key':'Current password')+'</label>'+
-      '<input id="current-secret" type="password" name="current" autocomplete="'+(recovery?'off':'current-password')+'" required></div>'+
+      '<form id="manage-password">'+(forced?'':'<div class="f"><label class="lbl" for="current-secret">'+(recovery?'Admin recovery key':'Current password')+'</label>'+
+      '<input id="current-secret" type="password" name="current" autocomplete="'+(recovery?'off':'current-password')+'" required></div>')+
       '<div class="f"><label class="lbl" for="replacement-password">New password</label><input id="replacement-password" type="password" name="password" autocomplete="new-password" minlength="6" maxlength="'+(admin?'128':'6')+'" required></div>'+
       '<div class="f"><label class="lbl" for="repeat-password">Confirm new password</label><input id="repeat-password" type="password" name="repeat" autocomplete="new-password" required></div>'+
       '<div class="acts"><button class="btn" type="submit">'+(recovery?'Reset password':'Change password')+'</button>'+
@@ -89,7 +91,7 @@
       if(data.get('password')!==data.get('repeat')){$('account-error').textContent='The passwords do not match.';return;}
       const password=data.get('password');
       if(recovery){await request('recover-admin',{recovery:data.get('current'),password});location.replace(accountHome);return;}
-      await request('change-password',{current:data.get('current'),password});
+      await request('change-password',forced?{password}:{current:data.get('current'),password});
       location.replace(accountHome);
     });
   }
@@ -140,28 +142,66 @@
     else{pane('Users',contents);$('account-logout').onclick=signOut;}
     function select(selected, existingName = '') {
       const visible=model.users.filter(user=>!branch||user.roles[branch]||(branch==='native'&&user.nativeName));
-      const unlinked=branch==='fundamental'?[]:nativeNames.filter(name=>!model.users.some(user=>user.nativeName===name));
+      const archived=model.archived||[];
+      const visibleArchived=archived.filter(user=>!branch||user.roles[branch]||(branch==='native'&&user.nativeName));
+      const linkedNames=[...model.users,...archived];
+      const unlinked=branch==='fundamental'?[]:nativeNames.filter(name=>!linkedNames.some(user=>user.nativeName===name));
       $('accounts-list').innerHTML='<button class="btn ghost" id="add-user" type="button">Add user</button>'+
         visible.map(user=>'<button class="btn ghost" type="button" data-user="'+escape(user.username)+'"><b>'+escape(user.name)+'</b> · '+escape(user.username)+(user.position?' · '+escape(user.position):'')+' <small>('+ (user.disabled?'Disabled':user.mustChange?'Password change pending':user.active?'Active':'Setup pending')+')</small></button>').join('')+
-        (unlinked.length?'<h3>Existing Native staff</h3>'+unlinked.map(name=>'<button class="btn ghost" type="button" data-native-name="'+escape(name)+'">'+escape(name)+'</button>').join(''):'');
+        (unlinked.length?'<h3>Existing Native staff</h3>'+unlinked.map(name=>'<button class="btn ghost" type="button" data-native-name="'+escape(name)+'">'+escape(name)+'</button>').join(''):'')+
+        (visibleArchived.length?'<details><summary>Deleted accounts ('+visibleArchived.length+')</summary>'+visibleArchived.map(user=>
+          '<div><span>'+escape(user.name)+' · '+escape(user.username)+'</span> <button class="btn ghost" type="button" data-restore-user="'+escape(user.username)+'">Restore</button></div>').join('')+'</details>':'');
       $('add-user').onclick=()=>select(null);
       for(const button of $('accounts-list').querySelectorAll('[data-user]'))button.onclick=()=>select(model.users.find(user=>user.username===button.dataset.user));
       for(const button of $('accounts-list').querySelectorAll('[data-native-name]'))button.onclick=()=>select(null,button.dataset.nativeName);
+      for(const button of $('accounts-list').querySelectorAll('[data-restore-user]'))button.onclick=async()=>{
+        button.disabled=true;
+        try{
+          const {username}=await request('restore-user',{username:button.dataset.restoreUser});
+          Object.assign(model,await request('users'));
+          select(model.users.find(user=>user.username===username));
+          $('account-invite').textContent='Account restored as disabled. Reset its password and enable it before sign-in.';
+        }catch(err){showError(err);button.disabled=false;}
+      };
       $('account-editor').innerHTML='<h2>'+(selected?'Edit user':'New user')+'</h2><form id="edit-user">'+
         '<div class="f"><label class="lbl" for="edit-username">Username</label><input id="edit-username" name="username" required minlength="3" maxlength="32" autocapitalize="none" value="'+escape(selected?.username)+'"'+(selected?' readonly':'')+'></div>'+
         '<div class="f"><label class="lbl" for="edit-name">Display name</label><input id="edit-name" name="name" maxlength="80" required value="'+escape(selected?.name)+'"></div>'+
         '<div class="f"><label class="lbl" for="edit-position">Position</label><select id="edit-position" name="position"><option value="">Select a position</option>'+
         model.positions.map(position=>'<option value="'+escape(position)+'"'+(selected?.position===position?' selected':'')+'>'+escape(position)+'</option>').join('')+'</select></div>'+
         '<div class="f"><label class="lbl" for="edit-native">Link existing Native staff</label><select id="edit-native" name="nativeName"><option value="">No link</option>'+
-        [...new Set([...nativeNames,...(selected?.nativeName?[selected.nativeName]:[])])].filter(name=>name===selected?.nativeName||!model.users.some(user=>user.nativeName===name))
+        [...new Set([...nativeNames,...(selected?.nativeName?[selected.nativeName]:[])])].filter(name=>name===selected?.nativeName||!linkedNames.some(user=>user.nativeName===name))
           .map(name=>'<option value="'+escape(name)+'"'+(selected?.nativeName===name?' selected':'')+'>'+escape(name)+'</option>').join('')+'</select></div>'+
         '<p class="cap">Link the existing Native name to keep access to that person’s recipe history.</p>'+
-        '<div class="f"><label class="lbl" for="edit-temp">'+(selected?'Reset password (optional)':'Temporary password')+'</label>'+
-        '<input id="edit-temp" name="temporaryPassword" type="password" autocomplete="new-password" minlength="6" maxlength="6"'+(selected?'':' required')+'></div>'+
+        (selected?'':'<div class="f"><label class="lbl" for="edit-temp">Temporary password</label>'+
+        '<input id="edit-temp" name="temporaryPassword" type="password" autocomplete="new-password" minlength="6" maxlength="6" required></div>')+
         '<fieldset class="branch-access"><legend class="lbl">Branch access</legend><p class="cap">Select one or more branches and choose a role for each.</p>'+
         Object.keys(branches).map(key=>branchAccess(key,selected?.roles[key])).join('')+'</fieldset>'+
         (selected?'<label class="account-check"><input type="checkbox" name="disabled"'+(selected.disabled?' checked':'')+'> Disable account</label>':'')+
-        '<div class="acts"><button class="btn" type="submit">'+(selected?'Save permissions':'Create user')+'</button></div></form><div id="account-invite"></div>';
+        '<div class="acts"><button class="btn" type="submit">'+(selected?'Save permissions':'Create user')+'</button></div></form>'+
+        (selected?'<section class="account-rollout"><h3>Account actions</h3><form id="reset-user"><div class="f">'+
+          '<label class="lbl" for="reset-temp">New temporary password</label><input id="reset-temp" name="temporaryPassword" type="password" autocomplete="new-password" minlength="6" maxlength="6" required></div>'+
+          '<div class="acts"><button class="btn ghost" type="submit">Reset password</button>'+
+          '<button class="btn ghost" id="delete-user" type="button">Delete account</button></div></form></section>':'')+
+        '<p id="account-invite" role="status"></p>';
+      if(selected){
+        onSubmit('reset-user',async data=>{
+          if(!confirm('Reset this password and sign the user out?'))return;
+          await request('reset-user-password',{username:selected.username,temporaryPassword:data.get('temporaryPassword')});
+          Object.assign(model,await request('users'));
+          select(model.users.find(user=>user.username===selected.username));
+          $('account-invite').textContent='Password reset. The user must choose a new password after signing in.';
+        });
+        $('delete-user').onclick=async event=>{
+          if(!confirm('Delete this staff account? It will be signed out. Its saved recipes will be kept.'))return;
+          const button=event.currentTarget;button.disabled=true;
+          try{
+            await request('delete-user',{username:selected.username});
+            Object.assign(model,await request('users'));
+            select(null);
+            $('account-invite').textContent='Account deleted.';
+          }catch(err){showError(err);button.disabled=false;}
+        };
+      }
       const prefillNative = nativeName => {
         if(!nativeName)return;
         if(!$('edit-name').value)$('edit-name').value=nativeName;
@@ -176,8 +216,8 @@
       onSubmit('edit-user',async data=>{
         $('account-error').textContent='';
         const values=Object.fromEntries(data);
-        if(!selected && model.users.some(user=>user.username===usernameOf(values.username)))throw new Error('username_taken');
-        if(selected?.active&&values.temporaryPassword&&!values.disabled&&!confirm('Reset this password and sign the user out?'))return;
+        if(!selected&&model.users.some(user=>user.username===usernameOf(values.username)))throw new Error('username_taken');
+        if(!selected&&archived.some(user=>user.username===usernameOf(values.username)))throw new Error('user_archived');
         const branchRoles=Object.fromEntries(Object.keys(branches).filter(key=>data.has('access-'+key)).map(key=>[key,values[key]]));
         const result=await request('save-user',{username:values.username,name:values.name,position:values.position,nativeName:values.nativeName,
           roles:branchRoles,disabled:!!values.disabled,temporaryPassword:values.temporaryPassword});

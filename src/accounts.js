@@ -6,6 +6,7 @@ const POSITIONS = ['Trainee','Service','Barista','Senior Barista','Captain','Sup
 const validPassword = (value, admin = false) => typeof value === 'string' &&
   (admin ? value.length >= 6 && value.length <= 128 : /^\S{6}$/u.test(value));
 const ROLES = new Set(['viewer', 'barista', 'manager']);
+const ARCHIVED = 2;
 const USERNAME = /^[\p{L}\p{Nd}][\p{L}\p{M}\p{Nd}._-]{2,31}$/u;
 const encoder = new TextEncoder();
 const hex = bytes => Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
@@ -146,12 +147,17 @@ async function changePassword(env, req, user, body, recovery = false) {
   const row=await accountRow(env,user.username);
   if(!recovery){
     await throttle(env,req,'change:'+user.username,10);
-    if(!await verifyPassword(env,user.username,body.current,row))fail('invalid_login',401);
+    if(user.mustChange && row?.must_change){
+      if(await verifyPassword(env,user.username,body.password,row))fail('same_password');
+    }else if(!await verifyPassword(env,user.username,body.current,row))fail('invalid_login',401);
   }
   const hash=await passwordHash(body.password,random(16));
+  const activeToken=recovery?null:await sessionKey(env,tokenOf(req));
   const statement=admin&&!row
-    ? env.DB.prepare("INSERT OR IGNORE INTO staff_accounts(username,name,roles,password) VALUES ('admin','Admin','{}',?)").bind(hash)
-    : env.DB.prepare('UPDATE staff_accounts SET password=?,invite_hash=NULL,invite_until=NULL WHERE username=? AND password=? AND disabled=0').bind(hash,user.username,row?.password);
+    ? env.DB.prepare("INSERT OR IGNORE INTO staff_accounts(username,name,roles,password) SELECT 'admin','Admin','{}',? WHERE ? IS NULL OR EXISTS(SELECT 1 FROM staff_sessions WHERE token_hash=? AND expires>?)")
+      .bind(hash,activeToken,activeToken,Date.now())
+    : env.DB.prepare('UPDATE staff_accounts SET password=?,invite_hash=NULL,invite_until=NULL WHERE username=? AND password=? AND disabled=0 AND (? IS NULL OR EXISTS(SELECT 1 FROM staff_sessions WHERE token_hash=? AND expires>?))')
+      .bind(hash,user.username,row?.password,activeToken,activeToken,Date.now());
   const results=await env.DB.batch([
     statement,
     env.DB.prepare('UPDATE staff_profiles SET must_change=0 WHERE username=? AND EXISTS(SELECT 1 FROM staff_accounts WHERE username=? AND password=?)').bind(user.username,user.username,hash),
@@ -184,8 +190,9 @@ async function saveUser(env, body, readRoster) {
   const roles=Object.fromEntries(BRANCHES.filter(branch=>ROLES.has(body.roles?.[branch])).map(branch=>[branch,body.roles[branch]]));
   const disabled=body.disabled===true?1:0;
   if(!disabled&&!Object.keys(roles).length)fail('choose_role');
-  const existing=await env.DB.prepare(`SELECT a.username,p.position,p.native_name FROM staff_accounts a
+  const existing=await env.DB.prepare(`SELECT a.username,a.disabled,p.position,p.native_name FROM staff_accounts a
     LEFT JOIN staff_profiles p ON p.username=a.username WHERE a.username=?`).bind(username).first();
+  if(existing?.disabled===ARCHIVED)fail('user_archived',409);
   const position=body.position??existing?.position??'';
   const nativeName=(body.nativeName??existing?.native_name)||null;
   if(position&&!POSITIONS.includes(position))fail('invalid_position');
@@ -202,18 +209,62 @@ async function saveUser(env, body, readRoster) {
       VALUES (?,?,?,?,?,?,?) ON CONFLICT(username) DO UPDATE SET name=excluded.name,roles=excluded.roles,disabled=excluded.disabled,
       password=CASE WHEN ? THEN excluded.password ELSE password END,
       invite_hash=CASE WHEN ? THEN excluded.invite_hash ELSE invite_hash END,
-      invite_until=CASE WHEN ? THEN excluded.invite_until ELSE invite_until END`)
+      invite_until=CASE WHEN ? THEN excluded.invite_until ELSE invite_until END WHERE staff_accounts.disabled<>?`)
       .bind(username,name,JSON.stringify(roles),disabled,password,token?await sha(token):null,token?Date.now()+INVITE_MS:null,
-        password||token?1:0,authChanged?1:0,authChanged?1:0),
-    env.DB.prepare(`INSERT INTO staff_profiles(username,position,native_name,must_change) VALUES (?,?,?,?)
+        password||token?1:0,authChanged?1:0,authChanged?1:0,ARCHIVED),
+    env.DB.prepare(`INSERT INTO staff_profiles(username,position,native_name,must_change) SELECT ?,?,?,?
+      WHERE EXISTS(SELECT 1 FROM staff_accounts WHERE username=? AND disabled<>?)
       ON CONFLICT(username) DO UPDATE SET position=excluded.position,native_name=excluded.native_name,
       must_change=CASE WHEN ? THEN excluded.must_change ELSE must_change END`)
-      .bind(username,position,nativeName,password?1:0,password||token?1:0),
+      .bind(username,position,nativeName,password?1:0,username,ARCHIVED,password||token?1:0),
   ];
   if(authChanged)statements.push(env.DB.prepare('DELETE FROM staff_sessions WHERE username=?').bind(username));
-  try{await env.DB.batch(statements);}
+  try{
+    const [saved]=await env.DB.batch(statements);
+    if(!saved.meta.changes)fail('user_archived',409);
+  }
   catch(e){if(String(e).includes('staff_profiles.native_name'))fail('roster_already_linked',409);throw e;}
   return json({username,token});
+}
+
+function staffUsername(body) {
+  const username=usernameOf(body.username);
+  if(!USERNAME.test(username)||username==='admin')fail('invalid_user');
+  return username;
+}
+
+async function resetUserPassword(env, body) {
+  const username=staffUsername(body);
+  if(!validPassword(body.temporaryPassword))fail('invalid_password');
+  const password=await passwordHash(body.temporaryPassword,random(16));
+  const [updated]=await env.DB.batch([
+    env.DB.prepare('UPDATE staff_accounts SET password=?,invite_hash=NULL,invite_until=NULL WHERE username=? AND disabled<>?')
+      .bind(password,username,ARCHIVED),
+    env.DB.prepare(`INSERT INTO staff_profiles(username,must_change) SELECT ?,1 WHERE EXISTS(SELECT 1 FROM staff_accounts WHERE username=? AND password=?)
+      ON CONFLICT(username) DO UPDATE SET must_change=1`).bind(username,username,password),
+    env.DB.prepare('DELETE FROM staff_sessions WHERE username=?').bind(username),
+  ]);
+  if(!updated.meta.changes)fail('user_not_found',404);
+  return json({username});
+}
+
+async function archiveUser(env, body) {
+  const username=staffUsername(body);
+  const [updated]=await env.DB.batch([
+    env.DB.prepare('UPDATE staff_accounts SET disabled=?,password=NULL,invite_hash=NULL,invite_until=NULL WHERE username=? AND disabled<>?')
+      .bind(ARCHIVED,username,ARCHIVED),
+    env.DB.prepare('UPDATE staff_profiles SET must_change=0 WHERE username=?').bind(username),
+    env.DB.prepare('DELETE FROM staff_sessions WHERE username=?').bind(username),
+  ]);
+  if(!updated.meta.changes)fail('user_not_found',404);
+  return json({username});
+}
+
+async function restoreUser(env, body) {
+  const username=staffUsername(body);
+  const result=await env.DB.prepare('UPDATE staff_accounts SET disabled=1 WHERE username=? AND disabled=?').bind(username,ARCHIVED).run();
+  if(!result.meta.changes)fail('user_not_found',404);
+  return json({username});
 }
 
 export async function accountEndpoint(env, req, action, body, readRoster) {
@@ -238,10 +289,15 @@ export async function accountEndpoint(env, req, action, body, readRoster) {
   if(action==='change-password')return await changePassword(env,req,user,body);
   if (!user.admin) fail('not_allowed', 403);
   if (action === 'save-user') return await saveUser(env, body, readRoster);
+  if (action === 'reset-user-password') return await resetUserPassword(env,body);
+  if (action === 'delete-user') return await archiveUser(env,body);
+  if (action === 'restore-user') return await restoreUser(env,body);
   if (action === 'users') {
     const rows = await env.DB.prepare(`SELECT a.username,a.name,a.roles,a.disabled,a.password IS NOT NULL AS active,p.position,p.native_name,p.must_change
       FROM staff_accounts a LEFT JOIN staff_profiles p ON p.username=a.username WHERE a.username!='admin' ORDER BY a.username`).all();
-    return json({positions:POSITIONS,users:rows.results.map(row=>({...publicUser(row),disabled:!!row.disabled,active:!!row.active})), roster:await readRoster(), enforced:await accountOnly(env)});
+    const users=rows.results.filter(row=>row.disabled!==ARCHIVED);
+    const archived=rows.results.filter(row=>row.disabled===ARCHIVED).map(publicUser);
+    return json({positions:POSITIONS,archived,users:users.map(row=>({...publicUser(row),disabled:!!row.disabled,active:!!row.active})), roster:await readRoster(), enforced:await accountOnly(env)});
   }
   if (action === 'mode') {
     if (typeof body.enforced !== 'boolean') fail('invalid_mode');
