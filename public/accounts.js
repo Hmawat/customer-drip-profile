@@ -2,7 +2,7 @@
   'use strict';
   const branches = {native:'Native Onsen Hotel',fundamental:'Fundamental'};
   const urls = {native:'/?account=1&open=1',fundamental:'/fundamental/?account=1&open=1'};
-  const roles = {'':'No access',viewer:'View only',barista:'Barista',manager:'Branch manager'};
+  const roles = {viewer:'View only',barista:'Barista',manager:'Branch manager'};
   const messages = {
     invalid_login:'Check your username and password.',
     invalid_invite:'This setup link has expired or already been used. Ask your admin for a new link.',
@@ -109,15 +109,21 @@
   function openHome(user) {
     const allowed=Object.keys(branches).filter(branch=>user.roles[branch]);
     if(allowed.length===1 && !user.admin){location.replace(urls[allowed[0]]);return;}
-    pane('Branches','<div class="grid account-branches">'+allowed.map(branch=>'<a class="bean account-branch" href="'+urls[branch]+'">'+branches[branch]+'</a>').join('')+'</div>'+
+    pane('Branches','<div class="account-branches">'+allowed.map(branch=>'<a class="account-branch" href="'+urls[branch]+'">'+branches[branch]+'</a>').join('')+'</div>'+
       (!allowed.length?'<p class="cap">Ask your admin to assign you a branch.</p>':'')+
       '<div class="acts">'+(user.admin?'<a class="btn" href="/?account=1&users=1">Users</a>':'')+
-      '<a class="lnk" href="/?account=1&password=1">Change password</a><button id="account-logout" class="btn ghost" type="button">Sign out</button></div>');
+      '<a class="lnk" href="/?account=1&password=1">Change password</a><button id="account-logout" class="btn ghost" type="button">Sign out</button></div>','account-home');
     $('account-logout').onclick=signOut;
   }
 
-  const roleSelect = (branch,user) => '<div class="f"><label class="lbl" for="role-'+branch+'">'+branches[branch]+'</label><select id="role-'+branch+'" name="'+branch+'">'+
-    Object.entries(roles).map(([key,text])=>'<option value="'+key+'"'+((user?.roles[branch]||'')===key?' selected':'')+'>'+text+'</option>').join('')+'</select></div>';
+  const branchAccess = (branch,role) => '<div class="branch-access-row"><label class="branch-access-check">'+
+    '<input type="checkbox" id="access-'+branch+'" name="access-'+branch+'"'+(role?' checked':'')+'> '+branches[branch]+'</label>'+
+    '<select id="role-'+branch+'" name="'+branch+'" aria-label="Role at '+branches[branch]+'"'+(role?'':' disabled')+'>'+
+    Object.entries(roles).map(([key,text])=>'<option value="'+key+'"'+((role||'barista')===key?' selected':'')+'>'+text+'</option>').join('')+'</select></div>';
+  const setBranchAccess = (branch,enabled) => {
+    $('access-'+branch).checked=enabled;
+    $('role-'+branch).disabled=!enabled;
+  };
 
   async function users(mount, branch) {
     const model=await request('users');
@@ -152,7 +158,8 @@
         '<p class="cap">Link the existing Native name to keep access to that person’s recipe history.</p>'+
         '<div class="f"><label class="lbl" for="edit-temp">'+(selected?'Reset password (optional)':'Temporary password')+'</label>'+
         '<input id="edit-temp" name="temporaryPassword" type="password" autocomplete="new-password" minlength="6" maxlength="6"'+(selected?'':' required')+'></div>'+
-        Object.keys(branches).map(branch=>roleSelect(branch,selected)).join('')+
+        '<fieldset class="branch-access"><legend class="lbl">Branch access</legend><p class="cap">Select one or more branches and choose a role for each.</p>'+
+        Object.keys(branches).map(key=>branchAccess(key,selected?.roles[key])).join('')+'</fieldset>'+
         (selected?'<label class="account-check"><input type="checkbox" name="disabled"'+(selected.disabled?' checked':'')+'> Disable account</label>':'')+
         '<div class="acts"><button class="btn" type="submit">'+(selected?'Save permissions':'Create user')+'</button></div></form><div id="account-invite"></div>';
       const prefillNative = nativeName => {
@@ -160,18 +167,20 @@
         if(!$('edit-name').value)$('edit-name').value=nativeName;
         const username=usernameOf(nativeName);
         if(!$('edit-username').value&&validUsername(username))$('edit-username').value=username;
-        if(!$('role-native').value)$('role-native').value='barista';
+        setBranchAccess('native',true);
       };
+      for(const key of Object.keys(branches))$('access-'+key).onchange=event=>setBranchAccess(key,event.currentTarget.checked);
       $('edit-native').onchange=event=>prefillNative(event.currentTarget.value);
       if(existingName){$('edit-native').value=existingName;prefillNative(existingName);}
-      else if(!selected&&branch)$('role-'+branch).value='barista';
+      else if(!selected&&branch)setBranchAccess(branch,true);
       onSubmit('edit-user',async data=>{
         $('account-error').textContent='';
         const values=Object.fromEntries(data);
         if(!selected && model.users.some(user=>user.username===usernameOf(values.username)))throw new Error('username_taken');
         if(selected?.active&&values.temporaryPassword&&!values.disabled&&!confirm('Reset this password and sign the user out?'))return;
+        const branchRoles=Object.fromEntries(Object.keys(branches).filter(key=>data.has('access-'+key)).map(key=>[key,values[key]]));
         const result=await request('save-user',{username:values.username,name:values.name,position:values.position,nativeName:values.nativeName,
-          roles:{native:values.native,fundamental:values.fundamental},disabled:!!values.disabled,temporaryPassword:values.temporaryPassword});
+          roles:branchRoles,disabled:!!values.disabled,temporaryPassword:values.temporaryPassword});
         Object.assign(model,await request('users'));
         select(model.users.find(user=>user.username===result.username));
         $('account-invite').textContent=values.temporaryPassword?'Saved. The user must change the temporary password when signing in.':'User saved.';

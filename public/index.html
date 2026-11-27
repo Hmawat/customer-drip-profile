@@ -1277,8 +1277,11 @@ body:has(#app>.account-auth){margin:0;padding-block:0}
 .account-auth .acts{flex-direction:column}
 .account-auth .acts button[type=submit]{width:100%}
 .account-auth #account-error:empty{display:none}
-.account-branches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:18px;gap:12px}
-.account-branch{align-items:center;justify-content:center;min-height:82px;padding:18px;color:var(--ink);font-weight:700;text-decoration:none}
+.account-pane.account-home{padding:clamp(18px,4vw,36px)}
+.account-branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));margin-bottom:22px;gap:16px}
+.account-branch{display:flex;align-items:center;justify-content:center;min-height:82px;min-width:0;padding:16px;overflow-wrap:anywhere;color:var(--ink);font-weight:700;text-decoration:none;background:var(--ci-bg,#f5f5f7);border:1px solid var(--ci-line,#d2d2d7);border-radius:var(--r-sm)}
+.account-branch:hover{border-color:var(--ci-accent,var(--ink))}
+.account-home #account-error:empty{display:none}
 .staff-settings{width:100%;max-width:900px;margin-inline:auto;text-align:center}
 .staff-settings>h2{margin-bottom:16px}
 .account-embedded{margin:0 auto}
@@ -1291,6 +1294,16 @@ body:has(#app>.account-auth){margin:0;padding-block:0}
 .account-list button{text-align:center;white-space:normal;max-width:100%}
 .account-rollout{margin-top:22px}
 .account-check{display:block;margin:8px 0}
+.branch-access{min-width:0;margin:16px 0;padding:12px;border:1px solid var(--ci-line,#d2d2d7);border-radius:var(--r-sm)}
+.branch-access legend{padding:0 5px}
+.branch-access .cap{margin:0 0 12px;text-align:start}
+.branch-access-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:8px}
+.branch-access-row+.branch-access-row{margin-top:10px}
+.branch-access-check{display:flex;align-items:center;gap:8px;min-height:44px}
+.branch-access-check input{width:18px;height:18px;flex:none}
+.branch-access-row select{width:100%;min-width:0;min-height:40px}
+.branch-access-row select:disabled{opacity:.55}
+@media(max-width:400px){.branch-access-row{grid-template-columns:1fr;gap:0}}
 .account-nav{align-items:center;justify-content:center;gap:12px;margin-bottom:12px;text-align:center}
 .account-nav .lnk{padding-block:8px}
 body[data-account-role] #app>.top{justify-content:center;align-items:center;flex-direction:column;text-align:center}

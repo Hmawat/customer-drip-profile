@@ -139,6 +139,15 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const usersAfter=(await accounts('users',{},owner.cookie)).data.users;
   const linked=usersAfter.find(u=>u.username==='ชมพู');
   assert.deepEqual([linked.position,linked.nativeName,linked.mustChange],['Senior Barista','Native Staff',false]);
+  const bothRoles={native:'barista',fundamental:'viewer'};
+  assert.equal((await accounts('save-user',{username:'ชมพู',name:'New display',roles:bothRoles},owner.cookie)).status,200);
+  assert.deepEqual((await accounts('status',{},staffChanged.cookie)).data.user.roles,bothRoles);
+  assert.equal((await read('',staffChanged.cookie)).status,200);
+  assert.equal((await read(fundamental,staffChanged.cookie)).status,200);
+  assert.equal((await write(fundamental,[{k:'snap',i:'no-write',d:{v:{barista:'New display'}}}],staffChanged.cookie)).status,403);
+  assert.equal((await accounts('save-user',{username:'ชมพู',name:'New display',roles:{native:'barista'}},owner.cookie)).status,200);
+  assert.equal((await read('',staffChanged.cookie)).status,200);
+  assert.equal((await read(fundamental,staffChanged.cookie)).status,403);
   assert.equal((await accounts('save-user',{username:'ชมพู',name:'New display',roles:{native:'barista'},position:'Senior Barista',nativeName:'Native Staff',temporaryPassword:'X9y8Z7'},owner.cookie)).status,200);
   assert.equal((await read('',staffChanged.cookie)).status,401);
   assert.equal((await accounts('login',{username:'ชมพู',password:'X9y8Z7'})).data.user.mustChange,true);
