@@ -71,6 +71,12 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const plateToken='0123456789abcdef0123456789abcdef';
   const plate='/t/1/'+plateToken;
   const bindPlate=(branch,code,ref)=>rpc(branch,'drip_bind_plate',{p_code:code,p_plate:plate,p_ref:ref});
+  const bindSlot=(branch,code,ref,slot)=>rpc(branch,'drip_bind_plate',{p_code:code,p_slot:slot,p_ref:ref});
+  const byNumber=await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',1);
+  assert.equal(byNumber.status,200);
+  assert.equal(byNumber.data.slot,1);
+  assert.equal((await bindSlot('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa',5)).status,400);
+  assert.equal((await bindSlot('',fundamentalCode,'same-recipe.aaaaaaaaaaaaaaaa',1)).status,403);
   assert.equal((await bindPlate('',nativeCode,'same-recipe.aaaaaaaaaaaaaaaa')).status,200);
   assert.equal((await bindPlate(fundamental,fundamentalCode,'same-recipe.bbbbbbbbbbbbbbbb')).status,400);
   assert.equal((await bindPlate('',fundamentalCode,'same-recipe.aaaaaaaaaaaaaaaa')).status,403);

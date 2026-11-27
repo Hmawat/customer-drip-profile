@@ -156,8 +156,9 @@ async function openPlate(env,req,url) {
 const F = {
   async drip_bind_plate(env,a,shop,req) {
     const account=await access(env,shop,a,req,true);
-    const plate=await validPlate(env,String(a.p_plate??''));
-    if(!plate||plate.shop!==shop)fail('invalid_plate',400);
+    const plate=a.p_plate?await validPlate(env,String(a.p_plate)):{shop,slot:a.p_slot};
+    if(!plate||plate.shop!==shop||!Number.isInteger(plate.slot)||plate.slot<1||plate.slot>4||
+      !env.QR_PLATE_HASHES?.[shop.id]?.[plate.slot-1])fail('invalid_plate',400);
     const ref=String(a.p_ref??'');
     if(!/^[a-z0-9-]{1,100}\.[a-f0-9]{12,64}$/i.test(ref))fail('invalid_recipe',400);
     const snap=await sharedSnap(env,shop,ref);
