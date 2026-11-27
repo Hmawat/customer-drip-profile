@@ -57,7 +57,7 @@ async function upsert(env, shop, rows, keepTime, author = null) {
       ON CONFLICT(kind, id) DO UPDATE SET data=excluded.data, deleted=excluded.deleted, updated_ms=excluded.updated_ms
       WHERE (${shop.items}.data IS NOT excluded.data OR ${shop.items}.deleted IS NOT excluded.deleted)
       AND (? IS NULL OR COALESCE(json_extract(${shop.items}.data, '$.v.ownerUsername')=?,json_extract(${shop.items}.data, '$.v.barista')=?))`)
-      .bind(k, id, data, del ? 1 : 0, ms, author?.username ?? null, author?.username ?? null, author?.name ?? null));
+      .bind(k, id, data, del ? 1 : 0, ms, author?.username ?? null, author?.username ?? null, author?.nativeNameReserved ? null : (author?.nativeName || author?.name || null)));
     size += (data ? data.length : 0) + 200;
     if (size > 900000 || batch.length >= 50) await flush();
   }
@@ -75,13 +75,13 @@ const authSetting = row => row.k === 'setting' &&
   (['adminPin','stockPin','baristas','baPins'].includes(row.i) || String(row.i).startsWith('baPin.'));
 
 async function checkBaristaRows(env, shop, rows, user) {
-  if (rows.some(row => row.k !== 'snap' || row.x === true || row.x === 'true' || row.d?.v?.barista !== user.name)) fail('not_allowed', 403);
+  if (rows.some(row => row.k !== 'snap' || row.x === true || row.x === 'true' || ![user.name,user.nativeName].filter(Boolean).includes(row.d?.v?.barista))) fail('not_allowed', 403);
   for (let offset=0;offset<rows.length;offset+=50) {
     const ids=rows.slice(offset,offset+50).map(row=>String(row.i ?? ''));
     const found=await env.DB.prepare(`SELECT data FROM ${shop.items} WHERE kind='snap' AND id IN (${ids.map(()=>'?').join(',')})`).bind(...ids).all();
     if (found.results.some(row => {
       const snap = JSON.parse(row.data || 'null')?.v;
-      return snap?.ownerUsername ? snap.ownerUsername !== user.username : snap?.barista !== user.name;
+      return snap?.ownerUsername ? snap.ownerUsername !== user.username : (!snap || user.nativeNameReserved || snap.barista!==(user.nativeName||user.name));
     })) fail('not_allowed', 403);
   }
 }
@@ -141,7 +141,8 @@ const F = {
     const account=await access(env, shop, a, req, true);
     if (!Array.isArray(a.p_rows) || a.p_rows.length > 500 || a.p_rows.some(row => !row || typeof row !== 'object')) fail('bad_rows');
     if (account && a.p_rows.some(authSetting)) fail('not_allowed', 403);
-    const barista=account?.role==='barista' ? account.user : null;
+    const barista=account?.role==='barista' ? {...account.user} : null;
+    if(barista&&shop!==NATIVE)barista.nativeName='';
     if (barista) {
       await checkBaristaRows(env, shop, a.p_rows, barista);
       for (const row of a.p_rows) row.d.v.ownerUsername=barista.username;

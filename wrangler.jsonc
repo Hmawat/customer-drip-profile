@@ -2,7 +2,7 @@
   "name": "customer-drip-profile",
   "main": "src/worker.js",
   "compatibility_date": "2026-10-01",
-  "vars": {"FUNDAMENTAL_SETUP_SHA256": "deed503840e04419fb58908557064eb77a69d42e43fafd5794cd540759479a72", "ACCOUNT_OWNER_PASSWORD_HASH": "005db0a6a5cbd19ae123f8b949e16f15a7c956aa288648a3dc279c83f0de776a"},
+  "vars": {"FUNDAMENTAL_SETUP_SHA256": "deed503840e04419fb58908557064eb77a69d42e43fafd5794cd540759479a72", "ACCOUNT_OWNER_PASSWORD_HASH": "005db0a6a5cbd19ae123f8b949e16f15a7c956aa288648a3dc279c83f0de776a", "ACCOUNT_OWNER_RECOVERY_HASH": "ca9fd20d3025ebfbea8cf7413ea7d518d111c6e95e419ce846247c94239e81ba"},
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",

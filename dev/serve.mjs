@@ -30,7 +30,7 @@ const ASSETS = { async fetch(req) {
   if (!f.startsWith(pub) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) f = path.join(pub, 'index.html');
   return new Response(fs.readFileSync(f), { headers: { 'Content-Type': types[path.extname(f)] || 'application/octet-stream' } });
 } };
-const env = { DB, ASSETS, ACCOUNT_OWNER_PASSWORD_HASH: process.env.ACCOUNT_OWNER_PASSWORD_HASH, FUNDAMENTAL_SETUP_SHA256: process.env.FUNDAMENTAL_SETUP_SHA256,
+const env = { DB, ASSETS, ACCOUNT_OWNER_PASSWORD_HASH: process.env.ACCOUNT_OWNER_PASSWORD_HASH, ACCOUNT_OWNER_RECOVERY_HASH: process.env.ACCOUNT_OWNER_RECOVERY_HASH, FUNDAMENTAL_SETUP_SHA256: process.env.FUNDAMENTAL_SETUP_SHA256,
   RT: { idFromName: (n) => n, get: () => ({ fetch: async () => new Response('no ws in test', { status: 501 }) }) } };
 http.createServer(async (q, s) => {
   const chunks = []; for await (const c of q) chunks.push(c);

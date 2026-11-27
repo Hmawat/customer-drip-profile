@@ -10,10 +10,12 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const nativeCode = 'TESTNATIVE';
   const fundamentalCode = 'TESTFUNDAMENTAL';
   const ownerPassword = 'Test owner password, not production';
+  const recovery = 'Test owner recovery secret, not production';
   const server = spawn(process.execPath, ['--no-warnings', 'dev/serve.mjs', '.', '0'], {
     cwd: repo,
     env: {
       ...process.env,
+      ACCOUNT_OWNER_RECOVERY_HASH: createHash('sha256').update(recovery).digest('hex'),
       ACCOUNT_OWNER_PASSWORD_HASH: createHash('sha256').update(ownerPassword).digest('hex'),
       FUNDAMENTAL_SETUP_SHA256: createHash('sha256').update(fundamentalCode).digest('hex'),
     },
@@ -37,7 +39,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
     { k: 'setting', i: 'theme', d: { ci: 'native-mica' } },
     { k: 'photo', i: 'same-bean', d: { label: ['native-photo'] } },
     { k: 'snap', i: 'same-recipe', d: { v: {
-      key: 'aaaaaaaaaaaaaaaa', bean: { id: 'same-bean' }, payload: 'native-recipe',
+      key: 'aaaaaaaaaaaaaaaa', barista:'Native Staff', bean: { id: 'same-bean' }, payload: 'native-recipe',
     } } },
   ];
   assert.equal((await request('import', { code: nativeCode, rows: nativeRows })).status, 200);
@@ -118,4 +120,37 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await read(fundamental, member.cookie)).status, 401);
   assert.equal((await accounts('mode', {enforced:false}, owner.cookie)).status, 200);
   assert.deepEqual(await staff('', nativeCode), ['Native Staff']);
+  const add=await accounts('save-user',{username:'native.linked',name:'New display',roles:{native:'barista'},position:'Senior Barista',nativeName:'Native Staff',temporaryPassword:'A1b2C3'},owner.cookie);
+  assert.equal(add.status,200);
+  const duplicate=await accounts('save-user',{username:'native.duplicate',name:'Another',roles:{native:'barista'},nativeName:'Native Staff',temporaryPassword:'G8h3L1'},owner.cookie);
+  assert.equal(duplicate.status,409);
+  const pending=await accounts('login',{username:'native.linked',password:'A1b2C3'});
+  assert.equal(pending.data.user.mustChange,true);
+  assert.equal((await read('',pending.cookie)).status,403);
+  assert.equal((await accounts('change-password',{current:'A1b2C3',password:'A1b2C3'},pending.cookie)).status,400);
+  const staffChanged=await accounts('change-password',{current:'A1b2C3',password:'F7g8H9'},pending.cookie);
+  assert.equal(staffChanged.status,200);
+  assert.equal((await read('',pending.cookie)).status,401);
+  assert.equal((await read('',staffChanged.cookie)).status,200);
+  assert.equal((await write('', [{k:'snap',i:'same-recipe',d:{v:{barista:'Native Staff',key:'aaaaaaaaaaaaaaaa',payload:'legacy history retained'}}}],staffChanged.cookie)).status,200);
+  assert.equal((await snap('', 'aaaaaaaaaaaaaaaa')).data,'legacy history retained');
+  assert.equal((await write('', [{k:'snap',i:'same-recipe',d:{v:{barista:'Native Staff'}}}],member.cookie)).status,401);
+
+  const usersAfter=(await accounts('users',{},owner.cookie)).data.users;
+  const linked=usersAfter.find(u=>u.username==='native.linked');
+  assert.deepEqual([linked.position,linked.nativeName,linked.mustChange],['Senior Barista','Native Staff',false]);
+  assert.equal((await accounts('save-user',{username:'native.linked',name:'New display',roles:{native:'barista'},position:'Senior Barista',nativeName:'Native Staff',temporaryPassword:'X9y8Z7'},owner.cookie)).status,200);
+  assert.equal((await read('',staffChanged.cookie)).status,401);
+  assert.equal((await accounts('login',{username:'native.linked',password:'X9y8Z7'})).data.user.mustChange,true);
+
+  const changedOwner=await accounts('change-password',{current:ownerPassword,password:'6rKd!A'},owner.cookie);
+  assert.equal(changedOwner.status,200);
+  assert.equal((await accounts('login',{username:'admin',password:ownerPassword})).status,401);
+  assert.equal((await accounts('users',{},owner.cookie)).status,401);
+  assert.equal((await accounts('users',{},changedOwner.cookie)).status,200);
+  assert.equal((await accounts('recover-admin',{recovery:'incorrect',password:'Ab34Cd'})).status,401);
+  assert.equal((await accounts('recover-admin',{recovery,password:'Ab34Cd'})).status,200);
+  assert.equal((await accounts('users',{},changedOwner.cookie)).status,401);
+  assert.equal((await accounts('login',{username:'admin',password:'Ab34Cd'})).status,200);
+
 });
