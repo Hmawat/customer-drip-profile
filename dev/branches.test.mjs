@@ -105,6 +105,20 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await photo(fundamental, 'aaaaaaaaaaaaaaaa')).data, null);
   assert.deepEqual((await photo(fundamental, 'bbbbbbbbbbbbbbbb')).data.label, ['fundamental-photo']);
   assert.equal((await rpc('', 'drip_theme', {})).data.ci, 'native-mica');
+  assert.equal((await rpc('', 'drip_theme', {})).data.colors, undefined);
+  assert.equal((await push('', nativeCode, [{ k: 'setting', i: 'theme', d: { ci: 'custom', cvb: 'light', colors: { bg: '#F0EEE9', ink: '40312F', accent: 'abc', accentH: '#864C24', link: 'nope', extra: '#ffffff' } } }])).status, 200);
+  const themed = (await rpc('', 'drip_theme', {})).data;
+  assert.equal(themed.ci, 'custom');
+  assert.equal(themed.cvb, 'light');
+  assert.equal(themed.colors.bg, '#f0eee9');
+  assert.equal(themed.colors.ink, '#40312f');
+  assert.equal(themed.colors.accent, '#aabbcc');
+  assert.equal(themed.colors.accentH, '#864c24');
+  assert.equal(themed.colors.link, undefined);
+  assert.equal(themed.colors.extra, undefined);
+  assert.equal((await push('', nativeCode, [{ k: 'setting', i: 'theme', d: { ci: 'native-mica' } }])).status, 200);
+  assert.equal((await rpc('', 'drip_theme', {})).data.ci, 'native-mica');
+  assert.equal((await rpc('', 'drip_theme', {})).data.colors, undefined);
   assert.equal((await rpc(fundamental, 'drip_theme', {})).data.ci, 'apple');
 
   const rotate = (branch, code, next) => rpc(branch, 'drip_set_code', { p_code: code, p_new: next });

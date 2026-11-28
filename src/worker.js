@@ -266,10 +266,28 @@ const F = {
   },
   // Public: the shop's brand colour set, so customer pages (no shop code) match the shop.
   async drip_theme(env, a, shop) {
+    const keys = ['bg','ink','accent','accentH','fill','line','mute','mute2','dark2','link','kick','accent2','tint'];
+    const hex = v => {
+      let t = String(v ?? '').trim();
+      if (t.startsWith('#')) t = t.slice(1);
+      if (!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(t)) return '';
+      if (t.length === 3) t = t[0] + t[0] + t[1] + t[1] + t[2] + t[2];
+      return '#' + t.toLowerCase();
+    };
     const r = await env.DB.prepare(`SELECT data FROM ${shop.items} WHERE kind='setting' AND id='theme' AND deleted=0`).first();
-    let ci = 'apple', cvb = 'dark';
-    try { const t = r && r.data ? JSON.parse(r.data) : null; if (t && /^native-(slate|mica)$/.test(t.ci)) ci = t.ci; if (t && t.cvb === 'light') cvb = 'light'; } catch (e) {}
-    return { ci, cvb };
+    let ci = 'apple', cvb = 'dark', colors = null;
+    try {
+      const t = r && r.data ? JSON.parse(r.data) : null;
+      if (t && t.cvb === 'light') cvb = 'light';
+      if (t && t.colors && typeof t.colors === 'object') {
+        const out = {};
+        for (const k of keys) { const h = hex(t.colors[k]); if (h) out[k] = h; }
+        if (Object.keys(out).length) colors = out;
+      }
+      if (t && t.ci === 'custom' && colors) ci = 'custom';
+      else if (t && /^native-(slate|mica)$/.test(t.ci)) ci = t.ci;
+    } catch (e) {}
+    return colors ? { ci, cvb, colors } : { ci, cvb };
   },
   async drip_set_code(env, a, shop, req) {
     const account=await access(env, shop, a, req, true);
