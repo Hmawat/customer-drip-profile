@@ -257,16 +257,25 @@
         '<div class="acts" id="plate-downloads"><button class="btn" id="plate-download-all" type="button">Download all</button>' +
         '<button class="btn ghost" id="plate-download-single" type="button">Download single</button></div>' +
         '<p class="cap">These files use the plate links already in use for this branch. The links are not replaced.</p>' +
-        '<button class="btn" type="button">Generate QR plate</button><p class="cap" role="status"></p><div class="acts" id="plate-generated"></div>';
+        '<div class="acts"><button class="btn" id="plate-generate" type="button">Generate QR plate</button>' +
+        '<button class="btn ghost" id="plate-delete" type="button">Delete plate</button></div>' +
+        '<p class="cap" role="status"></p><div class="acts" id="plate-generated"></div>';
       const duration = mount.querySelector('form');
       const minutes = duration.querySelector('input');
       const save = duration.querySelector('button');
-      const create = mount.querySelector(':scope > button');
+      const create = mount.querySelector('#plate-generate');
+      const remove = mount.querySelector('#plate-delete');
       const status = mount.querySelector('[role=status]');
       const buttons = mount.querySelector('#plate-generated');
       const downloadAll = mount.querySelector('#plate-download-all');
       const downloadSingle = mount.querySelector('#plate-download-single');
       let fixed = [];
+      let extras = [];
+      let knownSlots = [];
+      const showExtras = () => {
+        buttons.replaceChildren();
+        extras.forEach(add);
+      };
       const add = plate => {
         const button = document.createElement('button');
         button.type = 'button';
@@ -368,19 +377,73 @@
           controls.forEach(control => { control.disabled = false; });
         }
       }
-      create.disabled = save.disabled = downloadAll.disabled = downloadSingle.disabled = true;
+      const applyList = plates => {
+        fixed = (plates.printable || []).slice().sort((a, b) => a.slot - b.slot);
+        extras = (plates.generated || []).slice().sort((a, b) => a.slot - b.slot);
+        knownSlots = [...new Set(plates.slots || [])].sort((a, b) => a - b);
+        showExtras();
+      };
+      remove.onclick = () => {
+        if (!knownSlots.length) {
+          status.textContent = 'This branch has no plates to delete.';
+          return;
+        }
+        const dialog = document.createElement('dialog');
+        dialog.className = 'plate-dialog';
+        dialog.setAttribute('aria-labelledby', 'plate-delete-title');
+        dialog.innerHTML = '<form><h2 id="plate-delete-title">Delete plate</h2>' +
+          '<p>This removes one plate from this branch. The other branch is not changed.</p>' +
+          '<div class="f"><label for="plate-delete-slot">Plate number</label><select id="plate-delete-slot" required></select></div>' +
+          '<p id="plate-delete-warn" role="status"></p><div class="acts">' +
+          '<button class="btn" id="plate-delete-confirm" type="submit">Delete plate</button>' +
+          '<button class="btn ghost" id="plate-delete-cancel" type="button">Cancel</button></div></form>';
+        document.body.append(dialog);
+        dialog.addEventListener('close', () => dialog.remove(), {once: true});
+        const slot = dialog.querySelector('#plate-delete-slot');
+        const warn = dialog.querySelector('#plate-delete-warn');
+        const confirm = dialog.querySelector('#plate-delete-confirm');
+        for (const value of knownSlots) slot.add(new Option('Plate ' + number(value), String(value)));
+        const describe = () => {
+          const selected = Number(slot.value);
+          confirm.textContent = 'Delete Plate ' + number(selected);
+          warn.textContent = selected <= 10
+            ? 'Plate ' + number(selected) + ' is one of the printed plates 01–10. Deleting it stops the QR already on the counter for this branch. This cannot be undone from here.'
+            : 'Plate ' + number(selected) + ' is not one of the printed plates 01–10. Deleting it removes only this branch’s extra plate.';
+        };
+        slot.onchange = describe;
+        describe();
+        dialog.querySelector('#plate-delete-cancel').onclick = () => dialog.close();
+        dialog.querySelector('form').onsubmit = async event => {
+          event.preventDefault();
+          const selected = Number(slot.value);
+          confirm.disabled = slot.disabled = true;
+          try {
+            const result = await D.rpc('drip_delete_plate', {p_slot: selected});
+            knownSlots = knownSlots.filter(value => value !== result.slot);
+            extras = extras.filter(plate => plate.slot !== result.slot);
+            fixed = fixed.filter(plate => plate.slot !== result.slot);
+            showExtras();
+            status.textContent = 'Plate ' + number(result.slot) + ' deleted from this branch.';
+            dialog.close();
+          } catch {
+            warn.textContent = 'Could not delete the plate. Check your connection and permissions.';
+            confirm.disabled = slot.disabled = false;
+          }
+        };
+        dialog.showModal();
+      };
+      create.disabled = save.disabled = downloadAll.disabled = downloadSingle.disabled = remove.disabled = true;
       try {
         const plates = await list(D);
         minutes.value = plates.minutes;
         save.disabled = false;
-        fixed = (plates.printable || []).slice().sort((a, b) => a.slot - b.slot);
+        applyList(plates);
         if (missing().length) status.textContent = 'Plate ' + missing().map(number).join(', ') + ' cannot be reprinted from here yet. Plates already on the counter still work.';
-        plates.generated.forEach(add);
       } catch {
         status.textContent = 'Could not load saved plates. Reopen Settings to retry.';
       } finally {
         create.disabled = false;
-        downloadAll.disabled = downloadSingle.disabled = false;
+        downloadAll.disabled = downloadSingle.disabled = remove.disabled = false;
       }
       duration.onsubmit = async event => {
         event.preventDefault();
@@ -399,7 +462,10 @@
         create.disabled = true;
         try {
           const plate = await D.rpc('drip_create_plate', {});
-          add(plate);
+          extras.push(plate);
+          if (!knownSlots.includes(plate.slot)) knownSlots.push(plate.slot);
+          knownSlots.sort((a, b) => a - b);
+          showExtras();
           status.textContent = 'Plate ' + number(plate.slot) + ' created. Download it to print.';
         } catch {
           status.textContent = 'Could not confirm creation. Reopen Settings to check before retrying.';
