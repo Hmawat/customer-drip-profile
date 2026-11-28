@@ -1,10 +1,10 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dafJCt/GRkVihK/HtiqGGIjUIMRsDq/pPp1EEtClLOQ=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-TY2in/xdyKgoGi33QN0ksX/8sKzOZjtVZ/v8q0YtuT8=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-Cav6sRd3MYAL9jmvC8k8bIMWQsuYxjMwWC6wMxFq7jA=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-eGAekpwboZ7zg0UUMHxceS7QRIaexT9PjO2276QBaXk=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-7NBjGdwJTaEdq8C+I1llI9QNPixMf0laiGnoEC8hU/w=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-i+SUaP810xaCueSBBasXxxxbY6KyXkNAlrEQhxXlZKU=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script src="/route.js"></script><script>
 const route=window.DripRoute;
 const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(route.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
 if(BRANCH_PATH)document.getElementById('drip-manifest').href='/fundamental.webmanifest';
-try{var c=localStorage.getItem(dripStorageKey("dp-ci"));if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem(dripStorageKey("dp-cvb"))==="light")document.documentElement.setAttribute("data-cvb","light");}catch(e){}</script>
+try{var c=localStorage.getItem(dripStorageKey("dp-ci"));if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem(dripStorageKey("dp-cvb"))==="light")document.documentElement.setAttribute("data-cvb","light");var raw=localStorage.getItem(dripStorageKey("dp-colors"));if(raw){var o=JSON.parse(raw),s=document.documentElement.style,map={bg:"--ci-bg",ink:"--ci-ink",accent:"--ci-accent",accentH:"--ci-accent-h",fill:"--ci-fill",line:"--ci-line",mute:"--ci-mute",mute2:"--ci-mute2",dark2:"--ci-dark2",link:"--ci-link",kick:"--ci-kick",accent2:"--ci-accent2",tint:"--ci-tint"};for(var k in map){var v=o[k];if(typeof v==="string"&&/^#[0-9a-fA-F]{6}$/.test(v))s.setProperty(map[k],v);}}}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap">
 <style>
 /* Layout: one paper sheet, like the printed A6 brewing log. Black ink, dotted leaders, wheel colours only on flavour marks. */
@@ -1268,11 +1268,51 @@ html[data-ci^="native"][data-cvb="light"] .cv-t .ico,html[data-ci^="native"][dat
 html[data-ci^="native"][data-cvb="light"] .cv-pr li{border-top-color:#ddd6c6}html[data-ci^="native"][data-cvb="light"] .cv-pr .pb{background:#ddd6c6}
 html[data-ci^="native"][data-cvb="light"] .cv-pr time{color:#7d6d52}html[data-ci^="native"][data-cvb="light"] .cv-pr .pb i{background:#a09178}
 html[data-ci^="native"][data-cvb="light"] body.card .cv-brew{background:#e6e1d2}
+/* Custom colours: the same slots as the presets, painted from the admin's HEX values. */
+html[data-ci="custom"] .top{background:color-mix(in srgb,var(--ci-bg) 86%,transparent)}
+html[data-ci="custom"] body.cv{background:var(--ci-bg)}
+html[data-ci="custom"] .btn:not(.ghost):not(.light),html[data-ci="custom"] .cv-btn,html[data-ci="custom"] .cv-foot .cv-review{color:var(--ci-on-accent,#fff)}
+html[data-ci="custom"] .cv-brew{--paper:var(--ci-ink);background:var(--ci-ink);color:var(--ci-bg)}
+html[data-ci="custom"] .cv-bh h2,html[data-ci="custom"] .cv-res h3,html[data-ci="custom"] .cv-pours h3,html[data-ci="custom"] .cv-t b,html[data-ci="custom"] .cv-pr .n,html[data-ci="custom"] .cv-pr .w,html[data-ci="custom"] .cv-dn .ico,html[data-ci="custom"] .cv-dn b{color:var(--ci-bg)}
+html[data-ci="custom"] .cv-brew h2 span,html[data-ci="custom"] .cv-t .ico,html[data-ci="custom"] .cv-t b small,html[data-ci="custom"] .cv-t span,html[data-ci="custom"] .cv-pr .w small{color:var(--ci-mute)}
+html[data-ci="custom"] .cv-dn{background:var(--ci-dark2)}
+html[data-ci="custom"] .cv-t,html[data-ci="custom"] .cv-res .cv-t,html[data-ci="custom"] .cv-pours{--paper:var(--ci-dark2);background:var(--ci-dark2)}
+html[data-ci="custom"] .cv-pr li{border-top-color:var(--ci-dark2)}html[data-ci="custom"] .cv-pr .pb{background:var(--ci-dark2)}
+html[data-ci="custom"] .cv-pr time{color:var(--ci-accent2)}html[data-ci="custom"] .cv-pr .pb i{background:var(--ci-accent)}
+html[data-ci="custom"] body.card .cv-brew{background:var(--ci-ink)}
+html[data-ci="custom"][data-cvb="light"] .cv-brew{--paper:var(--ci-fill);background:var(--ci-fill);color:var(--ci-ink)}
+html[data-ci="custom"][data-cvb="light"] .cv-bh h2,html[data-ci="custom"][data-cvb="light"] .cv-res h3,html[data-ci="custom"][data-cvb="light"] .cv-pours h3,html[data-ci="custom"][data-cvb="light"] .cv-t b,html[data-ci="custom"][data-cvb="light"] .cv-pr .n,html[data-ci="custom"][data-cvb="light"] .cv-pr .w{color:var(--ci-ink)}
+html[data-ci="custom"][data-cvb="light"] .cv-brew h2 span,html[data-ci="custom"][data-cvb="light"] .cv-t .ico,html[data-ci="custom"][data-cvb="light"] .cv-t b small,html[data-ci="custom"][data-cvb="light"] .cv-t span,html[data-ci="custom"][data-cvb="light"] .cv-pr .w small{color:var(--ci-mute2)}
+html[data-ci="custom"][data-cvb="light"] .cv-dn{background:var(--ci-ink)}html[data-ci="custom"][data-cvb="light"] .cv-dn .ico,html[data-ci="custom"][data-cvb="light"] .cv-dn b{color:var(--ci-bg)}
+html[data-ci="custom"][data-cvb="light"] .cv-t,html[data-ci="custom"][data-cvb="light"] .cv-res .cv-t,html[data-ci="custom"][data-cvb="light"] .cv-pours{--paper:var(--ci-bg);background:var(--ci-bg)}
+html[data-ci="custom"][data-cvb="light"] .cv-pr li{border-top-color:var(--ci-line)}html[data-ci="custom"][data-cvb="light"] .cv-pr .pb{background:var(--ci-line)}
+html[data-ci="custom"][data-cvb="light"] .cv-pr time{color:var(--ci-link)}html[data-ci="custom"][data-cvb="light"] .cv-pr .pb i{background:var(--ci-accent)}
+html[data-ci="custom"][data-cvb="light"] body.card .cv-brew{background:var(--ci-fill)}
 .ci-sets{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:10px}
 .ci-set{display:block;text-align:left;border:1px solid var(--ci-line,#d2d2d7);background:#fff;border-radius:14px;padding:12px;cursor:pointer;font:inherit;color:inherit}
 .ci-set[aria-pressed="true"]{border-color:var(--ci-ink,#1d1d1f);box-shadow:0 0 0 1px var(--ci-ink,#1d1d1f)}
 .ci-sw{display:flex;gap:6px;margin-bottom:10px}.ci-sw i{flex:1;height:34px;border-radius:8px;border:1px solid rgba(0,0,0,.08)}
 .ci-set b{display:block;font-size:15px}.ci-set small{display:block;color:var(--ci-mute2,#6e6e73);font-size:12px;margin-top:2px}
+.ci-h{margin:22px 0 6px;font:600 17px/1.3 var(--font-s);letter-spacing:-.01em;text-transform:none;color:var(--ink)}
+.ci-slots{display:grid;gap:10px;margin-top:12px}
+.ci-slot{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;grid-template-areas:"swatch label picker" "swatch field picker" "err err err";gap:2px 10px;align-items:center;padding:10px;border:1px solid var(--ci-line,#d2d2d7);border-radius:14px;background:#fff;text-align:left}
+.ci-slot.on{border-color:var(--ci-ink,#1d1d1f);box-shadow:0 0 0 1px var(--ci-ink,#1d1d1f)}
+.ci-swatch{grid-area:swatch;width:52px;height:52px;border-radius:12px;border:1px solid rgba(0,0,0,.12);padding:0;cursor:pointer}
+.ci-slot .lbl{grid-area:label;margin:0}
+.ci-hex{grid-area:field;width:100%;min-height:44px;padding:8px 12px;border:1px solid var(--ci-mute,#86868b);border-radius:12px;background:#fff;color:var(--ink);font:600 16px/1.2 ui-monospace,SFMono-Regular,monospace}
+.ci-hex[aria-invalid="true"]{border-color:#d70015}
+.ci-slot input[type=color]{grid-area:picker;width:52px;height:52px;padding:4px;border:1px solid var(--ci-line,#d2d2d7);border-radius:12px;background:#fff;cursor:pointer}
+.ci-slot .err{grid-area:err;margin:2px 0 0;font-size:13px;color:#d70015}
+.ci-cvb{margin-top:16px}
+.ci-pan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-top:10px}
+.ci-pan{display:flex;flex-direction:column;min-width:0;border:1px solid var(--ci-line,#d2d2d7);border-radius:12px;background:#fff;overflow:hidden}
+.ci-pan-hit{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;border:0;background:transparent;padding:8px 8px 6px;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.ci-pan-hit i{display:block;width:100%;height:42px;border-radius:8px;border:1px solid rgba(0,0,0,.08);margin-bottom:4px}
+.ci-pan-hit b{font-size:12px;line-height:1.25;font-weight:600}
+.ci-pan-hit small{color:var(--ci-mute2,#6e6e73);font-size:11px;line-height:1.3}
+.ci-pan-copy{border:0;border-top:1px solid var(--ci-line,#d2d2d7);background:var(--ci-bg,#f5f5f7);min-height:44px;font:600 13px var(--font-b);cursor:pointer;color:var(--ci-link,#0066cc)}
+.ci-note{margin-top:8px}
+@media(max-width:420px){.ci-pan-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .account-pane{width:min(100%,840px);margin:clamp(16px,5vh,48px) auto 0;text-align:center}
 .account-pane h1{margin-bottom:18px}
 .account-pane .f{margin-bottom:12px}
@@ -2875,7 +2915,7 @@ D.TXT=[
   ['ad.fo.new','New folder name'],['ad.fo.add','Add folder'],['ad.fo.none','No folders yet.'],
   ['ad.cdb','Coffee Database'],['ad.cadd','Add Coffee'],['ad.csearch','Search coffee'],['ad.cnone','No coffee found.'],['ad.edit','Edit'],['ad.delete','Delete'],
   ['ad.txt.h','Text and Labels'],['ad.txt.help','Change any word shown in the system. Leave a field empty to use the original text. Changes are saved and shown straight away. Text on the customer page is copied into each QR link when a recipe is saved, so recipes saved earlier keep their old wording.'],
-  ['ad.theme.h','Brand Colors'],['ad.ci.help','Choose the colour set for every screen, including the customer page. Only the admin can change it.'],['ci.apple','Original (blue)'],['ci.native-slate','NATIVE · Midnight Slate'],['ci.native-mica','NATIVE · Mica Dust'],['ci.cvb','Recipe section on the customer page'],['ci.cvb.dark','Dark · Midnight Slate'],['ci.cvb.light','Light · Ivory'],['ad.set.save','Save settings'],['ad.set.reset','Reset to default'],
+  ['ad.theme.h','Brand Colors'],['ad.ci.help','Choose a ready-made set, or set each colour yourself. It is used on every screen, including the customer page. Only the admin can change it.'],['ci.apple','Original (blue)'],['ci.native-slate','NATIVE · Midnight Slate'],['ci.native-mica','NATIVE · Mica Dust'],['ci.cvb','Recipe section on the customer page'],['ci.cvb.dark','Dark · Midnight Slate'],['ci.cvb.light','Light · Ivory'],['ci.bg','Background'],['ci.ink','Text'],['ci.accent','Accent / button'],['ci.accentH','Button hover'],['ci.fill','Panels'],['ci.line','Borders'],['ci.mute','Muted text'],['ci.mute2','Secondary text'],['ci.dark2','Dark detail'],['ci.link','Links'],['ci.kick','Small highlight'],['ci.accent2','Second accent'],['ci.tint','Soft tint'],['ad.ci.custom','Your colours'],['ad.ci.customhelp','Paste a HEX code with or without #, or use the colour box. Three or six digits both work. The shop updates straight away. Button hover and the soft tint follow the accent until you change them. Press Save settings to keep this on every device and on the customer page.'],['ad.ci.pick','The highlighted row is filled when you tap a Pantone swatch. Tap a row to choose it.'],['ad.ci.bad','Enter a HEX colour, such as #A47864 or A47864.'],['ad.ci.pantone','Pantone colour guide'],['ad.ci.pantonehelp','Tap a swatch to fill the highlighted colour above. Copy places the HEX on the clipboard.'],['ad.ci.approx','HEX values are approximate, not official Pantone values.'],['ad.ci.copy','Copy'],['ad.ci.copied','Copied'],['ad.set.save','Save settings'],['ad.set.reset','Reset to default'],
   ['ad.ph.banner','Link farm and origin photos to each bean. The Coffee Label image is managed in Edit Coffee. Photos are resized to JPEG and copied into the snapshot when a recipe is saved. After adding or removing photos, press Save photo links.'],
   ['ad.ph.farm','Farm photos'],['ad.ph.origin','Origin photos'],['ad.ph.save','Save photo links'],
   ['ad.pub.h','Backup'],
@@ -3057,12 +3097,37 @@ D.saveError=e=>{
 D.lum=h=>{const m=/^#?([0-9a-f]{6})$/i.exec(String(h||''));if(!m)return null;const n=parseInt(m[1],16),f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);};return .2126*f(n>>16&255)+.7152*f(n>>8&255)+.0722*f(n&255);};
 D.contrast=(a,b)=>{const x=D.lum(a),y=D.lum(b);if(x==null||y==null)return 21;const hi=Math.max(x,y),lo=Math.min(x,y);return (hi+.05)/(lo+.05);};
 D.onColor=bg=>D.contrast(bg,'#ffffff')>=D.contrast(bg,'#141414')?'#ffffff':'#141414';
-D.ciOf=()=>{const c=(D.S.theme||{}).ci;return c==='native-slate'||c==='native-mica'?c:'apple';};
-D.cvbOf=()=>(D.S.theme||{}).cvb==='light'?'light':'dark';
-D.setCi=(c,v)=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');if(v==='light')h.setAttribute('data-cvb','light');else h.removeAttribute('data-cvb');if(!D.account)try{localStorage.setItem(dripStorageKey('dp-ci'),c||'apple');localStorage.setItem(dripStorageKey('dp-cvb'),v||'dark');}catch(e){}};
-D.applyTheme=reset=>{D.setCi(reset?'apple':D.ciOf(),reset?'dark':D.cvbOf());const r=document.documentElement.style,t=D.S.theme||{};['paper','ink','accent','sage','soft','beige'].forEach(k=>t[k]&&!reset?r.setProperty('--'+k,t[k]):r.removeProperty('--'+k));
+D.CI_VAR={bg:'--ci-bg',ink:'--ci-ink',accent:'--ci-accent',accentH:'--ci-accent-h',fill:'--ci-fill',line:'--ci-line',mute:'--ci-mute',mute2:'--ci-mute2',dark2:'--ci-dark2',link:'--ci-link',kick:'--ci-kick',accent2:'--ci-accent2',tint:'--ci-tint'};
+D.CI_KEYS=Object.keys(D.CI_VAR);
+D.normHex=s=>{let t=String(s==null?'':s).trim();if(t.charAt(0)==='#')t=t.slice(1);if(!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(t))return '';if(t.length===3)t=t.charAt(0)+t.charAt(0)+t.charAt(1)+t.charAt(1)+t.charAt(2)+t.charAt(2);return '#'+t.toLowerCase();};
+D.ciPalettes={
+  apple:{bg:'#f5f5f7',ink:'#1d1d1f',accent:'#0071e3',accentH:'#0077ed',fill:'#e8e8ed',line:'#d2d2d7',mute:'#86868b',mute2:'#6e6e73',dark2:'#424245',link:'#0066cc',kick:'#bf4800',accent2:'#2997ff',tint:'#f0f7ff'},
+  'native-slate':{bg:'#f3f0e8',ink:'#2d2828',accent:'#2d2828',accentH:'#45403c',fill:'#e6e1d2',line:'#d9d2c2',mute:'#8c8478',mute2:'#6b645b',dark2:'#4a4440',link:'#7d6d52',kick:'#8a7a5f',accent2:'#a09178',tint:'#efeadf'},
+  'native-mica':{bg:'#f3f0e8',ink:'#2d2828',accent:'#a09178',accentH:'#8f8068',fill:'#e6e1d2',line:'#d9d2c2',mute:'#8c8478',mute2:'#6b645b',dark2:'#4a4440',link:'#7d6d52',kick:'#8a7a5f',accent2:'#a09178',tint:'#efeadf'}
+};
+D.ciPalette=id=>Object.assign({},D.ciPalettes[id]||D.ciPalettes.apple);
+D.colorsOf=theme=>{const t=theme||{},id=t.ci==='native-slate'||t.ci==='native-mica'?t.ci:'apple',base=D.ciPalette(id),c=t.colors;if(c&&typeof c==='object')D.CI_KEYS.forEach(k=>{const h=D.normHex(c[k]);if(h)base[k]=h;});return base;};
+D.ciMatch=cols=>{for(const id of ['apple','native-slate','native-mica']){const p=D.ciPalettes[id];if(D.CI_KEYS.every(k=>p[k]===cols[k]))return id;}return 'custom';};
+D.shadeHex=(hex,amt)=>{const m=/^#([0-9a-f]{6})$/.exec(hex||'');if(!m)return hex||'';const n=parseInt(m[1],16),f=c=>{const v=amt<0?c*(1+amt):c+(255-c)*amt;return Math.max(0,Math.min(255,Math.round(v)));};return '#'+[f(n>>16&255),f(n>>8&255),f(n&255)].map(x=>x.toString(16).padStart(2,'0')).join('');};
+D.mixHex=(a,b,t)=>{const pa=/^#([0-9a-f]{6})$/.exec(a||''),pb=/^#([0-9a-f]{6})$/.exec(b||'');if(!pa||!pb)return a||'';const na=parseInt(pa[1],16),nb=parseInt(pb[1],16),ch=(x,y)=>Math.round(x*(1-t)+y*t);return '#'+[ch(na>>16&255,nb>>16&255),ch(na>>8&255,nb>>8&255),ch(na&255,nb&255)].map(x=>x.toString(16).padStart(2,'0')).join('');};
+D.ringOf=hex=>{const m=/^#([0-9a-f]{6})$/.exec(hex||'');if(!m)return '';const n=parseInt(m[1],16);return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+',.28)';};
+D.paintCi=(cols,persist)=>{const r=document.documentElement.style;if(!cols){D.CI_KEYS.forEach(k=>r.removeProperty(D.CI_VAR[k]));r.removeProperty('--ci-ring');r.removeProperty('--ci-on-accent');if(persist&&!D.account)try{localStorage.removeItem(dripStorageKey('dp-colors'));}catch(e){}return;}D.CI_KEYS.forEach(k=>{if(cols[k])r.setProperty(D.CI_VAR[k],cols[k]);});const ring=D.ringOf(cols.accent);if(ring)r.setProperty('--ci-ring',ring);if(cols.accent)r.setProperty('--ci-on-accent',D.onColor(cols.accent));if(persist&&!D.account)try{localStorage.setItem(dripStorageKey('dp-colors'),JSON.stringify(D.colorsOf({ci:'custom',colors:cols})));}catch(e){}};
+D.themeLive=()=>D.colorDraft||D.S.theme||{};
+D.ciOf=()=>{const c=D.themeLive().ci;return c==='native-slate'||c==='native-mica'||c==='custom'?c:'apple';};
+D.cvbOf=()=>D.themeLive().cvb==='light'?'light':'dark';
+D.setCi=(c,v,persist)=>{const h=document.documentElement;if(c&&c!=='apple')h.setAttribute('data-ci',c);else h.removeAttribute('data-ci');if(v==='light')h.setAttribute('data-cvb','light');else h.removeAttribute('data-cvb');if(persist===false||D.account)return;try{localStorage.setItem(dripStorageKey('dp-ci'),c||'apple');localStorage.setItem(dripStorageKey('dp-cvb'),v||'dark');}catch(e){}};
+D.applyTheme=reset=>{if(reset)D.colorDraft=null;const live=!reset&&!!D.colorDraft,theme=live?D.colorDraft:(D.S.theme||{}),r=document.documentElement.style;
+  const hasColors=!!(theme.colors&&typeof theme.colors==='object'&&D.CI_KEYS.some(k=>D.normHex(theme.colors[k])));
+  const present=!!(reset||live||theme.ci||hasColors);
+  ['paper','ink','accent','sage','soft','beige'].forEach(k=>{if(!reset&&!hasColors&&D.S.theme&&D.S.theme[k])r.setProperty('--'+k,D.S.theme[k]);else r.removeProperty('--'+k);});
   /* text on filled colours is always chosen for contrast, so a selected item can never become unreadable */
-  [['ink','on-ink','#fbfbf9'],['sage','on-sage','#ffffff'],['accent','on-accent','#ffffff']].forEach(x=>{if(!reset&&t[x[0]])r.setProperty('--'+x[1],D.onColor(t[x[0]]));else r.removeProperty('--'+x[1]);});};
+  [['ink','on-ink'],['sage','on-sage'],['accent','on-accent']].forEach(x=>{if(!reset&&!hasColors&&D.S.theme&&D.S.theme[x[0]])r.setProperty('--'+x[1],D.onColor(D.S.theme[x[0]]));else r.removeProperty('--'+x[1]);});
+  if(!present)return;
+  const ci=reset?'apple':(theme.ci==='native-slate'||theme.ci==='native-mica'||theme.ci==='custom'?theme.ci:'apple');
+  const cvb=reset?'dark':(theme.cvb==='light'?'light':'dark');
+  D.setCi(ci,cvb,!live);
+  if(reset||!hasColors)D.paintCi(null,!live);else D.paintCi(D.colorsOf(theme),!live);};
+D.applyRemoteTheme=t=>{if(!t||D.colorDraft)return;const theme=Object.assign({},D.S.theme||{});if(t.ci)theme.ci=t.ci;if(t.cvb)theme.cvb=t.cvb;if(t.colors&&typeof t.colors==='object')theme.colors=t.colors;D.S.theme=theme;D.applyTheme();};
 D.newId=()=>'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 D.pageUrl=()=>{
   if(BRANCH_PATH||D.account||new URLSearchParams(route.search).has('shop-code'))return location.origin+(BRANCH_PATH||'/');
@@ -3542,6 +3607,49 @@ const TH=[['paper','Background'],['ink','Text and buttons'],['accent','Accent'],
 const CI_SETS=[['apple','Blue #0071e3 · Grey #f5f5f7',['#f5f5f7','#1d1d1f','#0071e3']],
   ['native-slate','Midnight Slate #2d2828 · Ivory Sediment #e6e1d2 · Mica Dust #a09178',['#e6e1d2','#2d2828','#a09178']],
   ['native-mica','Mica Dust #a09178 · Ivory Sediment #e6e1d2 · Midnight Slate #2d2828',['#e6e1d2','#a09178','#2d2828']]];
+const CI_SLOTS=[['bg','ci.bg'],['ink','ci.ink'],['accent','ci.accent'],['accentH','ci.accentH'],['fill','ci.fill'],['line','ci.line'],['mute','ci.mute'],['mute2','ci.mute2'],['dark2','ci.dark2'],['link','ci.link'],['kick','ci.kick'],['accent2','ci.accent2'],['tint','ci.tint']];
+/* Screen colours for the café guide. HEX is approximate, not an official Pantone value. [name, code, hex, year] */
+const PANTONE=[
+ ['Cloud Dancer','11-4201','#F0EEE9','2026'],['Snow White','11-0602','#F2F0EB',''],['Antique White','11-0105','#EDE3D2',''],['Almond Oil','12-0713','#F4E4C1',''],
+ ['Biscotti','13-1009','#DAC7AB',''],['Sand Dollar','13-1106','#DECDBE',''],['Shifting Sand','14-1210','#D8C0AD',''],['Beige','14-1118','#D5BA98',''],
+ ['Almond Buff','14-1116','#CCB390',''],['Mellow Buff','13-1014','#D8B998',''],['Nougat','16-1320','#B69885',''],['Light Taupe','16-1210','#B19D8D',''],
+ ['Doe','16-1333','#B98E68',''],['Caramel','16-1439','#C37C54',''],['Copper','16-1325','#C47E5A',''],['Brown Sugar','17-1134','#A17249',''],
+ ['Mocha Mousse','17-1230','#A47864','2025'],['Tobacco Brown','17-1327','#9A7352',''],['Otter','18-1018','#7F674F',''],['Leather Brown','18-1142','#97572B',''],
+ ['Mocha Bisque','18-1140','#8C543A',''],['Caramel Café','18-1148','#864C24',''],['Coffee Liqueur','18-0930','#6A513B',''],['Cocoa Brown','18-1222','#6C5043',''],
+ ['Chestnut','19-1118','#584039',''],['Mustang','19-1217','#684B40',''],['Bitter Chocolate','19-1317','#503130',''],['Coffee Bean','19-0915','#40312F',''],
+ ['Bracken','19-1015','#4F3F3B',''],['Jet Black','19-0303','#2D2C2F',''],['True Red','19-1664','#BF1932',''],['Chili Pepper','19-1557','#9B1B30',''],
+ ['Inca Gold','17-1048','#BB7A2C',''],['Mimosa','14-0848','#F0C05A',''],['Classic Blue','19-4052','#0F4C81','2020'],['Peacoat','19-3920','#2B2E43',''],
+ ['Greener Pastures','19-6311','#37503D',''],['Kombu Green','19-0417','#3A4032',''],['Anthracite','19-4007','#28282D',''],['Pale Dogwood','13-1404','#EDCDC2',''],
+ ['Peach Fuzz','13-1023','#FFBE98','2024'],['Viva Magenta','18-1750','#BB2649','2023'],['Very Peri','17-3938','#6667AB','2022'],['Ultimate Gray','17-5104','#939597','2021'],
+ ['Illuminating','13-0647','#F5DF4D','2021'],['Living Coral','16-1546','#FF6F61','2019'],['Ultra Violet','18-3838','#5F4B8B','2018'],['Greenery','15-0343','#88B04B','2017'],
+ ['Rose Quartz','13-1520','#F7CAC9','2016'],['Serenity','15-3919','#91A8D0','2016'],['Marsala','18-1438','#964F4C','2015'],['Radiant Orchid','18-3224','#AD5E99','2014'],
+ ['Emerald','17-5641','#009473','2013'],['Tangerine Tango','17-1463','#DD4124','2012'],['Honeysuckle','18-2120','#D94F70','2011'],['Turquoise','15-5519','#45B5AA','2010']];
+const ensureColorDraft=()=>{if(D.colorDraft)return D.colorDraft;const cvb=(D.S.theme||{}).cvb==='light'?'light':'dark',colors=D.colorsOf(D.S.theme);D.colorDraft={ci:D.ciMatch(colors),cvb,colors};return D.colorDraft;};
+const markColorSlot=()=>{const s=D.ciSlot||'accent';app.querySelectorAll('.ci-slot').forEach(n=>n.classList.toggle('on',n.dataset.cislot===s));app.querySelectorAll('[data-act="cislot"]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.slot===s)));};
+const showHexErr=(k,bad)=>{const inp=app.querySelector('[data-chex="'+k+'"]'),err=app.querySelector('[data-cerr="'+k+'"]');if(inp)inp.setAttribute('aria-invalid',bad?'true':'false');if(err){err.hidden=!bad;err.textContent=bad?D.T('ad.ci.bad'):'';}};
+const paintColorField=(k,hex)=>{const sw=app.querySelector('[data-csw="'+k+'"]'),pick=app.querySelector('[data-cpick="'+k+'"]');if(sw)sw.style.background=hex;if(pick)pick.value=hex;};
+const syncBrandChrome=()=>{const ci=D.ciOf();app.querySelectorAll('[data-act="ciset"]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ci===ci)));const box=app.querySelector('.ci-cvb');if(box)box.hidden=ci==='apple';};
+const commitColorSlot=(k,hex)=>{const draft=ensureColorDraft();const prev=draft.colors[k];draft.colors[k]=hex;
+  if(k==='accent'&&prev!==hex){draft.colors.accentH=D.shadeHex(hex,-0.12);draft.colors.tint=D.mixHex('#ffffff',hex,0.18);paintColorField('accentH',draft.colors.accentH);paintColorField('tint',draft.colors.tint);
+    const ah=app.querySelector('[data-chex="accentH"]'),ti=app.querySelector('[data-chex="tint"]');if(ah&&document.activeElement!==ah)ah.value=draft.colors.accentH.toUpperCase();if(ti&&document.activeElement!==ti)ti.value=draft.colors.tint.toUpperCase();showHexErr('accentH',false);showHexErr('tint',false);}
+  draft.ci=D.ciMatch(draft.colors);paintColorField(k,hex);D.applyTheme();syncBrandChrome();};
+const applyHexToSlot=(k,hex)=>{D.ciSlot=k;markColorSlot();const inp=app.querySelector('[data-chex="'+k+'"]');if(inp)inp.value=hex.toUpperCase();showHexErr(k,false);commitColorSlot(k,hex);};
+const onBrandInput=t=>{if(!D.caps.isOwner)return;const k=t.dataset.chex||t.dataset.cpick;if(!k)return;D.ciSlot=k;markColorSlot();
+  const raw=String(t.value||'').trim(),body=raw.charAt(0)==='#'?raw.slice(1):raw,hex=D.normHex(raw);
+  const finished=/^[0-9a-fA-F]{6}$/.test(body)||(raw.charAt(0)==='#'&&/^[0-9a-fA-F]{3}$/.test(body))||!!t.dataset.cpick;
+  if(!hex){showHexErr(k,!!raw&&!/^[0-9a-fA-F]{0,6}$/.test(body));return;}
+  if(!finished){showHexErr(k,false);return;}
+  showHexErr(k,false);if(t.dataset.cpick){const inp=app.querySelector('[data-chex="'+k+'"]');if(inp)inp.value=hex.toUpperCase();}else paintColorField(k,hex);commitColorSlot(k,hex);};
+const brandHtml=()=>{if(!D.ciSlot)D.ciSlot='accent';const cols=D.colorDraft?D.colorDraft.colors:D.colorsOf(D.S.theme),slot=D.ciSlot;
+  const slots=CI_SLOTS.map(x=>{const hex=(cols[x[0]]||'#000000').toLowerCase(),on=slot===x[0],id='ci-'+x[0];
+    return '<div class="ci-slot'+(on?' on':'')+'" data-cislot="'+x[0]+'"><button type="button" class="ci-swatch" data-act="cislot" data-slot="'+x[0]+'" data-csw="'+x[0]+'" style="background:'+hex+'" aria-pressed="'+on+'" aria-label="'+esc(D.T(x[1]))+'"></button><label class="lbl" for="'+id+'">'+T(x[1])+'</label><input id="'+id+'" class="ci-hex" data-chex="'+x[0]+'" value="'+esc(hex.toUpperCase())+'" maxlength="9" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-describedby="cerr-'+x[0]+'"><input type="color" data-cpick="'+x[0]+'" value="'+hex+'" aria-label="'+esc(D.T(x[1]))+'"><p class="err" id="cerr-'+x[0]+'" data-cerr="'+x[0]+'" hidden></p></div>';}).join('');
+  const pans=PANTONE.map(p=>{const hex=p[2].toUpperCase(),meta=p[1]+(p[3]?' · '+p[3]:'');
+    return '<div class="ci-pan"><button type="button" class="ci-pan-hit" data-act="cipan" data-hex="'+hex+'" aria-label="'+esc(p[0]+' '+meta+' '+hex)+'"><i style="background:'+hex+'"></i><b>'+esc(p[0])+'</b><small>'+esc(meta)+'</small><small>'+hex+'</small></button><button type="button" class="ci-pan-copy" data-act="cipancopy" data-hex="'+hex+'">'+T('ad.ci.copy')+'</button></div>';}).join('');
+  return '<h2 style="margin-top:20px">'+T('ad.theme.h')+'</h2><p class="cap">'+T('ad.ci.help')+'</p><div class="ci-sets">'+CI_SETS.map(x=>'<button type="button" class="ci-set" data-act="ciset" data-ci="'+x[0]+'" aria-pressed="'+(D.ciOf()===x[0])+'"><span class="ci-sw">'+x[2].map(c=>'<i style="background:'+c+'"></i>').join('')+'</span><b>'+T('ci.'+x[0])+'</b><small>'+x[1]+'</small></button>').join('')+'</div>'+
+    '<h3 class="ci-h">'+T('ad.ci.custom')+'</h3><p class="cap">'+T('ad.ci.customhelp')+'</p><p class="cap">'+T('ad.ci.pick')+'</p><div class="ci-slots">'+slots+'</div>'+
+    '<div class="ci-cvb"'+(D.ciOf()==='apple'?' hidden':'')+'><div class="lbl" style="margin-top:16px">'+T('ci.cvb')+'</div><div class="ci-sets">'+[['dark','#2d2828','#3b3532'],['light','#e6e1d2','#f6f3ec']].map(x=>'<button type="button" class="ci-set" data-act="cvbset" data-v="'+x[0]+'" aria-pressed="'+(D.cvbOf()===x[0])+'"><span class="ci-sw"><i style="background:'+x[1]+'"></i><i style="background:'+x[2]+'"></i></span><b>'+T('ci.cvb.'+x[0])+'</b></button>').join('')+'</div></div>'+
+    '<h3 class="ci-h">'+T('ad.ci.pantone')+'</h3><p class="cap">'+T('ad.ci.pantonehelp')+'</p><div class="ci-pan-grid">'+pans+'</div><p class="cap ci-note">'+T('ad.ci.approx')+'</p>'+
+    '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div>';};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const bean=id=>BEANS.find(b=>b.id===id);
 /* ---------- Taste Notes: one list per coffee (bean.flavors), shared by Add Coffee, Recipe and the customer page ---------- */
@@ -3778,9 +3886,7 @@ const settingsHtml=()=>{
       return '<div class="f'+(long?' wide':'')+'"><label class="lbl" for="'+id+'">'+esc(short(x[1],64))+'</label>'+(long?'<textarea id="'+id+'" rows="3" data-lab="'+k+'">'+esc(cur)+'</textarea>':'<input id="'+id+'" data-lab="'+k+'" value="'+esc(cur)+'">')+'</div>';}).join('')+'</div></details>').join('');
   return '<section class="sec"><h2>'+T('ad.txt.h')+'</h2><p class="cap">'+T('ad.txt.help')+'</p>'+
   '<div class="f" style="margin:10px 0 12px;max-width:360px"><label class="lbl" for="tq">'+T('sb.search')+'</label><input id="tq" type="search" value="'+esc(tq)+'" placeholder="'+T('sb.search')+'"></div>'+(det||'<p class="cap">'+T('ad.cnone')+'</p>')+
-  '<h2 style="margin-top:20px">'+T('ad.theme.h')+'</h2><p class="cap">'+T('ad.ci.help')+'</p><div class="ci-sets">'+CI_SETS.map(x=>'<button type="button" class="ci-set" data-act="ciset" data-ci="'+x[0]+'" aria-pressed="'+(D.ciOf()===x[0])+'"><span class="ci-sw">'+x[2].map(c=>'<i style="background:'+c+'"></i>').join('')+'</span><b>'+T('ci.'+x[0])+'</b><small>'+x[1]+'</small></button>').join('')+'</div>'+
-  (D.ciOf()!=='apple'?'<div class="lbl" style="margin-top:16px">'+T('ci.cvb')+'</div><div class="ci-sets">'+[['dark','#2d2828','#3b3532'],['light','#e6e1d2','#f6f3ec']].map(x=>'<button type="button" class="ci-set" data-act="cvbset" data-v="'+x[0]+'" aria-pressed="'+(D.cvbOf()===x[0])+'"><span class="ci-sw"><i style="background:'+x[1]+'"></i><i style="background:'+x[2]+'"></i></span><b>'+T('ci.cvb.'+x[0])+'</b></button>').join('')+'</div>':'')+
-  '<div class="acts" style="margin-top:14px"><button class="btn" data-act="savesettings">'+T('ad.set.save')+'</button><button class="btn ghost" data-act="resetsettings">'+T('ad.set.reset')+'</button></div></section>';};
+  brandHtml()+'</section>';};
 const KINDS=[['farm','ad.ph.farm'],['origin','ad.ph.origin']];
 const staffSettings=()=>D.account?.admin?
   '<section class="sec staff-settings"><h2>Staff account settings</h2><div id="staff-settings"><p class="cap">Loading staff accounts…</p></div></section>':
@@ -3882,6 +3988,7 @@ const setPath=(k,val)=>{
 const keepFocus=(id,fn)=>{const n0=$('#'+id),p=n0?n0.selectionStart:0;fn();const n=$('#'+id);if(n){n.focus();try{n.setSelectionRange(p,p);}catch(e){}}};
 app.addEventListener('input',e=>{
   const t=e.target;
+  if(t.dataset&&(t.dataset.chex||t.dataset.cpick)){onBrandInput(t);return;}
   if(t.id==='aq'){aq=t.value;keepFocus('aq',render);return;}
   if(t.id==='q'){filt.q=t.value;keepFocus('q',render);return;}
   if(t.id==='tq'){tq=t.value;keepFocus('tq',render);return;}
@@ -3897,6 +4004,8 @@ app.addEventListener('input',e=>{
     refreshCalc();
   }
 });
+app.addEventListener('focusin',e=>{const t=e.target;if(!t.dataset||!D.caps.isOwner)return;const k=t.dataset.chex||t.dataset.cpick;if(!k)return;D.ciSlot=k;markColorSlot();});
+app.addEventListener('focusout',e=>{const t=e.target;if(!t.dataset||!t.dataset.chex||!D.caps.isOwner)return;const hex=D.normHex(t.value);if(hex){t.value=hex.toUpperCase();showHexErr(t.dataset.chex,false);commitColorSlot(t.dataset.chex,hex);}else showHexErr(t.dataset.chex,true);});
 const shrink=(file,max,q)=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,(max||900)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q||0.72));};im.onerror=rej;im.src=fr.result;};fr.onerror=rej;fr.readAsDataURL(file);});
 const OCR_BASE='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/';
 const loadOcr=()=>window.Tesseract?Promise.resolve(true):new Promise(res=>{const s=document.createElement('script');s.src=OCR_BASE+'tesseract.min.js';s.onload=()=>res(!!window.Tesseract);s.onerror=()=>{s.remove();res(false);};document.head.appendChild(s);});
@@ -3926,6 +4035,7 @@ const doSave=async(okMsg,undo)=>{
 };
 app.addEventListener('change',async e=>{
   const t=e.target;
+  if(t.dataset&&t.dataset.cpick){onBrandInput(t);return;}
   if(t.dataset.mv){if(!D.caps.isOwner)return;const b=bean(t.dataset.mv);if(!b)return;mutate(()=>{if(t.value)b.folder=t.value;else delete b.folder;},'Coffee moved');return;}
   if(t.dataset.fn){const v=t.value.trim(),f=D.S.folders.find(x=>x.id===t.dataset.fn);if(!D.caps.isOwner||!f)return;if(!v||D.S.folders.some(x=>x!==f&&x.name.toLowerCase()===v.toLowerCase())){toast('Enter a unique folder name');render();return;}mutate(()=>{f.name=v;},'Folder renamed');return;}
   if(t.dataset.bsel&&W){const nb=bean(t.value);if(!nb)return;const old=bean(W.beanId),same=!old||JSON.stringify(W.notes)===JSON.stringify(uniqNotes(old.flavors));W.beanId=nb.id;if(same)W.notes=uniqNotes(nb.flavors);render();return;}
@@ -3950,11 +4060,16 @@ const priceOf=raw=>{const s=String(raw==null?'':raw).trim().replace(/,/g,'').rep
 app.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id;
-  if(['fadd','fup','fdown','fdel','cedit','cdel','savesettings','resetsettings','ciset','cvbset','savephotos','rmphoto','chpin','pubphotos'].includes(a)&&!D.caps.isOwner){toast('Admin login required');return;}
+  if(['fadd','fup','fdown','fdel','cedit','cdel','savesettings','resetsettings','ciset','cvbset','savephotos','rmphoto','chpin','pubphotos','cislot','cipan','cipancopy'].includes(a)&&!D.caps.isOwner){toast('Admin login required');return;}
   switch(a){
-   case 'savesettings':await doSave('Settings saved');render();break;
-   case 'ciset':{const c=el.dataset.ci;D.S.theme={ci:c,cvb:D.cvbOf()};D.applyTheme();await doSave('Brand colors saved');render();break;}
-   case 'cvbset':{D.S.theme=Object.assign({},D.S.theme||{},{cvb:el.dataset.v==='light'?'light':'dark'});D.applyTheme();await doSave('Brand colors saved');render();break;}
+   case 'savesettings':{
+     if(D.colorDraft){D.S.theme={ci:D.colorDraft.ci,cvb:D.colorDraft.cvb,colors:Object.assign({},D.colorDraft.colors)};D.colorDraft=null;D.applyTheme();}
+     await doSave('Settings saved');render();break;}
+   case 'ciset':{const c=el.dataset.ci;if(c!=='apple'&&c!=='native-slate'&&c!=='native-mica')break;const cvb=D.cvbOf();D.colorDraft=null;D.S.theme={ci:c,cvb,colors:D.ciPalette(c)};D.applyTheme();await doSave('Brand colors saved');render();break;}
+   case 'cvbset':{const v=el.dataset.v==='light'?'light':'dark';if(D.colorDraft)D.colorDraft.cvb=v;D.S.theme=Object.assign({},D.S.theme||{},{cvb:v});D.applyTheme();await doSave('Brand colors saved');render();break;}
+   case 'cislot':D.ciSlot=el.dataset.slot||'accent';markColorSlot();break;
+   case 'cipan':{const hex=D.normHex(el.dataset.hex);if(hex)applyHexToSlot(D.ciSlot||'accent',hex);break;}
+   case 'cipancopy':{const hex=el.dataset.hex||'';try{await navigator.clipboard.writeText(hex);toast(D.T('ad.ci.copied')+' '+hex);}catch(err){prompt(D.T('ad.ci.copy'),hex);}break;}
    case 'resetsettings':{if(!await ask('Restore all original text, labels and colors?','Reset to default'))break;delete D.S.labels;delete D.S.theme;D.applyTheme(true);await doSave('Defaults restored');render();break;}
    case 'login':{if(Date.now()<lockUntil){toast('Too many attempts. Try again in '+Math.ceil((lockUntil-Date.now())/1000)+' s');return;}const v=$('#pin').value||'';if(v.length<4){toast('PIN needs at least 4 characters');return;}const h=await hp(v);if(!D.S.adminPin){D.S.adminPin=h;if(!await doSave('Admin PIN created',()=>{delete D.S.adminPin;}))return;}else if(h!==D.S.adminPin){if(++fails>=5){fails=0;lockUntil=Date.now()+30000;toast('Too many attempts. Locked for 30 seconds');}else toast('Incorrect PIN');return;}fails=0;D.caps.isOwner=true;try{sessionStorage.setItem(dripStorageKey('dp-admin'),'1');}catch(x){}render();break;}
    case 'logout':D.caps.isOwner=false;try{sessionStorage.removeItem(dripStorageKey('dp-admin'));}catch(x){}tab='beans';render();break;
@@ -4345,7 +4460,7 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
   };
   if(pathRef||isQueryProfile||/^#(?:c|s)=/.test(route.hash)){
     D.applyTheme();
-    if(!D.cap)D.rpc('drip_theme',{}).then(t=>{if(t)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});
+    if(!D.cap)D.rpc('drip_theme',{}).then(t=>{if(t)D.applyRemoteTheme(t);}).catch(()=>{});
     await sync();
     if(D.cap){
       document.body.classList.add('cap');
@@ -4361,7 +4476,7 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
   if(BRANCH_PATH&&joinCode&&!D.cap&&!D.account)await D.join(joinCode);
   D.applyTheme();
   /* Devices without the shop code (customers opening a QR) still get the shop's brand colours. */
-  if(!D.connected())D.rpc('drip_theme',{}).then(t=>{if(t&&!D.connected())D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});
+  if(!D.connected())D.rpc('drip_theme',{}).then(t=>{if(t&&!D.connected())D.applyRemoteTheme(t);}).catch(()=>{});
   applyBeans();
   if(D.account){
     D.caps.isOwner=D.accountRole==='manager';document.body.dataset.accountRole=D.accountRole;
