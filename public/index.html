@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-eGAekpwboZ7zg0UUMHxceS7QRIaexT9PjO2276QBaXk=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-pHJI1iNdQdHpyAltGF6SJn3tXFcJchMa/6e2ftbxJgA=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-H5WIe/fmmiXui9cX6cJwClrQtY8nCi+Y2OQKDJua/28=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-eGAekpwboZ7zg0UUMHxceS7QRIaexT9PjO2276QBaXk=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-4UptMH1EgE7TQxd1znbAbMCVyTyJmQjGOnVWYxaO5Wg=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-95VU3LQgStE/6Un4qHyZIMttbJsxT2uv+sLcoCwCWnM=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script src="/route.js"></script><script>
 const route=window.DripRoute;
 const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(route.pathname)?'/fundamental/':'';
@@ -3163,7 +3163,7 @@ const b64=u8=>{let t='';u8.forEach(c=>t+=String.fromCharCode(c));return btoa(t).
 const unb64=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const r=atob(t),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u;};
 const pipe=async(u8,S)=>new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(new S('deflate-raw'))).arrayBuffer());
 D.makePayload=async s=>{
-  const bean=Object.assign({},s.bean);delete bean.flavors;
+  const bean=Object.assign({},s.bean);delete bean.flavors;delete bean.cupPrice;delete bean.beanPrice;
   const o={id:s.id,createdAt:s.createdAt,customer:s.customer,barista:s.barista,dripper:s.dripper,bean,recipe:s.recipe,brew:D.showOn(s,'brew')?{tds:(s.brew||{}).tds,yield:(s.brew||{}).yield,ext:(s.brew||{}).ext}:undefined,show:s.show,notes:s.notes,message:s.message,profile:s.profile,labels:D.cpLabels()};
   const bytes=new TextEncoder().encode(JSON.stringify(o));
   if(window.CompressionStream)return 'z'+b64(await pipe(bytes,CompressionStream));
@@ -3173,6 +3173,7 @@ D.readPayload=async t=>{
   const raw=unb64(t.slice(1));
   const bytes=t[0]==='z'?await pipe(raw,DecompressionStream):raw;
   const o=JSON.parse(new TextDecoder().decode(bytes));
+  if(o.bean){delete o.bean.cupPrice;delete o.bean.beanPrice;}
   o.photos={label:[],farm:[],origin:[]};o.labels=(o.labels&&typeof o.labels==='object')?o.labels:{};o.payload=t;return o;
 };
 D.water=r=>(+r.bloomWater||0)+(r.pours||[]).reduce((a,p)=>a+(+p.w||0),0);
@@ -3352,14 +3353,13 @@ D.profileHtml=s=>{
   const rv=D.reviewUrl();
   const b=s.bean,T=D.tt,dripper=D.dName(s.dripper),by=D.person(s.barista);
   const src=D.coffeeImg(s)||D.heroSrc(s);
-  const spec=[['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['cupPrice',D.priceText(b,'cup')],['beanPrice',D.priceText(b,'bean')]]
+  const spec=[['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast]]
     .filter(a=>a[1]!==''&&a[1]!=null).map(a=>'<div><dt>'+esc(T('cp.l.'+a[0]))+'</dt><dd>'+esc(a[1])+'</dd></div>').join('');
   const org=[b.country,b.region].filter(Boolean).join(' · ');
-  const prices=D.priceBits(b);
   const meta=[by?esc(D.T('cp.by'))+' <b>'+esc(by)+'</b>':'',s.customer?esc(D.T('cp.brewed'))+' <b>'+esc(s.customer)+'</b>':'',esc(D.fmtDate(s.createdAt))].filter(Boolean).join('<i aria-hidden="true">·</i>');
-  /* Section titles only (the small taglines after them were removed). */
+  /* Section titles only (the small taglines after them were removed). Prices stay on the shop's Select Beans cards. */
   const head=(t,tag,extra)=>'<div class="cv-sh"><h2>'+t+'</h2>'+(extra||'')+'</div>';
-  const hero='<header class="cv-hero"><div class="cv-in cv-hc"><p class="cv-kick">'+T('cp.kicker')+'</p><h1 class="cv-name">'+esc(b.name)+'</h1>'+(org?'<p class="cv-org">'+esc(org)+'</p>':'')+(prices.length?'<p class="cv-price">'+prices.map(p=>'<b>'+esc(p)+'</b>').join('')+'</p>':'')+'<p class="cv-meta">'+meta+'</p></div>'+
+  const hero='<header class="cv-hero"><div class="cv-in cv-hc"><p class="cv-kick">'+T('cp.kicker')+'</p><h1 class="cv-name">'+esc(b.name)+'</h1>'+(org?'<p class="cv-org">'+esc(org)+'</p>':'')+'<p class="cv-meta">'+meta+'</p></div>'+
     '<div class="cv-in"><figure class="cv-ph"><img alt="'+esc(b.name||'')+'" src="'+esc(src)+'">'+(b.process?'<figcaption class="cv-proc">'+esc(b.process)+'</figcaption>':'')+'</figure></div></header>';
   const specs=(spec||b.note)?'<section class="cv-specs"><div class="cv-in">'+head(T('cp.coffee'),T('cp.coffee.tag'))+(spec?'<dl class="cv-spec">'+spec+'</dl>':'')+(b.note?'<p class="cv-note">'+esc(b.note)+'</p>':'')+'</div></section>':'';
   const fl=D.flavorHtml(s),nN=(s.notes||[]).filter(Boolean).length;
@@ -3429,7 +3429,7 @@ D.renderJpegCanvas=async s=>{
     txt([D.person(s.barista)?T('cp.by')+' '+D.person(s.barista):'',s.customer?T('cp.brewed')+' '+s.customer:''].filter(Boolean).join('  ·  '),P,y,bold,INK);y+=10;
     head(T('cp.coffee'));
     if(limg){const lh=Math.round(IW*0.62);if(!dry)cover(c,limg,P,y-10,IW,lh);y+=lh+36;}
-    [['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['cupPrice',D.priceText(b,'cup')],['beanPrice',D.priceText(b,'bean')]].forEach(a=>row(T('cp.l.'+a[0]),a[1]));
+    [['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast]].forEach(a=>row(T('cp.l.'+a[0]),a[1]));
     if(b.note){y+=8;y=wrap(b.note,P,y,IW,36,body,MUTE);}
     head(T('cp.recipe'));
     const on=k=>D.showOn(s,k);
@@ -4344,13 +4344,12 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="stoc
   const old=D.S.stockPin;D.S.stockPin=await hp(v);if(await doSave(D.T('st.ad.ok'),()=>{D.S.stockPin=old;})){stockOk=false;try{sessionStorage.removeItem(dripStorageKey('dp-stock'));}catch(x){}render();}},true);
 /* ---------- Coffee showcase: full-screen profiles the customer swipes through before choosing ---------- */
 const chooseBean=id=>{const b=bean(id);if(!b)return;W=newWork(b);const p=presets().find(x=>x.id===activePreset);if(p)applyPreset(W,p);tab='recipe';resultId=null;render();window.scrollTo(0,0);};
-const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.flavors),px=D.priceBits(b);
+const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.flavors);
   const spec=[['variety',b.variety],['process',b.process],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['region',b.region]].filter(x=>x[1]).map(x=>'<div><dt>'+T('cp.l.'+x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>').join('');
   const gal=ph.farm.concat(ph.origin).filter(u=>u&&u!==hero).slice(0,4);
   return '<article class="sc-page" data-id="'+esc(b.id)+'" aria-roledescription="slide" aria-label="'+esc(b.name)+'"><div class="sc-scroll">'+
    '<figure class="sc-hero'+(b.oos?' oos':'')+'"><img src="'+esc(hero)+'" alt="">'+(b.process?'<figcaption>'+esc(b.process)+'</figcaption>':'')+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'</figure>'+
    '<div class="sc-body"><p class="sc-kick">'+esc([b.country,b.region].filter(Boolean).join(' · '))+'</p><h2 class="sc-name">'+esc(b.name)+'</h2>'+
-   (px.length?'<p class="sc-price">'+px.map(p=>'<b>'+esc(p)+'</b>').join('')+'</p>':'')+
    (b.farmer||b.farm?'<p class="sc-grown">'+(b.farmer?T('sc.grown')+' <b>'+esc(b.farmer)+'</b>':'')+(b.farm?(b.farmer?' '+T('sc.at')+' ':'')+'<b>'+esc(b.farm)+'</b>':'')+'</p>':'')+
    (notes.length?'<ul class="sc-notes">'+notes.map(n=>'<li><span aria-hidden="true">'+D.noteIcon(n)+'</span>'+esc(n)+'</li>').join('')+'</ul>':'')+
    (spec?'<dl class="sc-spec">'+spec+'</dl>':'')+(b.note?'<p class="sc-note">'+esc(b.note)+'</p>':'')+

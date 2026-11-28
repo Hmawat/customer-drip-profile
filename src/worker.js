@@ -260,6 +260,39 @@ async function openPlate(env,req,url) {
   return new Response(req.method==='HEAD'?null:page,{status:410,headers});
 }
 
+const b64url = (bytes) => {
+  let text = '';
+  bytes.forEach((c) => { text += String.fromCharCode(c); });
+  return btoa(text).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+};
+const unb64url = (text) => {
+  let t = String(text).replace(/-/g, '+').replace(/_/g, '/');
+  while (t.length % 4) t += '=';
+  const raw = atob(t);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes;
+};
+const deflateRaw = async (bytes, Stream) => new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new Stream('deflate-raw'))).arrayBuffer());
+
+// A customer link carries a copy of the coffee. Cup and 100g prices stay in the shop data and are left out of that copy.
+async function customerPayload(payload) {
+  if (typeof payload !== 'string' || (payload[0] !== 'z' && payload[0] !== 'j')) return payload;
+  try {
+    const raw = unb64url(payload.slice(1));
+    const bytes = payload[0] === 'z' ? await deflateRaw(raw, DecompressionStream) : raw;
+    const data = JSON.parse(new TextDecoder().decode(bytes));
+    const bean = data && data.bean;
+    if (!bean || typeof bean !== 'object' || (!Object.prototype.hasOwnProperty.call(bean, 'cupPrice') && !Object.prototype.hasOwnProperty.call(bean, 'beanPrice'))) return payload;
+    delete bean.cupPrice;
+    delete bean.beanPrice;
+    const out = new TextEncoder().encode(JSON.stringify(data));
+    return payload[0] === 'z' ? 'z' + b64url(await deflateRaw(out, CompressionStream)) : 'j' + b64url(out);
+  } catch (e) {
+    return payload;
+  }
+}
+
 const F = {
   async drip_list_plates(env,a,shop,req) {
     const account=await access(env,shop,a,req);
@@ -369,7 +402,8 @@ const F = {
     return { raw: r && r.data ? r.data : 'null' };
   },
   async drip_snap(env, a, shop) {
-    return (await sharedSnap(env, shop, a.p_ref))?.payload ?? null;
+    const payload = (await sharedSnap(env, shop, a.p_ref))?.payload ?? null;
+    return payload == null ? null : await customerPayload(payload);
   },
   // Public: the shop's brand colour set, so customer pages (no shop code) match the shop.
   async drip_theme(env, a, shop) {
