@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-eGAekpwboZ7zg0UUMHxceS7QRIaexT9PjO2276QBaXk=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-pHJI1iNdQdHpyAltGF6SJn3tXFcJchMa/6e2ftbxJgA=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-H5WIe/fmmiXui9cX6cJwClrQtY8nCi+Y2OQKDJua/28=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-eGAekpwboZ7zg0UUMHxceS7QRIaexT9PjO2276QBaXk=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-GpJKzotJpIFaMLqUF1djZJch5LTXHnrmWxDq+WDwy0g=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-9Fj6Qi3AZwxYfrzHYw91GMsHq9FavvpZW+OHUS/q54k=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-N1KQFDJid4ts687dGGQuWf54sP3Vb1oCTGiWInupoWg=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script src="/route.js"></script><script>
 const route=window.DripRoute;
 const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(route.pathname)?'/fundamental/':'';
@@ -1205,8 +1205,11 @@ html.sc-open,html.sc-open body{overflow:hidden}
 .photos figcaption{display:flex;gap:6px;flex-wrap:wrap}
 .lib-up{justify-content:flex-start}
 .lib-dlg{max-width:560px;width:100%}
+.lib-dlg h3{font:600 17px/1.3 var(--font-s);letter-spacing:-.01em;text-transform:none;margin:2px 0 0;color:var(--ink)}
 .lib-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;max-height:min(62vh,520px);overflow:auto}
+.lib-grid.lib-built{max-height:none;overflow:visible}
 .lib-grid button{display:block;width:100%;margin:0;padding:0;border:2px solid transparent;border-radius:12px;overflow:hidden;background:var(--soft,#f5f5f7);aspect-ratio:1;cursor:pointer}
+.lib-grid.lib-built button{aspect-ratio:16/9}
 .lib-grid button:focus-visible,.lib-grid button:hover{border-color:var(--ci-accent,#0071e3)}
 .lib-grid img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 @media(min-width:700px){.lib-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -2735,16 +2738,34 @@ window.BEANS = [
  {id:'g-006',name:'Guatemala Antigua',country:'Guatemala',region:'Antigua',farm:'Finca El Injerto',farmer:'Familia Aguirre',process:'Washed',variety:'Bourbon / Caturra',altitude:'1,600 m',harvest:'2025/26',roast:'Medium',
   note:'ภูเขาไฟรอบเมืองให้ดินแร่ธาตุสูง ปลูกใต้ต้นกราวิเลีย',flavors:['Chocolate','Almond','Apple','Cinnamon'],hue:100,sample:true}
 ];
-/* Placeholder illustration used until Admin links a real photo (see Admin tab). */
+/* Placeholder illustration used until Admin links a real photo (see Admin tab).
+   Colour variants are the hues already used on the sample mountain cards. */
+window.PLACE_HUES=[8,22,40,100,280,345];
 window.placeholder = function(kind,hue,label){
-  const bg='hsl('+hue+' 38% 82%)',fg='hsl('+hue+' 40% 22%)',a='hsl('+hue+' 45% 60%)';
+  const n=Math.max(0,Math.min(360,Math.round(+hue)||0));
+  const bg='hsl('+n+' 38% 82%)',fg='hsl('+n+' 40% 22%)',a='hsl('+n+' 45% 60%)';
   const t=String(label||'').replace(/[<>&]/g,'');
   const art = kind==='farmer'
    ? '<circle cx="200" cy="105" r="42" fill="'+a+'"/><path d="M110 260c10-70 50-96 90-96s80 26 90 96z" fill="'+a+'"/>'
    : '<path d="M0 220L90 120l60 70 70-110 90 140 90-90v170H0z" fill="'+a+'"/><circle cx="310" cy="60" r="22" fill="'+bg+'" opacity=".8"/>';
-  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 400 225"><rect width="400" height="225" fill="'+bg+'"/>'+art+
-   '<text x="12" y="212" font-family="sans-serif" font-size="11" letter-spacing="2" fill="'+fg+'">'+t.toUpperCase()+' · PLACEHOLDER</text></svg>';
+  const cap=t?'<text x="64" y="212" font-family="sans-serif" font-size="11" letter-spacing="2" fill="'+fg+'">'+t.toUpperCase()+'</text>':'';
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 400 225" data-hue="'+n+'"><rect width="400" height="225" fill="'+bg+'"/>'+art+cap+'</svg>';
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+};
+/* Hue pinned inside a chosen mountain design, or null for a real photo or an older image. */
+window.builtinHue=function(src){
+  if(typeof src!=='string'||src.indexOf('data:image/svg+xml')!==0)return null;
+  const i=src.indexOf(',');if(i<0)return null;
+  let svg;try{svg=decodeURIComponent(src.slice(i+1));}catch(e){return null;}
+  const m=/data-hue="(\d{1,3})"/.exec(svg);if(!m)return null;
+  const n=+m[1];return n>=0&&n<=360?n:null;
+};
+/* A chosen design keeps its hue. The country line is drawn from the coffee, so it stays current. */
+window.cardArt=function(src,bean){
+  const hue=src?window.builtinHue(src):null;
+  if(hue!=null)return window.placeholder('origin',hue,(bean&&bean.country)||'');
+  if(src)return src;
+  return window.placeholder('origin',(bean&&bean.hue)||30,bean&&bean.country);
 };
 
 </script>
@@ -2925,7 +2946,7 @@ D.TXT=[
   ['ad.theme.h','Brand Colors'],['ad.ci.help','Choose a ready-made set, or set each colour yourself. It is used on every screen, including the customer page. Only the admin can change it.'],['ci.apple','Original (blue)'],['ci.native-slate','NATIVE · Midnight Slate'],['ci.native-mica','NATIVE · Mica Dust'],['ci.cvb','Recipe section on the customer page'],['ci.cvb.dark','Dark · Midnight Slate'],['ci.cvb.light','Light · Ivory'],['ci.bg','Background'],['ci.ink','Text'],['ci.accent','Accent / button'],['ci.accentH','Button hover'],['ci.fill','Panels'],['ci.line','Borders'],['ci.mute','Muted text'],['ci.mute2','Secondary text'],['ci.dark2','Dark detail'],['ci.link','Links'],['ci.kick','Small highlight'],['ci.accent2','Second accent'],['ci.tint','Soft tint'],['ad.ci.custom','Your colours'],['ad.ci.customhelp','Paste a HEX code with or without #, or use the colour box. Three or six digits both work. The shop updates straight away. Button hover and the soft tint follow the accent until you change them. Press Save settings to keep this on every device and on the customer page.'],['ad.ci.pick','The highlighted row is filled when you tap a Pantone swatch. Tap a row to choose it.'],['ad.ci.bad','Enter a HEX colour, such as #A47864 or A47864.'],['ad.ci.pantone','Pantone colour guide'],['ad.ci.pantonehelp','Tap a swatch to fill the highlighted colour above. Copy places the HEX on the clipboard.'],['ad.ci.approx','HEX values are approximate, not official Pantone values.'],['ad.ci.copy','Copy'],['ad.ci.copied','Copied'],['ad.set.save','Save settings'],['ad.set.reset','Reset to default'],
   ['ad.ph.banner','Link farm and origin photos to each bean. The Coffee Label image is managed in Edit Coffee. Upload a new photo, or choose one already saved for this branch. Photos are resized to JPEG and copied into the snapshot when a recipe is saved. After adding or removing photos, press Save photo links.'],
   ['ad.ph.farm','Farm photos'],['ad.ph.origin','Origin photos'],['ad.ph.upload','Upload'],['ad.ph.save','Save photo links'],
-  ['lib.choose','Choose from library'],['lib.h','Image library'],['lib.help','Photos already uploaded for this branch. Tap one to use it. Other branches cannot see these photos.'],['lib.loading','Loading photos…'],['lib.empty','No photos in this branch yet. Upload one and it will show up here.'],['lib.fail','Could not open the library. Check the connection and try again.'],['lib.close','Close'],['lib.used','Image added. Press Save to keep it.'],['lib.photo','Photo added. Remember to save.'],['lib.use','Use this photo'],
+  ['lib.choose','Choose from library'],['lib.h','Image library'],['lib.built','Built-in designs'],['lib.built.help','Same mountain designs on every branch. Tap one to use it.'],['lib.help','Photos already uploaded for this branch. Tap one to use it. Other branches cannot see these photos.'],['lib.loading','Loading photos…'],['lib.empty','No photos in this branch yet. Upload one and it will show up here.'],['lib.fail','Could not open the library. Check the connection and try again.'],['lib.close','Close'],['lib.used','Image added. Press Save to keep it.'],['lib.photo','Photo added. Remember to save.'],['lib.use','Use this photo'],['lib.design','Use this design'],
   ['ad.pub.h','Backup'],
   ['ad.pub.help','Coffees, photos, recipes and settings are saved in the shop database, and farm photos now appear on the customer page automatically. Download a copy here to keep as a backup.'],
   ['jn.h','Connect this device to your shop'],['jn.changed','The shop code was changed. Open the new staff link from the admin, or enter the new code.'],['jn.help','Open the staff link from your admin, or enter the shop code. You only do this once on each device.'],['jn.l','Shop code'],['jn.btn','Connect'],['jn.bad','That code is not right. Check it and try again.'],['jn.off','No internet connection. Connect and try again.'],['jn.ok','Connected to the shop'],
@@ -3244,14 +3265,14 @@ D.photoList=s=>{
   [['farm','cp.ph.farm'],['origin','cp.ph.origin']].forEach(([k,t])=>{(s.photos&&s.photos[k]||[]).forEach(src=>out.push({src,cap:D.T(t)}));});
   return out;
 };
-D.labelSrc=s=>((s.photos&&s.photos.label)||[])[0]||'';
+D.labelSrc=s=>{const src=((s.photos&&s.photos.label)||[])[0]||'';const hue=src&&window.builtinHue?window.builtinHue(src):null;return hue!=null?placeholder('origin',hue,(s.bean&&s.bean.country)||''):src;};
 D.hasPhotos=s=>['label','farm','origin'].some(k=>((s.photos&&s.photos[k])||[]).length>0);
 /* Coffee Label card: photo + lot details. Used on the customer page, Recipe, Add/Edit Coffee and the JPEG. */
 D.labelHtml=(b,src,T,o)=>{
   o=o||{};
   T=T||D.T;
   const S=(l,v)=>v===''||v==null?'':'<div><span>'+esc(l)+'</span><b>'+esc(v)+'</b></div>';
-  const img=src||placeholder('origin',b.hue||30,b.country||'');
+  const img=window.cardArt(src,b);
   return '<article class="clabel"><div class="ci"><img alt="'+esc(b.name||'')+'" src="'+esc(img)+'">'+(b.process?'<span class="tag">'+esc(b.process)+'</span>':'')+'</div>'+
    '<div class="cb">'+(o.noName?'':'<div class="lbl">'+esc(T('cp.lbl.h'))+'</div><h3>'+esc(b.name||D.T('ac.lbl.untitled'))+'</h3>')+
    '<p class="org">'+esc([b.country,b.region].filter(Boolean).join(' · '))+'</p>'+
@@ -3260,8 +3281,8 @@ D.labelHtml=(b,src,T,o)=>{
 };
 /* Barista display name: the name typed when the recipe was saved. Never an e-mail address. */
 D.person=n=>{n=String(n==null?'':n).trim();const m=/^([^@\s]+)@[^@\s]+\.[^@\s]+$/.exec(n);return m?m[1]:n;};
-D.coffeeImg=s=>D.labelSrc(s)||(s.photos.farm&&s.photos.farm[0])||(s.photos.origin&&s.photos.origin[0])||'';
-D.heroSrc=s=>(s.photos.farm&&s.photos.farm[0])||(s.photos.origin&&s.photos.origin[0])||placeholder('origin',(s.bean&&s.bean.hue)||30,s.bean&&s.bean.country);
+D.coffeeImg=s=>{const label=D.labelSrc(s);if(label)return label;const raw=(s.photos.farm&&s.photos.farm[0])||(s.photos.origin&&s.photos.origin[0])||'';if(!raw)return '';const hue=window.builtinHue?window.builtinHue(raw):null;return hue!=null?placeholder('origin',hue,(s.bean&&s.bean.country)||''):raw;};
+D.heroSrc=s=>{const raw=(s.photos.farm&&s.photos.farm[0])||(s.photos.origin&&s.photos.origin[0])||'';if(!raw)return placeholder('origin',(s.bean&&s.bean.hue)||30,s.bean&&s.bean.country);const hue=window.builtinHue?window.builtinHue(raw):null;return hue!=null?placeholder('origin',hue,(s.bean&&s.bean.country)||''):raw;};
 
 /* Brew Log icons (24x24). f = filled, s = line, c = cut-out line drawn in the page colour. Shared by the screen and the JPEG. */
 D.icons={
@@ -3684,7 +3705,7 @@ const hashId=()=>{const h=route.hash.replace(/^#/,'');return /^p-[a-z0-9]+$/.tes
 let tt;
 const toast=m=>{let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}t.textContent=m;clearTimeout(tt);tt=setTimeout(()=>t.remove(),3200);};
 const photosOf=id=>{const p=D.S.photos[id]||{};return {label:(p.label||[]).slice(0,1),farm:(p.farm||[]).slice(),origin:(p.origin||[]).slice()};};
-const beanImg=b=>{const p=D.S.photos[b.id]||{};return (p.label||[])[0]||(p.origin||[])[0]||placeholder('origin',b.hue||30,b.country);};
+const beanImg=b=>{const p=D.S.photos[b.id]||{};return window.cardArt((p.label||[])[0]||(p.origin||[])[0]||'',b);};
 
 const workFromSnap=s=>({beanId:s.bean.id,beanSnap:clone(s.bean),dripper:s.dripper,customer:s.customer||'',barista:s.barista||'',recipe:clone(s.recipe),notes:(s.notes||[]).slice(),message:s.message||'',profile:clone(s.profile||{}),
   brew:Object.assign({tds:'',yield:'',ext:'',acidity:'',sweetness:'',body:''},clone(s.brew||{})),show:clone(s.show||{}),editId:s.id});
@@ -4024,10 +4045,19 @@ const useLibraryImage=(beanId,kind,src)=>{
 };
 const openLibrary=async(beanId,kind)=>{
   if(!D.caps.isOwner){toast('Admin login required');return;}
-  const d=ov('<div class="sec lib-dlg"><h2>'+T('lib.h')+'</h2><p class="cap">'+T('lib.help')+'</p><p class="cap" id="lib-status">'+T('lib.loading')+'</p><div class="lib-grid" id="lib-grid" role="list"></div><div class="acts" style="margin-top:12px"><button class="btn ghost" type="button" data-n>'+T('lib.close')+'</button></div></div>');
+  const hues=window.PLACE_HUES||[];
+  const built=hues.map((hue,i)=>'<button type="button" class="lib-pick" data-built="'+i+'" aria-label="'+esc(D.T('lib.design')+' '+(i+1))+'"><img alt="" src="'+esc(placeholder('origin',hue,''))+'"></button>').join('');
+  const d=ov('<div class="sec lib-dlg"><h2>'+T('lib.h')+'</h2><h3>'+T('lib.built')+'</h3><p class="cap">'+T('lib.built.help')+'</p><div class="lib-grid lib-built" id="lib-built" role="list">'+built+'</div><p class="cap" style="margin-top:14px">'+T('lib.help')+'</p><p class="cap" id="lib-status">'+T('lib.loading')+'</p><div class="lib-grid" id="lib-grid" role="list"></div><div class="acts" style="margin-top:12px"><button class="btn ghost" type="button" data-n>'+T('lib.close')+'</button></div></div>');
   const images=[];
+  const first=d.querySelector('[data-built]');if(first)first.focus();
   d.onclick=e=>{
     if(e.target.dataset.n!==undefined||e.target===d){d.remove();return;}
+    const design=e.target.closest('[data-built]');
+    if(design){
+      const hue=hues[+design.dataset.built];if(hue==null)return;
+      const country=kind==='cd'?(CD&&CD.v&&CD.v.country)||'':((bean(beanId)||{}).country||'');
+      d.remove();useLibraryImage(beanId,kind,placeholder('origin',hue,country));return;
+    }
     const pick=e.target.closest('[data-lib]');if(!pick)return;
     const src=images[+pick.dataset.lib];if(!src)return;
     d.remove();useLibraryImage(beanId,kind,src);
@@ -4040,7 +4070,6 @@ const openLibrary=async(beanId,kind)=>{
     if(!images.length){if(status)status.textContent=T('lib.empty');return;}
     if(status)status.textContent='';
     if(grid)grid.innerHTML=images.map((src,i)=>'<button type="button" class="lib-pick" data-lib="'+i+'" aria-label="'+esc(D.T('lib.use')+' '+(i+1))+'"><img alt="" src="'+esc(src)+'"></button>').join('');
-    const first=grid&&grid.querySelector('button');if(first)first.focus();
   }catch(e){const status=$('#lib-status');if(status&&d.isConnected)status.textContent=T('lib.fail');}
 };
 const OCR_BASE='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/';
@@ -4139,7 +4168,7 @@ app.addEventListener('click',async e=>{
      if(cup===null||beanP===null)return err(D.T('ac.price.bad'));
      v.cupPrice=cup;v.beanPrice=beanP;
      const pend=$('#cn-new');if(pend&&pend.value.trim())pend.value.split(',').forEach(x=>addNote(CD.notes,x));const flavors=uniqNotes(CD.notes),oldF=ed?(ed.flavors||[]).slice():null;
-     const rec=Object.assign(emptyFields(),v,{flavors}),nid=ed?ed.id:'g-'+Date.now().toString(36),photo=CD.label.slice(0,1);
+     const rec=Object.assign(emptyFields(),v,{flavors}),nid=ed?ed.id:'g-'+Date.now().toString(36),photo=CD.label.slice(0,1).map(src=>{const h=window.builtinHue&&window.builtinHue(src);return h!=null?placeholder('origin',h,v.country):src;});
      const dropBlankPrice=o=>['cupPrice','beanPrice'].forEach(k=>{if(!o[k])delete o[k];});
      const ok=await mutate(()=>{
        if(ed){Object.assign(ed,rec);if(!rec.folder)delete ed.folder;dropBlankPrice(ed);delete ed.sample;}
