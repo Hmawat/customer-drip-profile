@@ -132,7 +132,9 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.match(otherPlate.data.path,/^\/fundamental\/t\/11\//);
   const generatedPlate=generated.find(x=>x.data.slot===11).data;
   const generatePublic=path=>fetch('http://127.0.0.1:'+port+path,{redirect:'manual'});
-  assert.equal((await generatePublic(generatedPlate.path)).status,410);
+  const waitingPlate=await generatePublic(generatedPlate.path);
+  assert.equal(waitingPlate.status,410);
+  assert.match(await waitingPlate.text(),/<script src="\/route.js"><\/script>/);
   const listPlates=await request('rpc/drip_list_plates',{p_account:true},owner.cookie);
   assert(listPlates.data.slots.includes(11));
   assert.equal(listPlates.data.minutes,12);

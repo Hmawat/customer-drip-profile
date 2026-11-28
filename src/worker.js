@@ -166,7 +166,7 @@ async function openPlate(env,req,url) {
       return new Response(null,{status:302,headers});
     }
   }
-  const page='<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>QR plate available</title><main style="max-width:32rem;margin:15vh auto;padding:1.5rem;text-align:center;font:16px system-ui"><h1>This QR plate is available</h1><p>Ask your barista to link your coffee profile, then scan again.</p></main></html>';
+  const page='<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>QR plate available</title><script src="/route.js"></script><main style="max-width:32rem;margin:15vh auto;padding:1.5rem;text-align:center;font:16px system-ui"><h1>This QR plate is available</h1><p>Ask your barista to link your coffee profile, then scan again.</p></main></html>';
   return new Response(req.method==='HEAD'?null:page,{status:410,headers});
 }
 
