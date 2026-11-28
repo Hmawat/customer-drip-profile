@@ -122,7 +122,13 @@ async function sharedSnap(env, shop, ref) {
   return String(v.key ?? '').toLowerCase() === key.toLowerCase() ? v : null;
 }
 
-const PLATE_DURATION = 30 * 60 * 1000;
+const DEFAULT_PLATE_MINUTES = 30;
+const plateSettingsSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_plate_settings (branch TEXT PRIMARY KEY, minutes INTEGER NOT NULL)').run();
+async function plateMinutes(env,shop) {
+  await plateSettingsSchema(env);
+  const row=await env.DB.prepare('SELECT minutes FROM drip_plate_settings WHERE branch=?').bind(shop.id).first();
+  return row?.minutes??DEFAULT_PLATE_MINUTES;
+}
 const plateRoute = /^(\/fundamental)?\/t\/([1-9][0-9]{0,15})\/([a-f0-9]{32})\/?$/;
 const plateSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_plates (branch TEXT NOT NULL, slot INTEGER NOT NULL, ref TEXT NOT NULL, expires INTEGER NOT NULL, PRIMARY KEY(branch,slot))').run();
 
@@ -170,7 +176,20 @@ const F = {
     await generatedPlateSchema(env);
     const {results}=await env.DB.prepare('SELECT slot,token FROM drip_generated_plates WHERE branch=? ORDER BY slot').bind(shop.id).all();
     const slots=(env.QR_PLATE_HASHES?.[shop.id]||[]).flatMap((hash,index)=>hash?[index+1]:[]);
-    return {slots:slots.concat(results.map(row=>row.slot)),generated:account?.user.admin?results.map(row=>platePath(shop,row)):[]};
+    await plateSchema(env);
+    const {results:active}=await env.DB.prepare('SELECT slot,expires FROM drip_plates WHERE branch=? AND expires>?').bind(shop.id,Date.now()).all();
+    return {slots:slots.concat(results.map(row=>row.slot)),busy:Object.fromEntries(active.map(row=>[row.slot,row.expires])),
+      minutes:await plateMinutes(env,shop),generated:account?.user.admin?results.map(row=>platePath(shop,row)):[]};
+  },
+  async drip_set_plate_duration(env,a,shop,req) {
+    const {user}=await branchAccount(env,req,shop.id,true);
+    if(!user.admin)fail('not_allowed',403);
+    const minutes=a.p_minutes;
+    if(!Number.isInteger(minutes)||minutes<1||minutes>1440)fail('invalid_plate_duration',400);
+    await plateSettingsSchema(env);
+    await env.DB.prepare('INSERT INTO drip_plate_settings(branch,minutes) VALUES (?,?) ON CONFLICT(branch) DO UPDATE SET minutes=excluded.minutes')
+      .bind(shop.id,minutes).run();
+    return {minutes};
   },
   async drip_create_plate(env,a,shop,req) {
     const {user}=await branchAccount(env,req,shop.id,true);
@@ -199,10 +218,12 @@ const F = {
       });
     }
     await plateSchema(env);
-    const expires=Date.now()+PLATE_DURATION;
-    await env.DB.prepare('INSERT INTO drip_plates(branch,slot,ref,expires) VALUES (?,?,?,?) ON CONFLICT(branch,slot) DO UPDATE SET ref=excluded.ref,expires=excluded.expires')
-      .bind(shop.id,plate.slot,ref,expires).run();
-    return {slot:plate.slot,expires};
+    const minutes=await plateMinutes(env,shop);
+    const now=Date.now(),expires=now+minutes*60000;
+    const bound=await env.DB.prepare('INSERT INTO drip_plates(branch,slot,ref,expires) VALUES (?,?,?,?) ON CONFLICT(branch,slot) DO UPDATE SET ref=excluded.ref,expires=excluded.expires WHERE drip_plates.expires<=? RETURNING slot,expires')
+      .bind(shop.id,plate.slot,ref,expires,now).first();
+    if(!bound)fail('plate_busy',409);
+    return {...bound,minutes};
   },
   async drip_pull(env, a, shop, req) {
     const account=await access(env, shop, a, req);

@@ -140,25 +140,46 @@
     const actions=mount?'':'<div class="acts account-actions"><a class="lnk" href="'+accountHome+'">All branches</a>'+
       '<button id="account-logout" class="btn ghost" type="button">Sign out</button></div>';
     const contents=actions+'<p class="cap account-intro">Set branch permissions and a six-character temporary password. Staff choose a new password when they first sign in with it.</p>'+
-      '<div class="accounts-layout"><div><h2>Staff accounts</h2><div id="accounts-list" class="account-list"></div></div><div id="account-editor"></div></div>'+
+      '<div id="accounts-list" class="user-directory"></div><section class="user-editor" id="account-editor" hidden></section>'+
       '<section class="sec account-rollout"><h2>Sign-in mode</h2><p class="cap">'+(model.enforced?'Staff sign in with their own accounts.':'Shop codes still work while you set up staff accounts.')+'</p>'+
       '<button id="toggle-access" class="btn ghost" type="button">'+(model.enforced?'Restore shop-code access':'Require staff accounts')+'</button></section>';
     if(mount)mount.innerHTML='<div class="account-pane account-embedded">'+contents+'<p id="account-error" class="err" role="alert"></p></div>';
     else{pane('Users',contents);$('account-logout').onclick=signOut;}
-    function select(selected, existingName = '') {
-      const visible=model.users.filter(user=>!branch||user.roles[branch]||(branch==='native'&&user.nativeName));
+    let filter=branch||'';
+    function select(selected, existingName = '', action = '') {
+      const visible=model.users.filter(user=>!filter||user.roles[filter]||(filter==='native'&&user.nativeName));
       const archived=model.archived||[];
-      const visibleArchived=archived.filter(user=>!branch||user.roles[branch]||(branch==='native'&&user.nativeName));
+      const visibleArchived=archived.filter(user=>!filter||user.roles[filter]||(filter==='native'&&user.nativeName));
       const linkedNames=[...model.users,...archived];
-      const unlinked=branch==='fundamental'?[]:nativeNames.filter(name=>!linkedNames.some(user=>user.nativeName===name));
-      $('accounts-list').innerHTML='<button class="btn ghost" id="add-user" type="button">Add user</button>'+
-        visible.map(user=>'<button class="btn ghost" type="button" data-user="'+escape(user.username)+'"><b>'+escape(user.name)+'</b> · '+escape(user.username)+(user.position?' · '+escape(user.position):'')+' <small>('+ (user.disabled?'Disabled':user.mustChange?'Password change pending':user.active?'Active':'Setup pending')+')</small></button>').join('')+
-        (unlinked.length?'<h3>Existing Native staff</h3>'+unlinked.map(name=>'<button class="btn ghost" type="button" data-native-name="'+escape(name)+'">'+escape(name)+'</button>').join(''):'')+
+      const unlinked=filter==='fundamental'?[]:nativeNames.filter(name=>!linkedNames.some(user=>user.nativeName===name));
+      const rowAction=(user,key,label)=>'<button class="chip" type="button" data-user="'+escape(user.username)+'" data-action="'+key+'" aria-label="'+label+' '+escape(user.username)+'">'+label+'</button>';
+      const rows=visible.map(user=>{
+        const state=user.disabled?'Disabled':user.mustChange?'Password change pending':user.active?'Active':'Setup pending';
+        const access=Object.entries(branches).filter(([key])=>user.roles[key])
+          .map(([key,label])=>'<span>'+label+' · '+escape(roles[user.roles[key]])+'</span>').join('');
+        return '<tr><th scope="row">'+escape(user.username)+'</th><td data-label="Name">'+escape(user.name)+'</td>'+
+          '<td data-label="Position">'+(escape(user.position)||'—')+'</td><td data-label="Branch access"><div class="user-access">'+(access||'—')+'</div></td>'+
+          '<td data-label="Status"><span class="user-state" data-active="'+(state==='Active')+'">'+state+'</span></td>'+
+          '<td><div class="acts">'+rowAction(user,'edit','Edit')+rowAction(user,'reset','Reset password')+rowAction(user,'delete','Delete')+'</div></td></tr>';
+      }).join('');
+      $('accounts-list').innerHTML='<div class="acts user-tools">'+(!branch?'<label>Branch <select id="users-branch"><option value="">All branches</option>'+
+        Object.entries(branches).map(([key,label])=>'<option value="'+key+'"'+(key===filter?' selected':'')+'>'+label+'</option>').join('')+'</select></label>':'')+
+        '<button class="btn ghost" id="add-user" type="button">Add user</button></div>'+
+        (rows?'<table class="users-table"><thead><tr><th scope="col">Username</th><th scope="col">Name</th><th scope="col">Position</th><th scope="col">Branch access</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead><tbody>'+rows+'</tbody></table>':'<p class="cap">No staff accounts in this view.</p>')+
+        (unlinked.length?'<details><summary>Existing Native staff ('+unlinked.length+')</summary><div class="acts">'+unlinked.map(name=>'<button class="btn ghost" type="button" data-native-name="'+escape(name)+'">'+escape(name)+'</button>').join('')+'</div></details>':'')+
         (visibleArchived.length?'<details><summary>Deleted accounts ('+visibleArchived.length+')</summary>'+visibleArchived.map(user=>
-          '<div><span>'+escape(user.name)+' · '+escape(user.username)+'</span> <button class="btn ghost" type="button" data-restore-user="'+escape(user.username)+'">Restore</button></div>').join('')+'</details>':'');
-      $('add-user').onclick=()=>select(null);
-      for(const button of $('accounts-list').querySelectorAll('[data-user]'))button.onclick=()=>select(model.users.find(user=>user.username===button.dataset.user));
-      for(const button of $('accounts-list').querySelectorAll('[data-native-name]'))button.onclick=()=>select(null,button.dataset.nativeName);
+          '<div class="acts"><span>'+escape(user.name)+' · '+escape(user.username)+'</span><button class="btn ghost" type="button" data-restore-user="'+escape(user.username)+'">Restore</button></div>').join('')+'</details>':'');
+      const editor=$('account-editor');
+      editor.hidden=!selected&&!existingName&&action!=='new';
+      const branchFilter=$('users-branch');
+      if(branchFilter)branchFilter.onchange=()=>{filter=branchFilter.value;select(null);$('users-branch').focus();};
+      $('add-user').onclick=()=>select(null,'','new');
+      for(const button of $('accounts-list').querySelectorAll('[data-user]'))button.onclick=()=>{
+        const user=model.users.find(row=>row.username===button.dataset.user);
+        if(button.dataset.action==='delete')removeUser(user,button);
+        else select(user,'',button.dataset.action);
+      };
+      for(const button of $('accounts-list').querySelectorAll('[data-native-name]'))button.onclick=()=>select(null,button.dataset.nativeName,'new');
       for(const button of $('accounts-list').querySelectorAll('[data-restore-user]'))button.onclick=async()=>{
         button.disabled=true;
         try{
@@ -168,7 +189,8 @@
           $('account-invite').textContent='Account restored as disabled. Reset its password and enable it before sign-in.';
         }catch(err){showError(err);button.disabled=false;}
       };
-      $('account-editor').innerHTML='<h2>'+(selected?'Edit user':'New user')+'</h2><form id="edit-user">'+
+      if(editor.hidden){editor.innerHTML='';return;}
+      editor.innerHTML='<h2>'+(selected?'Edit '+escape(selected.username):'New user')+'</h2><form id="edit-user">'+
         '<div class="f"><label class="lbl" for="edit-username">Username</label><input id="edit-username" name="username" required minlength="3" maxlength="32" autocapitalize="none" value="'+escape(selected?.username)+'"'+(selected?' readonly':'')+'></div>'+
         '<div class="f"><label class="lbl" for="edit-name">Display name</label><input id="edit-name" name="name" maxlength="80" required value="'+escape(selected?.name)+'"></div>'+
         '<div class="f"><label class="lbl" for="edit-position">Position</label><select id="edit-position" name="position"><option value="">Select a position</option>'+
@@ -196,17 +218,10 @@
           select(model.users.find(user=>user.username===selected.username));
           $('account-invite').textContent='Password reset. The user must choose a new password after signing in.';
         });
-        $('delete-user').onclick=async event=>{
-          if(!confirm('Delete this staff account? It will be signed out. Its saved recipes will be kept.'))return;
-          const button=event.currentTarget;button.disabled=true;
-          try{
-            await request('delete-user',{username:selected.username});
-            Object.assign(model,await request('users'));
-            select(null);
-            $('account-invite').textContent='Account deleted.';
-          }catch(err){showError(err);button.disabled=false;}
-        };
+        $('delete-user').onclick=event=>removeUser(selected,event.currentTarget);
       }
+      if(action==='reset')$('reset-temp').focus();
+      else if(action)$('edit-name').focus();
       const prefillNative = nativeName => {
         if(!nativeName)return;
         if(!$('edit-name').value)$('edit-name').value=nativeName;
@@ -217,7 +232,7 @@
       for(const key of Object.keys(branches))$('access-'+key).onchange=event=>setBranchAccess(key,event.currentTarget.checked);
       $('edit-native').onchange=event=>prefillNative(event.currentTarget.value);
       if(existingName){$('edit-native').value=existingName;prefillNative(existingName);}
-      else if(!selected&&branch)setBranchAccess(branch,true);
+      else if(!selected&&filter)setBranchAccess(filter,true);
       onSubmit('edit-user',async data=>{
         $('account-error').textContent='';
         const values=Object.fromEntries(data);
@@ -230,6 +245,16 @@
         select(model.users.find(user=>user.username===result.username));
         $('account-invite').textContent=values.temporaryPassword?'Saved. The user must change the temporary password when signing in.':'User saved.';
       });
+    }
+    async function removeUser(user,button){
+      if(!confirm('Delete '+user.username+'? They will be signed out. Their saved recipes will be kept.'))return;
+      button.disabled=true;
+      try {
+        await request('delete-user',{username:user.username});
+        Object.assign(model,await request('users'));
+        select(null);
+        $('account-error').textContent='Account deleted.';
+      }catch(err){showError(err);button.disabled=false;}
     }
     select(null);
     $('toggle-access').onclick=async event=>{
