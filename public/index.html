@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-eGAekpwboZ7zg0UUMHxceS7QRIaexT9PjO2276QBaXk=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-7NBjGdwJTaEdq8C+I1llI9QNPixMf0laiGnoEC8hU/w=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-i+SUaP810xaCueSBBasXxxxbY6KyXkNAlrEQhxXlZKU=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-eGAekpwboZ7zg0UUMHxceS7QRIaexT9PjO2276QBaXk=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-pHJI1iNdQdHpyAltGF6SJn3tXFcJchMa/6e2ftbxJgA=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-H5WIe/fmmiXui9cX6cJwClrQtY8nCi+Y2OQKDJua/28=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script src="/route.js"></script><script>
 const route=window.DripRoute;
 const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(route.pathname)?'/fundamental/':'';
@@ -1203,6 +1203,13 @@ html.sc-open,html.sc-open body{overflow:hidden}
 .px-prev img{width:100%;height:100%;display:block}
 .photos figure,.bean,.sc-hero,.cv-ph,.cv-photos figure,.st-img,.clabel .ci{overflow:hidden}
 .photos figcaption{display:flex;gap:6px;flex-wrap:wrap}
+.lib-up{justify-content:flex-start}
+.lib-dlg{max-width:560px;width:100%}
+.lib-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;max-height:min(62vh,520px);overflow:auto}
+.lib-grid button{display:block;width:100%;margin:0;padding:0;border:2px solid transparent;border-radius:12px;overflow:hidden;background:var(--soft,#f5f5f7);aspect-ratio:1;cursor:pointer}
+.lib-grid button:focus-visible,.lib-grid button:hover{border-color:var(--ci-accent,#0071e3)}
+.lib-grid img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+@media(min-width:700px){.lib-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .sc-gi{margin:0;aspect-ratio:1;border-radius:16px;overflow:hidden;background:var(--ci-fill,#e8e8ed)}
 .sc-gi img{width:100%;height:100%;aspect-ratio:auto;border-radius:0}
 
@@ -2916,8 +2923,9 @@ D.TXT=[
   ['ad.cdb','Coffee Database'],['ad.cadd','Add Coffee'],['ad.csearch','Search coffee'],['ad.cnone','No coffee found.'],['ad.edit','Edit'],['ad.delete','Delete'],
   ['ad.txt.h','Text and Labels'],['ad.txt.help','Change any word shown in the system. Leave a field empty to use the original text. Changes are saved and shown straight away. Text on the customer page is copied into each QR link when a recipe is saved, so recipes saved earlier keep their old wording.'],
   ['ad.theme.h','Brand Colors'],['ad.ci.help','Choose a ready-made set, or set each colour yourself. It is used on every screen, including the customer page. Only the admin can change it.'],['ci.apple','Original (blue)'],['ci.native-slate','NATIVE · Midnight Slate'],['ci.native-mica','NATIVE · Mica Dust'],['ci.cvb','Recipe section on the customer page'],['ci.cvb.dark','Dark · Midnight Slate'],['ci.cvb.light','Light · Ivory'],['ci.bg','Background'],['ci.ink','Text'],['ci.accent','Accent / button'],['ci.accentH','Button hover'],['ci.fill','Panels'],['ci.line','Borders'],['ci.mute','Muted text'],['ci.mute2','Secondary text'],['ci.dark2','Dark detail'],['ci.link','Links'],['ci.kick','Small highlight'],['ci.accent2','Second accent'],['ci.tint','Soft tint'],['ad.ci.custom','Your colours'],['ad.ci.customhelp','Paste a HEX code with or without #, or use the colour box. Three or six digits both work. The shop updates straight away. Button hover and the soft tint follow the accent until you change them. Press Save settings to keep this on every device and on the customer page.'],['ad.ci.pick','The highlighted row is filled when you tap a Pantone swatch. Tap a row to choose it.'],['ad.ci.bad','Enter a HEX colour, such as #A47864 or A47864.'],['ad.ci.pantone','Pantone colour guide'],['ad.ci.pantonehelp','Tap a swatch to fill the highlighted colour above. Copy places the HEX on the clipboard.'],['ad.ci.approx','HEX values are approximate, not official Pantone values.'],['ad.ci.copy','Copy'],['ad.ci.copied','Copied'],['ad.set.save','Save settings'],['ad.set.reset','Reset to default'],
-  ['ad.ph.banner','Link farm and origin photos to each bean. The Coffee Label image is managed in Edit Coffee. Photos are resized to JPEG and copied into the snapshot when a recipe is saved. After adding or removing photos, press Save photo links.'],
-  ['ad.ph.farm','Farm photos'],['ad.ph.origin','Origin photos'],['ad.ph.save','Save photo links'],
+  ['ad.ph.banner','Link farm and origin photos to each bean. The Coffee Label image is managed in Edit Coffee. Upload a new photo, or choose one already saved for this branch. Photos are resized to JPEG and copied into the snapshot when a recipe is saved. After adding or removing photos, press Save photo links.'],
+  ['ad.ph.farm','Farm photos'],['ad.ph.origin','Origin photos'],['ad.ph.upload','Upload'],['ad.ph.save','Save photo links'],
+  ['lib.choose','Choose from library'],['lib.h','Image library'],['lib.help','Photos already uploaded for this branch. Tap one to use it. Other branches cannot see these photos.'],['lib.loading','Loading photos…'],['lib.empty','No photos in this branch yet. Upload one and it will show up here.'],['lib.fail','Could not open the library. Check the connection and try again.'],['lib.close','Close'],['lib.used','Image added. Press Save to keep it.'],['lib.photo','Photo added. Remember to save.'],['lib.use','Use this photo'],
   ['ad.pub.h','Backup'],
   ['ad.pub.help','Coffees, photos, recipes and settings are saved in the shop database, and farm photos now appear on the customer page automatically. Download a copy here to keep as a backup.'],
   ['jn.h','Connect this device to your shop'],['jn.changed','The shop code was changed. Open the new staff link from the admin, or enter the new code.'],['jn.help','Open the staff link from your admin, or enter the shop code. You only do this once on each device.'],['jn.l','Shop code'],['jn.btn','Connect'],['jn.bad','That code is not right. Check it and try again.'],['jn.off','No internet connection. Connect and try again.'],['jn.ok','Connected to the shop'],
@@ -3781,7 +3789,7 @@ const viewAdd=()=>{
     '<details class="grp" data-g="cn-more"'+(openG.has('cn-more')?' open':'')+'><summary>'+T('ac.tn.more')+'</summary><div id="cn-more" style="padding:0 14px 14px">'+cnMore()+'</div></details></div>'+
    '<div class="f" style="margin-top:12px"><label class="lbl" for="cf-note">'+T('ac.f.note')+'</label><textarea id="cf-note" data-cf="note" rows="3">'+esc(v.note||'')+'</textarea></div>'+
    '<div class="f" style="margin-top:16px"><span class="lbl">'+T('ac.lbl.h')+'</span>'+
-    '<div class="acts" style="align-items:center;margin:6px 0"><label class="btn ghost" for="cf-photo" style="cursor:pointer">'+(CD.label.length?T('ac.lbl.change'):T('ac.lbl.add'))+'</label>'+(CD.id&&CD.label.length?'<button class="btn ghost" data-act="phadj" data-b="'+esc(CD.id)+'" data-k="cd">'+T('px.btn')+'</button>':'')+(CD.label.length?'<button class="btn ghost" data-act="cfrm">'+T('ac.lbl.remove')+'</button>':'')+'<input type="file" accept="image/*" id="cf-photo" data-cfphoto="1" aria-label="'+T('ac.lbl.h')+'" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></div><span class="u">'+T('ac.lbl.help')+'</span></div>'+
+    '<div class="acts" style="align-items:center;margin:6px 0"><label class="btn ghost" for="cf-photo" style="cursor:pointer">'+(CD.label.length?T('ac.lbl.change'):T('ac.lbl.add'))+'</label>'+(D.caps.isOwner?'<button type="button" class="btn ghost" data-act="lib" data-b="'+esc(CD.id||'')+'" data-k="cd">'+T('lib.choose')+'</button>':'')+(CD.id&&CD.label.length?'<button class="btn ghost" data-act="phadj" data-b="'+esc(CD.id)+'" data-k="cd">'+T('px.btn')+'</button>':'')+(CD.label.length?'<button class="btn ghost" data-act="cfrm">'+T('ac.lbl.remove')+'</button>':'')+'<input type="file" accept="image/*" id="cf-photo" data-cfphoto="1" aria-label="'+T('ac.lbl.h')+'" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></div><span class="u">'+T('ac.lbl.help')+'</span></div>'+
     '<div style="margin-top:16px"><span class="lbl">'+T('ac.lbl.prev')+'</span><div id="lblprev" style="margin-top:8px">'+D.labelHtml(cdBean(),CD.label[0],T)+'</div></div>'+
    (ed?'<p class="cap" style="margin-top:12px">'+T('ac.keep')+'</p>':'')+
    '<p class="cap err" id="cferr" role="alert"></p><div class="acts"><button class="btn" data-act="cfsave"'+(busy?' disabled':'')+'>'+T('ac.save')+'</button><button class="btn ghost" data-act="cfcancel">'+(ed?T('ac.cancel'):T('ac.clear'))+'</button></div></section>';
@@ -3903,7 +3911,7 @@ const viewAdmin=()=>passwordSettings()+plateSettings()+(D.account&&!D.caps.isOwn
    '<div class="acts" style="margin-top:10px"><button class="btn" data-act="setcode">'+T('jn.ad.set')+'</button><button class="btn ghost" data-act="gencode">'+T('jn.ad.gen')+'</button></div></div></section>'+
   '<section class="sec"><h2>'+T('ad.pub.h')+'</h2><p class="cap">'+T('ad.pub.help')+'</p><div class="acts" style="margin-top:10px"><button class="btn ghost" data-act="pubphotos">'+T('ad.pub.btn')+'</button></div></section>'+
   '<div class="banner">'+T('ad.ph.banner')+'</div>'+
-  BEANS.map(b=>{const p=D.S.photos[b.id]||{};return '<section class="sec"><h2>'+esc(b.name)+'</h2>'+((p.label||[])[0]?'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T('px.label')+'</div><div class="photos"><figure><img alt="" src="'+esc(p.label[0])+'"><figcaption><button class="chip" data-act="phadj" data-b="'+b.id+'" data-k="label" data-i="0">'+T('px.btn')+'</button></figcaption></figure></div></div>':'')+KINDS.map(k=>'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T(k[1])+'</div><div class="photos">'+(p[k[0]]||[]).map((src,i)=>'<figure><img alt="" src="'+esc(src)+'"><figcaption><button class="chip" data-act="phadj" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('px.btn')+'</button><button class="chip" data-act="rmphoto" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('ad.delete')+'</button></figcaption></figure>').join('')+'</div><input type="file" accept="image/*" id="up-'+b.id+'-'+k[0]+'" data-up="'+b.id+':'+k[0]+'" aria-label="'+esc(D.T(k[1])+' · '+b.name)+'"></div>').join('')+'</section>';}).join('')+
+  BEANS.map(b=>{const p=D.S.photos[b.id]||{};return '<section class="sec"><h2>'+esc(b.name)+'</h2>'+((p.label||[])[0]?'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T('px.label')+'</div><div class="photos"><figure><img alt="" src="'+esc(p.label[0])+'"><figcaption><button class="chip" data-act="phadj" data-b="'+b.id+'" data-k="label" data-i="0">'+T('px.btn')+'</button></figcaption></figure></div></div>':'')+KINDS.map(k=>'<div style="margin-bottom:12px"><div class="lbl" style="margin-bottom:6px">'+T(k[1])+'</div><div class="photos">'+(p[k[0]]||[]).map((src,i)=>'<figure><img alt="" src="'+esc(src)+'"><figcaption><button class="chip" data-act="phadj" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('px.btn')+'</button><button class="chip" data-act="rmphoto" data-b="'+b.id+'" data-k="'+k[0]+'" data-i="'+i+'">'+T('ad.delete')+'</button></figcaption></figure>').join('')+'</div><div class="acts lib-up"><label class="btn ghost" for="up-'+b.id+'-'+k[0]+'">'+T('ad.ph.upload')+'</label><button type="button" class="btn ghost" data-act="lib" data-b="'+esc(b.id)+'" data-k="'+k[0]+'">'+T('lib.choose')+'</button><input type="file" accept="image/*" id="up-'+b.id+'-'+k[0]+'" data-up="'+b.id+':'+k[0]+'" class="vh" aria-label="'+esc(D.T(k[1])+' · '+b.name)+'"></div></div>').join('')+'</section>';}).join('')+
   '<div class="acts"><button class="btn" data-act="savephotos" '+(dirty?'':'disabled')+'>'+T('ad.ph.save')+'</button></div>');
 
 /* ---------- Result + customer ---------- */
@@ -4007,6 +4015,34 @@ app.addEventListener('input',e=>{
 app.addEventListener('focusin',e=>{const t=e.target;if(!t.dataset||!D.caps.isOwner)return;const k=t.dataset.chex||t.dataset.cpick;if(!k)return;D.ciSlot=k;markColorSlot();});
 app.addEventListener('focusout',e=>{const t=e.target;if(!t.dataset||!t.dataset.chex||!D.caps.isOwner)return;const hex=D.normHex(t.value);if(hex){t.value=hex.toUpperCase();showHexErr(t.dataset.chex,false);commitColorSlot(t.dataset.chex,hex);}else showHexErr(t.dataset.chex,true);});
 const shrink=(file,max,q)=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,(max||900)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q||0.72));};im.onerror=rej;im.src=fr.result;};fr.onerror=rej;fr.readAsDataURL(file);});
+const rememberImage=src=>{if(!D.caps.isOwner||!D.connected()||!src)return;D.rpc('drip_library_add',{p_code:D.sync.code,p_data:src}).catch(()=>{});};
+const useLibraryImage=(beanId,kind,src)=>{
+  if(kind==='cd'){if(!CD)return;CD.label=[src];render();toast(D.T('lib.used'));return;}
+  if(!beanId||(kind!=='farm'&&kind!=='origin'))return;
+  const p=D.S.photos[beanId]=D.S.photos[beanId]||{};const arr=p[kind]=Array.isArray(p[kind])?p[kind]:[];
+  if(!arr.includes(src))arr.push(src);dirty=true;render();toast(D.T('lib.photo'));
+};
+const openLibrary=async(beanId,kind)=>{
+  if(!D.caps.isOwner){toast('Admin login required');return;}
+  const d=ov('<div class="sec lib-dlg"><h2>'+T('lib.h')+'</h2><p class="cap">'+T('lib.help')+'</p><p class="cap" id="lib-status">'+T('lib.loading')+'</p><div class="lib-grid" id="lib-grid" role="list"></div><div class="acts" style="margin-top:12px"><button class="btn ghost" type="button" data-n>'+T('lib.close')+'</button></div></div>');
+  const images=[];
+  d.onclick=e=>{
+    if(e.target.dataset.n!==undefined||e.target===d){d.remove();return;}
+    const pick=e.target.closest('[data-lib]');if(!pick)return;
+    const src=images[+pick.dataset.lib];if(!src)return;
+    d.remove();useLibraryImage(beanId,kind,src);
+  };
+  try{
+    const res=await D.rpc('drip_library',{p_code:D.sync.code});
+    if(!d.isConnected)return;
+    (res&&res.images||[]).forEach(img=>{if(img&&typeof img.data==='string'&&img.data.indexOf('data:image/')===0)images.push(img.data);});
+    const grid=$('#lib-grid'),status=$('#lib-status');
+    if(!images.length){if(status)status.textContent=T('lib.empty');return;}
+    if(status)status.textContent='';
+    if(grid)grid.innerHTML=images.map((src,i)=>'<button type="button" class="lib-pick" data-lib="'+i+'" aria-label="'+esc(D.T('lib.use')+' '+(i+1))+'"><img alt="" src="'+esc(src)+'"></button>').join('');
+    const first=grid&&grid.querySelector('button');if(first)first.focus();
+  }catch(e){const status=$('#lib-status');if(status&&d.isConnected)status.textContent=T('lib.fail');}
+};
 const OCR_BASE='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/';
 const loadOcr=()=>window.Tesseract?Promise.resolve(true):new Promise(res=>{const s=document.createElement('script');s.src=OCR_BASE+'tesseract.min.js';s.onload=()=>res(!!window.Tesseract);s.onerror=()=>{s.remove();res(false);};document.head.appendChild(s);});
 const scanSt=(m,p)=>{CD.scanMsg=m;if(p!=null)CD.scanP=p;const n=$('#scanst');if(n)n.textContent=m;const b=$('#scanbar');if(b&&p!=null)b.style.width=Math.round(p*100)+'%';};
@@ -4014,7 +4050,7 @@ const scanPhoto=async file=>{
   const cd=CD;cd.scanBusy=true;cd.scanP=0;cd.scanText='';cd.scanMsg=D.T('ac.scan.load');render();
   try{
     const img=await shrink(file,1800,0.92);
-    if(!cd.label.length)cd.label=[await shrink(file,1000,0.72)];
+    if(!cd.label.length){cd.label=[await shrink(file,1000,0.72)];rememberImage(cd.label[0]);}
     if(!await loadOcr())throw new Error('ocr');
     const w=await Tesseract.createWorker('eng+tha',1,{workerPath:OCR_BASE+'worker.min.js',corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',logger:m=>{if(CD!==cd)return;if(m.status==='recognizing text')scanSt(D.T('ac.scan.busy')+' '+Math.round(m.progress*100)+'%',.15+m.progress*.85);else if(m.progress!=null)scanSt(D.T('ac.scan.load'),Math.min(.15,m.progress*.15));}});
     let text='';try{const r=await w.recognize(img);text=(r&&r.data&&r.data.text)||'';}finally{try{await w.terminate();}catch(x){}}
@@ -4043,13 +4079,13 @@ app.addEventListener('change',async e=>{
   if(t.dataset.col){if(!D.caps.isOwner)return;(D.S.theme=D.S.theme||{})[t.dataset.col]=t.value;D.applyTheme();await doSave('Saved');return;}
   if(t.dataset.scan&&CD){const f=t.files&&t.files[0];t.value='';if(f&&!CD.scanBusy)scanPhoto(f);return;}
   if(t.dataset.cfphoto&&CD){
-    const fs=Array.from(t.files||[]);if(!fs.length)return;
-    try{CD.label=[await shrink(fs[0],1000,0.72)];render();toast('Image saved to the form. Press Save to keep it.');}
+    const fs=Array.from(t.files||[]);t.value='';if(!fs.length)return;
+    try{CD.label=[await shrink(fs[0],1000,0.72)];rememberImage(CD.label[0]);render();toast(D.T('lib.used'));}
     catch(x){toast('Could not read this image');}
     return;}
   if(t.dataset.up){
-    const [bid,kind]=t.dataset.up.split(':');const f=t.files&&t.files[0];if(!f)return;
-    try{const src=await shrink(f,1100,0.7);const p=D.S.photos[bid]=D.S.photos[bid]||{};(p[kind]=p[kind]||[]).push(src);dirty=true;render();toast('Photo added. Remember to save.');}
+    const [bid,kind]=t.dataset.up.split(':');const f=t.files&&t.files[0];t.value='';if(!f)return;
+    try{const src=await shrink(f,1100,0.7);const p=D.S.photos[bid]=D.S.photos[bid]||{};(p[kind]=p[kind]||[]).push(src);dirty=true;rememberImage(src);render();toast(D.T('lib.photo'));}
     catch(x){toast('Could not read this image');}
   }
 });
@@ -4060,7 +4096,7 @@ const priceOf=raw=>{const s=String(raw==null?'':raw).trim().replace(/,/g,'').rep
 app.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id;
-  if(['fadd','fup','fdown','fdel','cedit','cdel','savesettings','resetsettings','ciset','cvbset','savephotos','rmphoto','chpin','pubphotos','cislot','cipan','cipancopy'].includes(a)&&!D.caps.isOwner){toast('Admin login required');return;}
+  if(['fadd','fup','fdown','fdel','cedit','cdel','savesettings','resetsettings','ciset','cvbset','savephotos','rmphoto','chpin','pubphotos','cislot','cipan','cipancopy','lib'].includes(a)&&!D.caps.isOwner){toast('Admin login required');return;}
   switch(a){
    case 'savesettings':{
      if(D.colorDraft){D.S.theme={ci:D.colorDraft.ci,cvb:D.colorDraft.cvb,colors:Object.assign({},D.colorDraft.colors)};D.colorDraft=null;D.applyTheme();}
@@ -4087,6 +4123,7 @@ app.addEventListener('click',async e=>{
    case 'cnadd':{const inp=$('#cn-new');if(!inp)break;let add=0,dup=0;inp.value.split(',').forEach(x=>{if(!normNote(x))return;if(addNote(CD.notes,x))add++;else dup++;});inp.value='';if(dup&&!add)toast(D.T('ac.tn.dup'));refreshCn();inp.focus();break;}
    case 'usenotes':{const bb=bean(W.beanId);W.notes=uniqNotes(bb&&bb.flavors);syncNoteChips();break;}
    case 'cfrm':CD.label=[];render();break;
+   case 'lib':openLibrary(el.dataset.b,el.dataset.k);break;
    case 'cfcancel':{const was=CD&&CD.id;CD=null;if(was)tab='admin';render();break;}
    case 'cmore':CD=null;render();break;
    case 'scan':{if(CD&&(CD.id||CD.done))CD=null;tab='addcoffee';resultId=null;render();const i=$('#cf-scan');if(i&&!i.disabled)i.click();break;}

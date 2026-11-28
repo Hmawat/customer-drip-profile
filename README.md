@@ -15,6 +15,14 @@ Live updates: after saving, a device sends `changed` on the WebSocket `/api/rt` 
 
 `POST /api/import` loads rows exported from the old Supabase database (`{code, rows}`); it sets the shop code when none is stored yet, otherwise it needs the current code.
 
+## Image library
+
+Admins can tap **Choose from library** next to Upload on the coffee label and on farm or origin photos. The grid shows photos already uploaded for that branch only. Native Onsen Hotel and Fundamental never share a library.
+
+Photos are stored in a new D1 table, `drip_image_library`, with a `branch` column (`native` or `fundamental`). Every library request reads and writes only the branch in the URL. The table is created by the Worker itself (`CREATE TABLE IF NOT EXISTS`) the first time the new code handles a request. Merging to `main` deploys the Worker (`npx wrangler deploy` via Cloudflare Workers Builds). No separate database command is required, and existing coffee, recipe, and photo rows are left as they are.
+
+The first time an admin opens the library for a branch, photos already linked to that branch's coffees (and photos kept on its saved recipes) are copied into the library. A new upload is added to that same branch's library when it is saved. Opening the library again does not copy them a second time.
+
 ## Staff accounts and rollback
 
 Staff sign in at the main URL. Open `/?account=1` to use an account on a device that already remembers its shop code. The owner signs in as `admin`. Only the SHA-256 verifier of the generated owner password belongs in the Worker variable `ACCOUNT_OWNER_PASSWORD_HASH`.
