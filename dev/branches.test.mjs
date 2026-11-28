@@ -305,4 +305,44 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await accounts('users',{},changedOwner.cookie)).status,401);
   assert.equal((await accounts('login',{username:'admin',password:'Ab34Cd'})).status,200);
 
+  const pack = async (obj, kind) => {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    const b64 = (u8) => { let t = ''; u8.forEach((c) => { t += String.fromCharCode(c); }); return btoa(t).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+    if (kind === 'j') return 'j' + b64(bytes);
+    const packed = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());
+    return 'z' + b64(packed);
+  };
+  const unpack = async (payload) => {
+    let t = payload.slice(1).replace(/-/g, '+').replace(/_/g, '/');
+    while (t.length % 4) t += '=';
+    const rawText = atob(t);
+    const raw = new Uint8Array(rawText.length);
+    for (let i = 0; i < rawText.length; i++) raw[i] = rawText.charCodeAt(i);
+    const bytes = payload[0] === 'z'
+      ? new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer())
+      : raw;
+    return JSON.parse(new TextDecoder().decode(bytes));
+  };
+  const priced = { id: 'priced', bean: { id: 'priced-bean', name: 'Priced Lot', farm: 'Hill', cupPrice: '450', beanPrice: '1300' }, recipe: { dose: 15 } };
+  assert.equal((await push('', nativeCode, [
+    { k: 'bean', i: 'priced-bean', d: { v: { id: 'priced-bean', name: 'Priced Lot', cupPrice: '450', beanPrice: '1300' } } },
+    { k: 'snap', i: 'priced-z', d: { v: { key: 'cccccccccccccccc', payload: await pack(priced, 'z'), bean: { cupPrice: '450', beanPrice: '1300' } } } },
+    { k: 'snap', i: 'priced-j', d: { v: { key: 'dddddddddddddddd', payload: await pack(priced, 'j') } } },
+  ])).status, 200);
+  const zSnap = await rpc('', 'drip_snap', { p_ref: 'priced-z.cccccccccccccccc' });
+  const jSnap = await rpc('', 'drip_snap', { p_ref: 'priced-j.dddddddddddddddd' });
+  const zBack = await unpack(zSnap.data);
+  const jBack = await unpack(jSnap.data);
+  assert.equal(zBack.bean.farm, 'Hill');
+  assert.equal(zBack.bean.name, 'Priced Lot');
+  assert.equal(zBack.bean.cupPrice, undefined);
+  assert.equal(zBack.bean.beanPrice, undefined);
+  assert.equal(jBack.bean.cupPrice, undefined);
+  assert.equal(jBack.bean.beanPrice, undefined);
+  assert.equal(String(jSnap.data).includes('cupPrice'), false);
+  assert.equal(String(jSnap.data).includes('beanPrice'), false);
+  const shopBean = (await pull('', nativeCode)).data.rows.find((r) => r.k === 'bean' && r.i === 'priced-bean');
+  assert.equal(shopBean.d.v.cupPrice, '450');
+  assert.equal(shopBean.d.v.beanPrice, '1300');
+
 });
