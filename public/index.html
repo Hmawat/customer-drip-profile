@@ -1403,6 +1403,8 @@ body:is([data-account-role="viewer"],[data-account-role="barista"]) :is(.quick,[
 .user-editor{margin:20px auto 0;padding:20px 0;border-top:1px solid var(--line)}
 .user-editor form{text-align:start}
 .plate-duration{max-width:240px;margin:0 auto 20px}
+#plate-downloads{margin:0 auto 18px}
+#qr-plate-settings>.cap{max-width:34rem;margin-inline:auto}
 @media(max-width:680px){
   .users-table,.users-table tbody{display:block}
   .users-table thead{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
@@ -3604,7 +3606,7 @@ D.downloadJpeg=async(s,toast,showImage)=>{
 
 </script>
 <script src="/accounts.js?v=4"></script>
-<script src="/plates.js?v=7"></script>
+<script src="/plates.js?v=8"></script>
 <script>/* Barista flow, Add Coffee, Admin Settings and customer view */
 (function(){
 'use strict';

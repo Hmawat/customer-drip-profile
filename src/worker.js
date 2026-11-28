@@ -223,7 +223,35 @@ const plateRoute = /^(\/fundamental)?\/t\/([1-9][0-9]{0,15})\/([a-f0-9]{32})\/?$
 const plateSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_plates (branch TEXT NOT NULL, slot INTEGER NOT NULL, ref TEXT NOT NULL, expires INTEGER NOT NULL, PRIMARY KEY(branch,slot))').run();
 
 const generatedPlateSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_generated_plates (branch TEXT NOT NULL, slot INTEGER NOT NULL, token TEXT NOT NULL, PRIMARY KEY(branch,slot))').run();
+const plateTokenSchema = env => env.DB.prepare('CREATE TABLE IF NOT EXISTS drip_plate_tokens (branch TEXT NOT NULL, slot INTEGER NOT NULL, token TEXT NOT NULL, PRIMARY KEY(branch,slot))').run();
 const platePath = (shop, row) => ({slot:row.slot, path:(shop===FUNDAMENTAL?'/fundamental':'')+'/t/'+row.slot+'/'+row.token});
+const plateTokenValue = token => typeof token === 'string' && /^[a-f0-9]{32}$/.test(token) ? token : '';
+function configuredPlateTokens(env) {
+  let value = env.QR_PLATE_TOKENS;
+  if (typeof value === 'string') { try { value = JSON.parse(value); } catch { value = null; } }
+  return value && typeof value === 'object' ? value : {};
+}
+async function rememberPlateToken(env, shop, slot, token) {
+  const hashes = env.QR_PLATE_HASHES?.[shop.id] || [];
+  if (slot < 1 || slot > 10 || !plateTokenValue(token) || hashes[slot - 1] !== await sha256(token)) return;
+  await plateTokenSchema(env);
+  await env.DB.prepare('INSERT INTO drip_plate_tokens(branch,slot,token) VALUES (?,?,?) ON CONFLICT(branch,slot) DO NOTHING')
+    .bind(shop.id, slot, token).run();
+}
+async function printablePlates(env, shop) {
+  const hashes = env.QR_PLATE_HASHES?.[shop.id] || [];
+  const configured = configuredPlateTokens(env)[shop.id];
+  await plateTokenSchema(env);
+  const {results} = await env.DB.prepare('SELECT slot,token FROM drip_plate_tokens WHERE branch=? AND slot BETWEEN 1 AND 10').bind(shop.id).all();
+  const stored = new Map(results.map(row => [row.slot, row.token]));
+  const plates = [];
+  for (let slot = 1; slot <= 10; slot++) {
+    const token = plateTokenValue(Array.isArray(configured) ? configured[slot - 1] : '') || plateTokenValue(stored.get(slot));
+    if (!hashes[slot - 1] || !token || hashes[slot - 1] !== await sha256(token)) continue;
+    plates.push(platePath(shop, {slot, token}));
+  }
+  return plates;
+}
 
 async function generatedPlate(env, shop, slot) {
   await generatedPlateSchema(env);
@@ -236,9 +264,12 @@ async function validPlate(env,path) {
   const shop=match[1]?FUNDAMENTAL:NATIVE,slot=Number(match[2]);
   if(!Number.isSafeInteger(slot))return null;
   const hashes=env.QR_PLATE_HASHES?.[shop.id]||[];
-  const valid=slot<=10?hashes[slot-1]===await sha256(match[3]):
-    (await generatedPlate(env,shop,slot))?.token===match[3];
-  return valid?{shop,slot}:null;
+  const token = match[3];
+  const valid=slot<=10?hashes[slot-1]===await sha256(token):
+    (await generatedPlate(env,shop,slot))?.token===token;
+  if (!valid) return null;
+  if (slot<=10) { try { await rememberPlateToken(env, shop, slot, token); } catch (e) { console.error('plate token'); } }
+  return {shop,slot};
 }
 
 async function openPlate(env,req,url) {
@@ -269,7 +300,8 @@ const F = {
     await plateSchema(env);
     const {results:active}=await env.DB.prepare('SELECT slot,expires FROM drip_plates WHERE branch=? AND expires>?').bind(shop.id,Date.now()).all();
     return {slots:slots.concat(results.map(row=>row.slot)),busy:Object.fromEntries(active.map(row=>[row.slot,row.expires])),
-      minutes:await plateMinutes(env,shop),generated:account?.user.admin?results.map(row=>platePath(shop,row)):[]};
+      minutes:await plateMinutes(env,shop),generated:account?.user.admin?results.map(row=>platePath(shop,row)):[],
+      printable:account?.user.admin?await printablePlates(env,shop):[]};
   },
   async drip_set_plate_duration(env,a,shop,req) {
     const {user}=await branchAccount(env,req,shop.id,true);
