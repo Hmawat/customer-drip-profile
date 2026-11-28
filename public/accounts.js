@@ -71,7 +71,7 @@
       const {user}=await request('login',Object.fromEntries(data));
       if(!(await request('status')).user)throw new Error('account_required');
       if(user.mustChange){passwordForm(user,true);return;}
-      if(new URLSearchParams(location.search).get('settings')==='1'){location.reload();return;}
+      if(new URLSearchParams(window.DripRoute.search).get('settings')==='1'){location.reload();return;}
       openHome(user);
     });
   }
@@ -268,17 +268,17 @@
   }
 
   async function boot(D, branch) {
-    const query = new URLSearchParams(location.search);
-    const invite = location.hash.match(/^#setup-account=([a-f0-9]{64})$/)?.[1];
-    if(D.cap || /^#(?:c|s)=/.test(location.hash))return false;
+    const query = new URLSearchParams(window.DripRoute.search);
+    const invite = window.DripRoute.hash.match(/^#setup-account=([a-f0-9]{64})$/)?.[1];
+    if(D.cap || /^#(?:c|s)=/.test(window.DripRoute.hash))return false;
     let status={user:null,enforced:false};
     try {status=await request('status',{},AbortSignal.timeout?.(2500));}
     catch(e){if(query.has('account')){signIn(true);showError(e);return true;}return false;}
-    if(invite){history.replaceState(null,'',accountHome);setup(invite,status.enforced);return true;}
+    if(invite){window.DripRoute.replace(accountHome);setup(invite,status.enforced);return true;}
     if(query.has('recover')){passwordForm(null,false,true);return true;}
     if(status.user?.mustChange){passwordForm(status.user,true);return true;}
     if(query.has('shop-code') && !status.enforced)return false;
-    if(!status.enforced && location.hash.startsWith('#join='))return false;
+    if(!status.enforced && window.DripRoute.hash.startsWith('#join='))return false;
     const oldDevice=(()=>{try{return !!localStorage.getItem((branch==='fundamental'?'fundamental:':'')+'dp-shop');}catch(e){return false;}})();
     if(!status.user){
       if(status.enforced||query.has('account')||(!oldDevice&&branch==='native')){signIn(status.enforced);return true;}

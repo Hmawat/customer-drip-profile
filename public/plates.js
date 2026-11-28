@@ -2,7 +2,7 @@
   'use strict';
   const number = slot => String(slot).padStart(2, '0');
   const list = D => D.rpc('drip_list_plates', {p_code: D.sync.code});
-  const branchName = () => location.pathname.startsWith('/fundamental') ? 'Fundamental' : 'Native Onsen Hotel';
+  const branchName = () => window.DripRoute.pathname.startsWith('/fundamental') ? 'Fundamental' : 'Native Onsen Hotel';
 
   function download(D, plate) {
     const qr = document.createElement('canvas');

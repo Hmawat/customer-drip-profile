@@ -1,6 +1,7 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-+3ZEPoMpNfB7SGHJ/s/JxVBofh0/AAOGxa2Wep5zC/w=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-N8fqcaCoLO+P5LgGwi1eNjMQI7HXEnW2ChntW/FtprM=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-y/e8rVTJO5dC6UtOD4DScfAtRE6iG1TsoQaN0LqE+Fk=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
-<link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
-const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(location.pathname)?'/fundamental/':'';
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dafJCt/GRkVihK/HtiqGGIjUIMRsDq/pPp1EEtClLOQ=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-sufG5qypgHzhAyt29EEgQhRqZrnMRwqHcxGvQp13yPY=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-b+BmF07F9MuQNrDddMtBEiE/9sECK5b8Aq+CYtmWCaM=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script src="/route.js"></script><script>
+const route=window.DripRoute;
+const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(route.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
 if(BRANCH_PATH)document.getElementById('drip-manifest').href='/fundamental.webmanifest';
 try{var c=localStorage.getItem(dripStorageKey("dp-ci"));if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem(dripStorageKey("dp-cvb"))==="light")document.documentElement.setAttribute("data-cvb","light");}catch(e){}</script>
@@ -2884,7 +2885,7 @@ D.cpLabels=()=>{const o={},l=D.S.labels||{};Object.keys(l).forEach(k=>{if((k.ind
 D.dName=id=>{const d=DRIPPERS.find(x=>x.id===id);return d?D.T('dr.'+d.id):String(id||'');};
 
 D.S={v:1,baseUrl:'',photos:{},snaps:[]};
-D.cap=/[?&]cap=1(&|$)/.test(location.search);
+D.cap=/[?&]cap=1(&|$)/.test(route.search);
 D.caps={art:null,user:null,dl:null,canEdit:false,isOwner:false};
 
 D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
@@ -3033,7 +3034,7 @@ D.rt={ws:null,topic:'',hb:0,retry:0,onChange:null,ok:false,
     ws.onerror=()=>{try{ws.close();}catch(x){}};},
   stop(){const w=this.ws;this.ws=null;this.ok=false;clearInterval(this.hb);if(w)try{w.close();}catch(e){}},
   ping(){const w=this.ws;if(!w||w.readyState!==1)return;try{w.send('changed');}catch(e){}}};
-D.joinLink=()=>(D.pageUrl()||location.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
+D.joinLink=()=>(D.pageUrl()||route.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
 D.saveError=e=>{
   if(e&&e.code==='storage')return 'The browser blocked saving (storage full or private mode). Remove photos or use a normal window.';
   const c=e&&e.code;
@@ -3055,8 +3056,8 @@ D.applyTheme=reset=>{D.setCi(reset?'apple':D.ciOf(),reset?'dark':D.cvbOf());cons
   [['ink','on-ink','#fbfbf9'],['sage','on-sage','#ffffff'],['accent','on-accent','#ffffff']].forEach(x=>{if(!reset&&t[x[0]])r.setProperty('--'+x[1],D.onColor(t[x[0]]));else r.removeProperty('--'+x[1]);});};
 D.newId=()=>'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 D.pageUrl=()=>{
-  if(BRANCH_PATH||D.account||new URLSearchParams(location.search).has('shop-code'))return location.origin+(BRANCH_PATH||'/');
-  const h=location.href.split('#')[0];
+  if(BRANCH_PATH||D.account||new URLSearchParams(route.search).has('shop-code'))return location.origin+(BRANCH_PATH||'/');
+  const h=route.href.split('#')[0];
   if(/^https?:/.test(h))return h;
   return D.S.baseUrl?D.S.baseUrl.replace(/#.*$/,''):'';
 };
@@ -3463,8 +3464,8 @@ D.capNow=async()=>{
   }
 };
 D.captureProfile=s=>new Promise((res,rej)=>{
-  const base=location.href.split('#')[0].split('?')[0];if(!/^https?:/.test(base))return rej(new Error('not hosted'));
-  const hash=s.payload?D.snapHash(s):location.hash;if(!hash.startsWith('#s=')||hash.length<4)return rej(new Error('no payload'));
+  const base=route.href.split('#')[0].split('?')[0];if(!/^https?:/.test(base))return rej(new Error('not hosted'));
+  const hash=s.payload?D.snapHash(s):route.hash;if(!hash.startsWith('#s=')||hash.length<4)return rej(new Error('no payload'));
   const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');f.tabIndex=-1;
   f.style.cssText='position:fixed;left:-10000px;top:0;width:430px;height:932px;border:0;opacity:0;pointer-events:none';
   f.src=base+'?cap=1&card=1'+hash;document.body.appendChild(f);
@@ -3491,7 +3492,7 @@ D.loadSharedPhotos=async s=>{
       if(p){let any=false;if(p.pos&&typeof p.pos==='object')s.photos.pos=p.pos;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});if(any)return true;}}}catch(e){}
   if(BRANCH_PATH)return false;
   try{
-    const u=location.href.split('#')[0].replace(/[^\/]*$/,'')+'drip-data.json';
+    const u=route.href.split('#')[0].replace(/[^\/]*$/,'')+'drip-data.json';
     const r=await fetch(u,{cache:'no-cache'});if(!r.ok)return false;
     const j=await r.json(),p=j&&j.photos&&j.photos[s.bean&&s.bean.id];if(!p)return false;
     let any=false;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});
@@ -3515,8 +3516,8 @@ D.downloadJpeg=async(s,toast,showImage)=>{
 })();
 
 </script>
-<script src="/accounts.js?v=3"></script>
-<script src="/plates.js?v=6"></script>
+<script src="/accounts.js?v=4"></script>
+<script src="/plates.js?v=7"></script>
 <script>/* Barista flow, Add Coffee, Admin Settings and customer view */
 (function(){
 'use strict';
@@ -3549,7 +3550,7 @@ const recipeNotesTop=b=>{const bn=uniqNotes(b.flavors),extra=W.notes.filter(n=>!
   const chip=n=>'<button class="chip" data-act="note" data-n="'+esc(n)+'" aria-pressed="'+W.notes.includes(n)+'">'+noteChipDot(n)+esc(n)+'</button>';
   return (bn.length?'<div class="cat lbl">'+T('rc.notes.bean')+'</div><div class="chips">'+bn.map(chip).join('')+'</div><div class="acts" style="margin-top:8px"><button class="btn ghost" data-act="usenotes">'+T('rc.notes.usebean')+'</button></div>':'')+
    (extra.length?'<div class="cat lbl">'+T('rc.notes.custom')+'</div><div class="chips">'+extra.map(chip).join('')+'</div>':'');};
-const hashId=()=>{const h=location.hash.replace(/^#/,'');return /^p-[a-z0-9]+$/.test(h)?h:'';};
+const hashId=()=>{const h=route.hash.replace(/^#/,'');return /^p-[a-z0-9]+$/.test(h)?h:'';};
 let tt;
 const toast=m=>{let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}t.textContent=m;clearTimeout(tt);tt=setTimeout(()=>t.remove(),3200);};
 const photosOf=id=>{const p=D.S.photos[id]||{};return {label:(p.label||[]).slice(0,1),farm:(p.farm||[]).slice(),origin:(p.origin||[]).slice()};};
@@ -4008,8 +4009,8 @@ app.addEventListener('click',async e=>{
      break;}
    case 'cmp':{const i=cmpSel.indexOf(id);if(i>=0)cmpSel.splice(i,1);else{cmpSel.push(id);if(cmpSel.length>2)cmpSel.shift();}render();break;}
     case 'cmpclear':cmpSel=[];render();break;
-    case 'open':location.hash=id;break;
-   case 'back':location.hash='';render();break;
+    case 'open':route.hash=id;break;
+   case 'back':route.hash='';render();break;
    case 'qr':resultId=id;render();break;
    case 'again':resultId=null;W=null;editAddr=false;tab='beans';render();break;
    case 'chaddr':editAddr=true;render();break;
@@ -4272,7 +4273,7 @@ app.addEventListener('click',e=>{const b=e.target.closest('[data-act="brewlater"
 D.sync.onFlush=()=>{const c=$('#qr');if(resultId&&c&&!c.dataset.short&&D.shortUrl(resultId)&&safeToRender())render();};
 const refreshShared=async()=>{if(!D.connected()||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
   if(!D.connected()){if(safeToRender())render();else pendingRender=true;return;}
-  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!W.presetEdit&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
+  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!W.presetEdit&&!bean(W.beanId))W=null;if(route.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join"],[data-act="copyjoin"],[data-act="syncnow"],[data-act="gencode"],[data-act="setcode"]');if(!b)return;
   if(b.dataset.act==='gencode'){const i=$('#new-code');if(i){i.value=D.newCode();i.focus();}return;}
   if(b.dataset.act==='setcode'){if(!D.caps.isOwner)return;const i=$('#new-code'),v=(i&&i.value||'').trim();
@@ -4286,14 +4287,14 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
-  const pathRef=location.pathname.match(/^\/(?:fundamental\/)?customer\/([A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64})\/?$/)?.[1];
-  const queryRef=new URLSearchParams(location.search).get('profile');
+  const pathRef=route.pathname.match(/^\/(?:fundamental\/)?customer\/([A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64})\/?$/)?.[1];
+  const queryRef=new URLSearchParams(route.search).get('profile');
   const isQueryProfile=/^[A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64}$/.test(queryRef||'');
   const sync=async()=>{
-    const short=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/)?.[1];
-    const full=location.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);
+    const short=route.hash.match(/^#c=([A-Za-z0-9._-]+)$/)?.[1];
+    const full=route.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);
     const ref=pathRef||short||(isQueryProfile?queryRef:null);
-    D.publicProfile=!!ref||location.hash.startsWith('#s=');
+    D.publicProfile=!!ref||route.hash.startsWith('#s=');
     D.shared=null;
     if(D.publicProfile){
       app.innerHTML='<div class="profile cv-msg"><p class="cap" role="status">Opening coffee profile…</p></div>';
@@ -4313,20 +4314,20 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
       if(ok&&D.shared===cur&&D.publicProfile)render();
     }
   };
-  if(pathRef||isQueryProfile||/^#(?:c|s)=/.test(location.hash)){
+  if(pathRef||isQueryProfile||/^#(?:c|s)=/.test(route.hash)){
     D.applyTheme();
     if(!D.cap)D.rpc('drip_theme',{}).then(t=>{if(t)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});
     await sync();
     if(D.cap){
       document.body.classList.add('cap');
-      if(/[?&]card=1(&|$)/.test(location.search)){document.body.classList.add('card');D.cardPrep();}
+      if(/[?&]card=1(&|$)/.test(route.search)){document.body.classList.add('card');D.cardPrep();}
       window.DPcap=D.capNow;
     }else window.addEventListener('hashchange',sync);
     return;
   }
   if(await window.DripAccounts.boot(D,BRANCH_PATH?'fundamental':'native'))return;
-  let joinCode='';const jm=location.hash.match(/^#join=([^&]+)/);
-  if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
+  let joinCode='';const jm=route.hash.match(/^#join=([^&]+)/);
+  if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{route.replace(route.pathname+route.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);
   if(BRANCH_PATH&&joinCode&&!D.cap&&!D.account)await D.join(joinCode);
   D.applyTheme();
@@ -4335,18 +4336,18 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
   applyBeans();
   if(D.account){
     D.caps.isOwner=D.accountRole==='manager';document.body.dataset.accountRole=D.accountRole;
-    if((D.account||D.caps.isOwner)&&new URLSearchParams(location.search).get('settings')==='1')tab='admin';
+    if((D.account||D.caps.isOwner)&&new URLSearchParams(route.search).get('settings')==='1')tab='admin';
     if(D.accountRole!=='barista')scope.hs='all';
     scope.pr='all';
     if(D.caps.isOwner)stockOk=true;
   }else try{D.caps.isOwner=sessionStorage.getItem(dripStorageKey('dp-admin'))==='1';}catch(x){D.caps.isOwner=false;}
   await sync();
-  if(D.sync.bg)D.sync.bg.then(ch=>{if(!ch)return;applyBeans();D.applyTheme();if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender())render();else pendingRender=true;});
-  if(D.cap){document.body.classList.add('cap');if(/[?&]card=1(&|$)/.test(location.search)){document.body.classList.add('card');D.cardPrep();}window.DPcap=D.capNow;return;}
+  if(D.sync.bg)D.sync.bg.then(ch=>{if(!ch)return;applyBeans();D.applyTheme();if(route.hash.indexOf('#s=')===0||hashId())return;if(safeToRender())render();else pendingRender=true;});
+  if(D.cap){document.body.classList.add('cap');if(/[?&]card=1(&|$)/.test(route.search)){document.body.classList.add('card');D.cardPrep();}window.DPcap=D.capNow;return;}
   window.addEventListener('hashchange',sync);
   D.rt.onChange=()=>{lastPull=0;refreshShared();};D.rt.start();
   setInterval(()=>{if(!D.rt.ws&&D.sync.code)D.rt.start();refreshShared();},20000);
-  if(!D.account)window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
+  if(!D.account)window.addEventListener('hashchange',async()=>{const m=route.hash.match(/^#join=([^&]+)/);if(!m)return;try{route.replace(route.pathname+route.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshShared();});
   window.addEventListener('focus',refreshShared);
   window.addEventListener('online',()=>{D.flush().catch(()=>{}).then(refreshShared);});
