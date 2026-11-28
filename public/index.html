@@ -1,6 +1,7 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-+3ZEPoMpNfB7SGHJ/s/JxVBofh0/AAOGxa2Wep5zC/w=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-8RhKBymNefArwhv9XSy8nqamywwjZDByBR30NDW4Rzc=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-w9lI+NiBSMVcEeIvs4KQUWqNDQkAaaWZFBP0GRygmKY=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
-<link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script>
-const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(location.pathname)?'/fundamental/':'';
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dafJCt/GRkVihK/HtiqGGIjUIMRsDq/pPp1EEtClLOQ=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-TY2in/xdyKgoGi33QN0ksX/8sKzOZjtVZ/v8q0YtuT8=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-Cav6sRd3MYAL9jmvC8k8bIMWQsuYxjMwWC6wMxFq7jA=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script src="/route.js"></script><script>
+const route=window.DripRoute;
+const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(route.pathname)?'/fundamental/':'';
 const dripStorageKey=key=>BRANCH_PATH?'fundamental:'+key:key;
 if(BRANCH_PATH)document.getElementById('drip-manifest').href='/fundamental.webmanifest';
 try{var c=localStorage.getItem(dripStorageKey("dp-ci"));if(c&&c!=="apple")document.documentElement.setAttribute("data-ci",c);if(localStorage.getItem(dripStorageKey("dp-cvb"))==="light")document.documentElement.setAttribute("data-cvb","light");}catch(e){}</script>
@@ -45,7 +46,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .dots i{display:none}
 .dots .lbl{flex:none}
 .dots b{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;min-width:0}
-.drippers{display:flex;gap:8px;flex-wrap:wrap}
+.drippers{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .dr{border:1px solid var(--line);padding:8px 14px;cursor:pointer;background:none;font:600 11px var(--font-d);letter-spacing:.16em;text-transform:uppercase}
 .dr[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--ink)}
 .pours{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
@@ -57,8 +58,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .chip:disabled{opacity:.35;cursor:not-allowed}
 .hist th.lbl[colspan]{padding-top:16px;color:var(--accent)}
-.acts{display:flex;gap:10px;flex-wrap:wrap}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
+.acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .chip{border:1px solid var(--line);background:none;padding:4px 10px;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;border-radius:999px}
 .chip i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--mute));display:inline-block}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
@@ -943,10 +944,11 @@ body.cap .cv-photos figure:first-child:nth-last-child(2n+1){grid-column:1/-1;asp
 .rs-name{margin:0;font:600 clamp(24px,5vw,30px)/1.15 var(--font-s);letter-spacing:-.01em;color:var(--ink)}
 .rs-sub{margin:6px 0 0;font-size:15px;color:var(--mute)}
 .rs-qr{margin:28px auto 0}
-.rs-qr canvas{display:block;width:min(300px,74vw);height:auto;aspect-ratio:1;margin:0 auto;image-rendering:pixelated;border-radius:18px;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.rs-qr canvas{display:block;width:min(300px,100%);height:auto;aspect-ratio:1;margin:0 auto;image-rendering:pixelated;border-radius:18px;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
 .rs-qr figcaption{margin-top:14px;font:500 15px/1.4 var(--font-b);color:var(--mute)}
-.rs-form{margin-top:24px;text-align:left}
+.rs-form{width:min(100%,380px);margin:24px auto 0}
 .rs-next{display:flex;width:100%;max-width:320px;margin:28px auto 0;justify-content:center}
+.rs>.acts{margin-top:14px}
 .rs-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 20px;margin-top:16px}
 .lnk{background:none;border:0;padding:6px 2px;font:400 15px/1.3 var(--font-b);color:var(--link,var(--ci-link,#0066cc));cursor:pointer}
 .lnk:hover{text-decoration:underline}
@@ -1172,7 +1174,7 @@ html.sc-open,html.sc-open body{overflow:hidden}
 .seg2 button{border:0;background:none;padding:6px 14px;border-radius:980px;font:500 13px var(--font-b);color:var(--ci-ink,#1d1d1f);cursor:pointer}
 .seg2 button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .pr-head{flex-wrap:wrap}
-.pr-head .seg2{margin-left:auto}
+.pr-head .seg2{margin-inline:0}
 .hs-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .hs-head h2{margin:0}
 
@@ -1293,12 +1295,6 @@ body:has(#app>.account-auth){margin:0;padding-block:0}
 .staff-settings>h2{margin-bottom:16px}
 .account-embedded{margin:0 auto}
 .account-intro{max-width:560px;margin-inline:auto}
-.accounts-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,4vw,36px);margin-top:20px}
-.accounts-layout form{text-align:start}
-.accounts-layout .cap{text-align:center}
-.account-list{display:flex;flex-direction:column;align-items:stretch;gap:8px;width:min(100%,420px);margin-inline:auto}
-.account-list h3{margin-top:12px;font-size:inherit}
-.account-list button{text-align:center;white-space:normal;max-width:100%}
 .account-rollout{margin-top:22px}
 .account-check{display:block;margin:8px 0}
 .branch-access{min-width:0;margin:16px 0;padding:12px;border:1px solid var(--ci-line,#d2d2d7);border-radius:var(--r-sm)}
@@ -1321,9 +1317,9 @@ body:has(#app>.account-auth){margin:0;padding-block:0}
 .account-password-settings form{max-width:380px;margin:16px auto 0;text-align:left}
 .account-password-settings summary{cursor:pointer;padding:12px;font-weight:600}
 .account-password-settings details>.cap{margin-top:10px}
-body[data-account-role] #app>.top{justify-content:center;align-items:center;flex-direction:column;text-align:center}
-body[data-account-role] #app>.top .tabs{justify-content:center}
-@media(max-width:620px){.accounts-layout,.account-branches{grid-template-columns:1fr}.account-pane.account-auth{padding-inline:16px}}
+#app>.top{justify-content:center;align-items:center;flex-direction:column;text-align:center}
+#app>.top .tabs{justify-content:center;flex-wrap:wrap;margin-inline:0}
+@media(max-width:620px){.account-branches{grid-template-columns:1fr}.account-pane.account-auth{padding-inline:16px}}
 body[data-account-role] .legacy-staff{display:none!important}
 body[data-account-role="viewer"] [data-sc="choose"],
 body[data-account-role="viewer"] [data-act="saverecipe"],
@@ -1331,9 +1327,43 @@ body[data-account-role="viewer"] [data-act="editsnap"],
 body[data-account-role="viewer"] [data-act="brewlater"],
 body[data-account-role="viewer"] [data-act="tab"][data-t="addcoffee"],
 body:is([data-account-role="viewer"],[data-account-role="barista"]) :is(.quick,[data-act="pkmode"],[data-act="prnew"],[data-act="predit"],[data-act="prsave"],[data-act="prupdate"],[data-act="prdel"]){display:none!important}
-.plate-dialog{width:min(90%,460px);max-height:90vh;overflow:auto;padding:24px;border:1px solid var(--line);border-radius:var(--r);color:var(--ink);background:var(--paper)}
+.plate-dialog{width:min(calc(100% - 32px),460px);max-height:calc(100% - 32px);margin:auto;overflow:auto;padding:clamp(16px,4vw,24px);border:1px solid var(--line);border-radius:var(--r);color:var(--ink);background:var(--paper)}
 .plate-dialog::backdrop{background:#0006}
 .plate-dialog .f{margin-bottom:12px}
+.plate-dialog #plate-status:empty{display:none}
+.plate-dialog .acts{margin-top:16px}
+.sec{margin-inline:auto}
+#app>.sec>h2,.cv-back,.join,.rs-form,.plate-dialog,.overlay[aria-modal]> .sec{text-align:center}
+.overlay[aria-modal]> .sec{width:100%;min-width:0;margin-block:auto}
+.overlay[aria-modal]> .sec .f :is(input,textarea,select),.plate-dialog select{text-align:start}
+.pr-head,.hs-head,.edit-bar{justify-content:center;text-align:center}
+.pr-head h2,.hs-head h2{flex-basis:100%}
+.li-back{margin-inline:auto;text-align:center}
+.grid{justify-content:safe center}
+.account-pane:has(.user-directory){width:min(100%,980px)}
+.user-tools{margin-bottom:14px}.user-tools select{margin-inline-start:6px;padding:6px;max-width:100%}
+.users-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.86rem}
+.users-table :is(th,td){padding:10px 6px;border-bottom:1px solid var(--line);overflow-wrap:anywhere;text-align:center;vertical-align:middle}
+.users-table thead th{color:var(--mute)}
+.users-table thead th:last-child{width:25%}
+.users-table .acts{gap:6px}
+.users-table .chip{justify-content:center;text-align:center}
+.user-access{display:grid;gap:3px}
+.user-state{display:inline-block;border-radius:999px;background:var(--soft);padding:3px 8px}
+.user-state[data-active="true"]{background:#e5f2e8;color:#225c35}
+.user-directory details{margin-top:14px}
+.user-directory details .acts{margin-top:8px}
+.user-editor{margin:20px auto 0;padding:20px 0;border-top:1px solid var(--line)}
+.user-editor form{text-align:start}
+.plate-duration{max-width:240px;margin:0 auto 20px}
+@media(max-width:680px){
+  .users-table,.users-table tbody{display:block}
+  .users-table thead{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+  .users-table tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 8px;padding:10px;margin-bottom:10px;border:1px solid var(--line);border-radius:var(--r-sm)}
+  .users-table :is(th,td){border:0;padding:2px}
+  .users-table tbody th,.users-table td:last-child{grid-column:1/-1}
+  .users-table td[data-label]::before{content:attr(data-label);display:block;font-size:.75rem;color:var(--mute)}
+}
 </style>
 </head><body>
 <div class="wrap" id="app"><p class="cap">Loading…</p></div>
@@ -2864,7 +2894,7 @@ D.cpLabels=()=>{const o={},l=D.S.labels||{};Object.keys(l).forEach(k=>{if((k.ind
 D.dName=id=>{const d=DRIPPERS.find(x=>x.id===id);return d?D.T('dr.'+d.id):String(id||'');};
 
 D.S={v:1,baseUrl:'',photos:{},snaps:[]};
-D.cap=/[?&]cap=1(&|$)/.test(location.search);
+D.cap=/[?&]cap=1(&|$)/.test(route.search);
 D.caps={art:null,user:null,dl:null,canEdit:false,isOwner:false};
 
 D.initCaps=async()=>{D.caps.canEdit=true;D.caps.isOwner=true;};
@@ -3013,7 +3043,7 @@ D.rt={ws:null,topic:'',hb:0,retry:0,onChange:null,ok:false,
     ws.onerror=()=>{try{ws.close();}catch(x){}};},
   stop(){const w=this.ws;this.ws=null;this.ok=false;clearInterval(this.hb);if(w)try{w.close();}catch(e){}},
   ping(){const w=this.ws;if(!w||w.readyState!==1)return;try{w.send('changed');}catch(e){}}};
-D.joinLink=()=>(D.pageUrl()||location.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
+D.joinLink=()=>(D.pageUrl()||route.href.split('#')[0])+'#join='+encodeURIComponent(D.sync.code);
 D.saveError=e=>{
   if(e&&e.code==='storage')return 'The browser blocked saving (storage full or private mode). Remove photos or use a normal window.';
   const c=e&&e.code;
@@ -3035,8 +3065,8 @@ D.applyTheme=reset=>{D.setCi(reset?'apple':D.ciOf(),reset?'dark':D.cvbOf());cons
   [['ink','on-ink','#fbfbf9'],['sage','on-sage','#ffffff'],['accent','on-accent','#ffffff']].forEach(x=>{if(!reset&&t[x[0]])r.setProperty('--'+x[1],D.onColor(t[x[0]]));else r.removeProperty('--'+x[1]);});};
 D.newId=()=>'p-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 D.pageUrl=()=>{
-  if(BRANCH_PATH||D.account||new URLSearchParams(location.search).has('shop-code'))return location.origin+(BRANCH_PATH||'/');
-  const h=location.href.split('#')[0];
+  if(BRANCH_PATH||D.account||new URLSearchParams(route.search).has('shop-code'))return location.origin+(BRANCH_PATH||'/');
+  const h=route.href.split('#')[0];
   if(/^https?:/.test(h))return h;
   return D.S.baseUrl?D.S.baseUrl.replace(/#.*$/,''):'';
 };
@@ -3448,8 +3478,8 @@ D.capNow=async()=>{
   }
 };
 D.captureProfile=s=>new Promise((res,rej)=>{
-  const base=location.href.split('#')[0].split('?')[0];if(!/^https?:/.test(base))return rej(new Error('not hosted'));
-  const hash=s.payload?D.snapHash(s):location.hash;if(!hash.startsWith('#s=')||hash.length<4)return rej(new Error('no payload'));
+  const base=route.href.split('#')[0].split('?')[0];if(!/^https?:/.test(base))return rej(new Error('not hosted'));
+  const hash=s.payload?D.snapHash(s):route.hash;if(!hash.startsWith('#s=')||hash.length<4)return rej(new Error('no payload'));
   const f=document.createElement('iframe');f.setAttribute('aria-hidden','true');f.tabIndex=-1;
   f.style.cssText='position:fixed;left:-10000px;top:0;width:430px;height:932px;border:0;opacity:0;pointer-events:none';
   f.src=base+'?cap=1&card=1'+hash;document.body.appendChild(f);
@@ -3476,7 +3506,7 @@ D.loadSharedPhotos=async s=>{
       if(p){let any=false;if(p.pos&&typeof p.pos==='object')s.photos.pos=p.pos;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});if(any)return true;}}}catch(e){}
   if(BRANCH_PATH)return false;
   try{
-    const u=location.href.split('#')[0].replace(/[^\/]*$/,'')+'drip-data.json';
+    const u=route.href.split('#')[0].replace(/[^\/]*$/,'')+'drip-data.json';
     const r=await fetch(u,{cache:'no-cache'});if(!r.ok)return false;
     const j=await r.json(),p=j&&j.photos&&j.photos[s.bean&&s.bean.id];if(!p)return false;
     let any=false;['label','farm','origin'].forEach(k=>{if(Array.isArray(p[k])&&p[k].length){s.photos[k]=p[k].filter(x=>typeof x==='string'&&x.indexOf('data:image/')===0);any=any||s.photos[k].length>0;}});
@@ -3500,8 +3530,8 @@ D.downloadJpeg=async(s,toast,showImage)=>{
 })();
 
 </script>
-<script src="/accounts.js?v=2"></script>
-<script src="/plates.js?v=5"></script>
+<script src="/accounts.js?v=4"></script>
+<script src="/plates.js?v=7"></script>
 <script>/* Barista flow, Add Coffee, Admin Settings and customer view */
 (function(){
 'use strict';
@@ -3534,7 +3564,7 @@ const recipeNotesTop=b=>{const bn=uniqNotes(b.flavors),extra=W.notes.filter(n=>!
   const chip=n=>'<button class="chip" data-act="note" data-n="'+esc(n)+'" aria-pressed="'+W.notes.includes(n)+'">'+noteChipDot(n)+esc(n)+'</button>';
   return (bn.length?'<div class="cat lbl">'+T('rc.notes.bean')+'</div><div class="chips">'+bn.map(chip).join('')+'</div><div class="acts" style="margin-top:8px"><button class="btn ghost" data-act="usenotes">'+T('rc.notes.usebean')+'</button></div>':'')+
    (extra.length?'<div class="cat lbl">'+T('rc.notes.custom')+'</div><div class="chips">'+extra.map(chip).join('')+'</div>':'');};
-const hashId=()=>{const h=location.hash.replace(/^#/,'');return /^p-[a-z0-9]+$/.test(h)?h:'';};
+const hashId=()=>{const h=route.hash.replace(/^#/,'');return /^p-[a-z0-9]+$/.test(h)?h:'';};
 let tt;
 const toast=m=>{let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}t.textContent=m;clearTimeout(tt);tt=setTimeout(()=>t.remove(),3200);};
 const photosOf=id=>{const p=D.S.photos[id]||{};return {label:(p.label||[]).slice(0,1),farm:(p.farm||[]).slice(),origin:(p.origin||[]).slice()};};
@@ -3723,7 +3753,7 @@ const hp=async p=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEnco
 const ov=h=>{const d=document.createElement('div');d.className='overlay';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.innerHTML=h;document.body.appendChild(d);
   const k=e=>{if(!d.isConnected){document.removeEventListener('keydown',k);return;}if(e.key==='Escape'){const n=d.querySelector('[data-n]');n?n.click():d.remove();}};document.addEventListener('keydown',k);
   const fi=d.querySelector('input,select,textarea')||d.querySelector('[data-n]');if(fi)fi.focus();return d;};
-const ask=(msg,ok)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px;margin:12vh 0 0"><p>'+msg+'</p><div class="acts"><button class="btn" data-y>'+ok+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');d.onclick=e=>{const y=e.target.dataset.y!==undefined;if(y||e.target.dataset.n!==undefined||e.target===d){d.remove();res(y);}};});
+const ask=(msg,ok)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px"><p>'+msg+'</p><div class="acts"><button class="btn" data-y>'+ok+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');d.onclick=e=>{const y=e.target.dataset.y!==undefined;if(y||e.target.dataset.n!==undefined||e.target===d){d.remove();res(y);}};});
 const mutate=async(fn,msg)=>{const bb=clone(BEANS),bf=clone(D.S.folders),bp=clone(D.S.photos);fn();D.S.beans=clone(BEANS);const ok=await doSave(msg,()=>{BEANS.splice(0,BEANS.length,...bb);D.S.folders=bf;D.S.photos=bp;D.S.beans=bb;});render();return ok;};
 const loginHtml=()=>'<section class="sec" style="max-width:420px"><h2>'+T('ad.login.h')+'</h2><div class="f"><label class="lbl" for="pin">'+(D.S.adminPin?T('ad.pin'):T('ad.pinnew'))+'</label><input id="pin" type="password" autocomplete="current-password"></div><div class="acts" style="margin-top:12px"><button class="btn" data-act="login">'+(D.S.adminPin?T('ad.loginbtn'):T('ad.createbtn'))+'</button></div></section>';
 const coffeeRow=b=>{const px=D.priceBits(b);return '<tr><td>'+esc(b.name)+'<div class="cap">'+esc(b.country)+' · '+esc(b.process)+(px.length?' · '+esc(px.join(' · ')):'')+'</div></td><td><div class="f"><select data-mv="'+b.id+'" aria-label="'+esc(D.T('ac.f.folder'))+': '+esc(b.name)+'"><option value="">'+T('sb.unfiled')+'</option>'+D.S.folders.map(f=>'<option value="'+f.id+'"'+(b.folder===f.id?' selected':'')+'>'+esc(f.name)+'</option>').join('')+'</select></div></td><td><div class="acts"><button class="chip" data-act="cedit" data-id="'+b.id+'">'+T('ad.edit')+'</button><button class="chip" data-act="cdel" data-id="'+b.id+'">'+T('ad.delete')+'</button></div></td></tr>';};
@@ -3732,7 +3762,7 @@ const adminTop=()=>{
   const frows=F.map((f,i)=>'<div class="acts" style="margin-bottom:8px;align-items:center"><div class="f" style="flex:1;min-width:150px"><input data-fn="'+f.id+'" value="'+esc(f.name)+'" aria-label="'+esc(D.T('ad.fo.h'))+'"></div><span class="cap">'+BEANS.filter(b=>b.folder===f.id).length+' coffees</span><button class="chip" data-act="fup" data-id="'+f.id+'" aria-label="Move up"'+(i===0?' disabled':'')+'>&#9650;</button><button class="chip" data-act="fdown" data-id="'+f.id+'" aria-label="Move down"'+(i===F.length-1?' disabled':'')+'>&#9660;</button><button class="chip" data-act="fdel" data-id="'+f.id+'">'+T('ad.delete')+'</button></div>').join('')||'<p class="cap">'+T('ad.fo.none')+'</p>';
   const groups=F.map(f=>[f.name,BEANS.filter(b=>b.folder===f.id&&hit(b))]).concat([[D.T('sb.unfiled'),BEANS.filter(b=>!F.some(f=>f.id===b.folder)&&hit(b))]]);
   const rows=groups.filter(g=>g[1].length).map(g=>'<tr><th colspan="3" class="lbl">'+esc(g[0])+' ('+g[1].length+')</th></tr>'+g[1].map(coffeeRow).join('')).join('');
-  return '<div class="acts" style="justify-content:space-between;align-items:center;margin-bottom:14px"><span class="lbl">'+T('ad.signed')+'</span><div class="acts legacy-staff"><button class="btn ghost" data-act="chpin">'+T('ad.chpin')+'</button><button class="btn ghost" data-act="logout">'+T('ad.logout')+'</button></div></div>'+
+  return '<div class="acts" style="margin-bottom:14px"><span class="lbl">'+T('ad.signed')+'</span><div class="acts legacy-staff"><button class="btn ghost" data-act="chpin">'+T('ad.chpin')+'</button><button class="btn ghost" data-act="logout">'+T('ad.logout')+'</button></div></div>'+
   '<section class="sec"><h2>'+T('ad.fo.h')+'</h2>'+frows+
   '<p class="cap">'+T('ad.fo.help')+'</p>'+
   '<div class="acts" style="margin-top:10px"><div class="f" style="flex:1;min-width:150px"><input id="fnew" placeholder="'+T('ad.fo.new')+'" aria-label="'+T('ad.fo.new')+'"></div><button class="btn ghost" data-act="fadd">'+T('ad.fo.add')+'</button></div></section>'+
@@ -3928,7 +3958,7 @@ app.addEventListener('click',async e=>{
    case 'resetsettings':{if(!await ask('Restore all original text, labels and colors?','Reset to default'))break;delete D.S.labels;delete D.S.theme;D.applyTheme(true);await doSave('Defaults restored');render();break;}
    case 'login':{if(Date.now()<lockUntil){toast('Too many attempts. Try again in '+Math.ceil((lockUntil-Date.now())/1000)+' s');return;}const v=$('#pin').value||'';if(v.length<4){toast('PIN needs at least 4 characters');return;}const h=await hp(v);if(!D.S.adminPin){D.S.adminPin=h;if(!await doSave('Admin PIN created',()=>{delete D.S.adminPin;}))return;}else if(h!==D.S.adminPin){if(++fails>=5){fails=0;lockUntil=Date.now()+30000;toast('Too many attempts. Locked for 30 seconds');}else toast('Incorrect PIN');return;}fails=0;D.caps.isOwner=true;try{sessionStorage.setItem(dripStorageKey('dp-admin'),'1');}catch(x){}render();break;}
    case 'logout':D.caps.isOwner=false;try{sessionStorage.removeItem(dripStorageKey('dp-admin'));}catch(x){}tab='beans';render();break;
-   case 'chpin':{const d=ov('<div class="sec" style="max-width:420px;width:100%;margin:12vh 0 0"><h2>'+T('ad.chpin')+'</h2><div class="f"><label class="lbl">Current PIN</label><input type="password" data-p="old" autocomplete="current-password"></div><div class="f" style="margin-top:10px"><label class="lbl">New PIN (min 4 characters)</label><input type="password" data-p="new" autocomplete="new-password"></div><p class="cap err" id="perr" role="alert"></p><div class="acts"><button class="btn" data-y>Save PIN</button><button class="btn ghost" data-n>Cancel</button></div></div>');
+   case 'chpin':{const d=ov('<div class="sec" style="max-width:420px;width:100%"><h2>'+T('ad.chpin')+'</h2><div class="f"><label class="lbl">Current PIN</label><input type="password" data-p="old" autocomplete="current-password"></div><div class="f" style="margin-top:10px"><label class="lbl">New PIN (min 4 characters)</label><input type="password" data-p="new" autocomplete="new-password"></div><p class="cap err" id="perr" role="alert"></p><div class="acts"><button class="btn" data-y>Save PIN</button><button class="btn ghost" data-n>Cancel</button></div></div>');
      d.onclick=async ev=>{if(ev.target.dataset.n!==undefined||ev.target===d){d.remove();return;}if(ev.target.dataset.y===undefined)return;const o=d.querySelector('[data-p="old"]').value,n=d.querySelector('[data-p="new"]').value,er=m=>d.querySelector('#perr').textContent=m;if(n.length<4)return er('New PIN needs at least 4 characters');if(await hp(o)!==D.S.adminPin)return er('Current PIN is incorrect');const old=D.S.adminPin;D.S.adminPin=await hp(n);d.remove();await doSave('PIN changed',()=>{D.S.adminPin=old;});};break;}
    case 'fold':filt.f=el.dataset.f;render();break;
    case 'fadd':{const n=($('#fnew').value||'').trim();if(!n||D.S.folders.some(x=>x.name.toLowerCase()===n.toLowerCase())){toast('Enter a unique folder name');return;}mutate(()=>D.S.folders.push({id:D.newId(),name:n}),'Folder added');break;}
@@ -4001,8 +4031,8 @@ app.addEventListener('click',async e=>{
      break;}
    case 'cmp':{const i=cmpSel.indexOf(id);if(i>=0)cmpSel.splice(i,1);else{cmpSel.push(id);if(cmpSel.length>2)cmpSel.shift();}render();break;}
     case 'cmpclear':cmpSel=[];render();break;
-    case 'open':location.hash=id;break;
-   case 'back':location.hash='';render();break;
+    case 'open':route.hash=id;break;
+   case 'back':route.hash='';render();break;
    case 'qr':resultId=id;render();break;
    case 'again':resultId=null;W=null;editAddr=false;tab='beans';render();break;
    case 'chaddr':editAddr=true;render();break;
@@ -4056,7 +4086,7 @@ const optimizePhotos=async()=>{if(optDone||!D.caps.isOwner)return;optDone=true;l
         if(out&&out.length<src.length*0.85){const oh=D.phash(src),nh=D.phash(out);if(p.pos&&p.pos[oh]){p.pos=Object.assign({},p.pos);p.pos[nh]=p.pos[oh];delete p.pos[oh];}a[i]=out;n++;}}}}
   if(n&&await doSave(D.T('op.done').replace('{n}',n)))render();};
 const openAdjust=(beanId,src)=>{if(!beanId||!src)return;const h=D.phash(src),cur=Object.assign({x:50,y:50,z:1},D.posOf(src)||{});let x=cur.x,y=cur.y,z=cur.z;
-  const d=ov('<div class="sec px-dlg" style="max-width:520px;margin:5vh auto 0"><h2>'+D.tt('px.h')+'</h2><p class="cap">'+D.tt('px.help')+'</p>'+
+  const d=ov('<div class="sec px-dlg" style="max-width:520px"><h2>'+D.tt('px.h')+'</h2><p class="cap">'+D.tt('px.help')+'</p>'+
     '<div class="px-frame"><img src="'+esc(src)+'" alt="" draggable="false"><span class="px-cross" aria-hidden="true"></span></div>'+
     '<div class="px-prev"><div class="px-sq"><img src="'+esc(src)+'" alt=""></div><div class="px-wide"><img src="'+esc(src)+'" alt=""></div></div>'+
     '<div class="f" style="margin-top:12px"><label class="lbl" for="px-z">'+D.tt('px.zoom')+'</label><input id="px-z" type="range" min="1" max="3" step="0.05" value="'+z+'"></div>'+
@@ -4140,7 +4170,7 @@ const stockList=()=>'<p class="cap">'+D.tt('st.help')+'</p><ul class="st-list">'
   '<span class="st-state">● '+D.tt(b.oos?'st.s.out':'st.s.in')+'</span></span>'+
   '<button class="st-act" data-st="'+esc(b.id)+'" aria-label="'+esc(D.T(b.oos?'st.a.in':'st.a.out'))+': '+esc(b.name)+'">'+D.tt(b.oos?'st.a.in':'st.a.out')+'</button></li>';}).join('')+'</ul>';
 const openStock=()=>{
-  const d=ov('<div class="sec st-dlg" style="max-width:520px;margin:6vh auto 0"><h2>'+D.tt('st.h')+'</h2><div class="st-body"></div><div class="acts" style="margin-top:14px"><button class="btn ghost" data-n>'+D.tt('st.done')+'</button></div></div>');
+  const d=ov('<div class="sec st-dlg" style="max-width:520px"><h2>'+D.tt('st.h')+'</h2><div class="st-body"></div><div class="acts" style="margin-top:14px"><button class="btn ghost" data-n>'+D.tt('st.done')+'</button></div></div>');
   const body=d.querySelector('.st-body');
   const lock=()=>{body.innerHTML='<p class="cap">'+D.tt('st.pinhelp')+'</p><div class="f"><label class="lbl" for="st-pin">'+D.tt('st.pin')+'</label><input id="st-pin" type="password" inputmode="numeric" autocomplete="off"></div><p class="err" id="st-err" role="alert"></p><div class="acts"><button class="btn" data-unlock>'+D.tt('st.unlock')+'</button></div>';
     const i=body.querySelector('#st-pin');i.focus();i.addEventListener('keydown',e=>{if(e.key==='Enter')body.querySelector('[data-unlock]').click();});};
@@ -4213,7 +4243,7 @@ app.addEventListener('click',async e=>{const c=e.target.closest('[data-act="show
   if(selMode){const ids=myPicks(),i=ids.indexOf(c.dataset.id);if(i<0)ids.push(c.dataset.id);else ids.splice(i,1);
     c.classList.toggle('picked',i<0);c.setAttribute('aria-pressed',String(i<0));await setPicks(ids);const f=$('#pk-float b');if(f)f.textContent=D.T('pk.count').replace('{n}',ids.length);return;}
   openShowcase(c.dataset.id);},true);
-const askName=(title,val,lbl)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px;margin:12vh auto 0"><h2>'+esc(title)+'</h2><div class="f"><label class="lbl" for="nm">'+esc(lbl||D.T('pr.name'))+'</label><input id="nm" maxlength="40" value="'+esc(val||'')+'"></div><div class="acts" style="margin-top:12px"><button class="btn" data-y>'+D.tt('bl.save')+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');
+const askName=(title,val,lbl)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px"><h2>'+esc(title)+'</h2><div class="f"><label class="lbl" for="nm">'+esc(lbl||D.T('pr.name'))+'</label><input id="nm" maxlength="40" value="'+esc(val||'')+'"></div><div class="acts" style="margin-top:12px"><button class="btn" data-y>'+D.tt('bl.save')+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');
   const i=d.querySelector('#nm');i.select();i.addEventListener('keydown',e=>{if(e.key==='Enter')d.querySelector('[data-y]').click();});
   d.onclick=e=>{if(e.target===d||e.target.dataset.n!==undefined){d.remove();res(null);}else if(e.target.dataset.y!==undefined){const v=i.value.trim();if(!v){toast(D.T('pr.namebad'));return;}d.remove();res(v);}};});
 const presetFromWork=()=>({dripper:W.dripper,recipe:Object.assign(clone(W.recipe),{waterTds:W.recipe.waterTds||''}),show:clone(W.show||{})});
@@ -4247,7 +4277,7 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="edit
 app.addEventListener('change',e=>{if(e.target.id!=='pr-sel'||!W)return;e.stopPropagation();const p=presets().find(x=>x.id===e.target.value);if(p){applyPreset(W,p);toast(D.T('pr.h')+': '+p.name);}else W.presetId=null;render();},true);
 /* Add TDS / Yield to a recipe that was already saved. The customer's link stays the same and shows the new values. */
 const brewLater=id=>{const s=D.S.snaps.find(x=>x.id===id);if(!s)return;const b=s.brew||{},had=b.tds!==''&&b.tds!=null||b.yield!==''&&b.yield!=null,on=had?!!(s.show&&s.show.brew):true,dose=+((s.recipe||{}).dose)||0;
-  const d=ov('<div class="sec bl" style="max-width:440px;margin:10vh auto 0"><h2>'+D.tt('bl.h')+'</h2><p class="cap">'+esc(s.bean.name)+(s.customer?' · '+D.tt('rs.brewed')+' '+esc(s.customer):'')+'</p><p class="cap">'+D.tt('bl.help')+'</p>'+
+  const d=ov('<div class="sec bl" style="max-width:440px"><h2>'+D.tt('bl.h')+'</h2><p class="cap">'+esc(s.bean.name)+(s.customer?' · '+D.tt('rs.brewed')+' '+esc(s.customer):'')+'</p><p class="cap">'+D.tt('bl.help')+'</p>'+
     '<div class="row" style="margin-top:10px"><div class="f"><label class="lbl" for="bl-tds">'+D.tt('rc.log.tds')+'</label><input id="bl-tds" type="number" step="0.01" inputmode="decimal" value="'+esc(b.tds==null?'':b.tds)+'"></div>'+
     '<div class="f"><label class="lbl" for="bl-y">'+D.tt('rc.log.yield')+'</label><input id="bl-y" type="number" step="0.1" inputmode="decimal" value="'+esc(b.yield==null?'':b.yield)+'"></div></div>'+
     '<div class="f" style="margin-top:10px"><span class="lbl">'+D.tt('rc.log.ext')+'</span><div class="bl-ext" id="bl-ext">'+esc(b.ext||'–')+'</div></div>'+
@@ -4267,7 +4297,7 @@ app.addEventListener('click',e=>{const b=e.target.closest('[data-act="brewlater"
 D.sync.onFlush=()=>{const c=$('#qr');if(resultId&&c&&!c.dataset.short&&D.shortUrl(resultId)&&safeToRender())render();};
 const refreshShared=async()=>{if(!D.connected()||document.hidden||Date.now()-lastPull<4000)return;lastPull=Date.now();const ch=await D.pull(false);
   if(!D.connected()){if(safeToRender())render();else pendingRender=true;return;}
-  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!W.presetEdit&&!bean(W.beanId))W=null;if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
+  if(ch||pendingRender){applyBeans();D.applyTheme();if(W&&!W.editId&&!W.presetEdit&&!bean(W.beanId))W=null;if(route.hash.indexOf('#s=')===0||hashId())return;if(safeToRender()){pendingRender=false;render();}else pendingRender=true;}};
 app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join"],[data-act="copyjoin"],[data-act="syncnow"],[data-act="gencode"],[data-act="setcode"]');if(!b)return;
   if(b.dataset.act==='gencode'){const i=$('#new-code');if(i){i.value=D.newCode();i.focus();}return;}
   if(b.dataset.act==='setcode'){if(!D.caps.isOwner)return;const i=$('#new-code'),v=(i&&i.value||'').trim();
@@ -4281,14 +4311,19 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="join
   if(r==='ok'){applyBeans();D.applyTheme();render();toast(D.T('jn.ok'));}else if(er)er.textContent=D.T(r==='offline'?'jn.off':'jn.bad');});
 app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'){const b=app.querySelector('[data-act="join"]');if(b)b.click();}});
 (async()=>{
-  const pathRef=location.pathname.match(/^\/(?:fundamental\/)?customer\/([A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64})\/?$/)?.[1];
-  const queryRef=new URLSearchParams(location.search).get('profile');
+  // Reload of a masked, unassigned plate must recheck the plate's current assignment.
+  if(/^\/(?:fundamental\/)?t\/[1-9][0-9]{0,15}\/[a-f0-9]{32}\/?$/.test(route.pathname)){
+    location.replace(route.href);
+    return;
+  }
+  const pathRef=route.pathname.match(/^\/(?:fundamental\/)?customer\/([A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64})\/?$/)?.[1];
+  const queryRef=new URLSearchParams(route.search).get('profile');
   const isQueryProfile=/^[A-Za-z0-9-]{1,100}\.[a-fA-F0-9]{12,64}$/.test(queryRef||'');
   const sync=async()=>{
-    const short=location.hash.match(/^#c=([A-Za-z0-9._-]+)$/)?.[1];
-    const full=location.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);
+    const short=route.hash.match(/^#c=([A-Za-z0-9._-]+)$/)?.[1];
+    const full=route.hash.match(/^#s=([^&]+)(?:&ref=([A-Za-z0-9._-]+))?$/);
     const ref=pathRef||short||(isQueryProfile?queryRef:null);
-    D.publicProfile=!!ref||location.hash.startsWith('#s=');
+    D.publicProfile=!!ref||route.hash.startsWith('#s=');
     D.shared=null;
     if(D.publicProfile){
       app.innerHTML='<div class="profile cv-msg"><p class="cap" role="status">Opening coffee profile…</p></div>';
@@ -4308,20 +4343,20 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
       if(ok&&D.shared===cur&&D.publicProfile)render();
     }
   };
-  if(pathRef||isQueryProfile||/^#(?:c|s)=/.test(location.hash)){
+  if(pathRef||isQueryProfile||/^#(?:c|s)=/.test(route.hash)){
     D.applyTheme();
     if(!D.cap)D.rpc('drip_theme',{}).then(t=>{if(t)D.setCi(t.ci||'apple',t.cvb);}).catch(()=>{});
     await sync();
     if(D.cap){
       document.body.classList.add('cap');
-      if(/[?&]card=1(&|$)/.test(location.search)){document.body.classList.add('card');D.cardPrep();}
+      if(/[?&]card=1(&|$)/.test(route.search)){document.body.classList.add('card');D.cardPrep();}
       window.DPcap=D.capNow;
     }else window.addEventListener('hashchange',sync);
     return;
   }
   if(await window.DripAccounts.boot(D,BRANCH_PATH?'fundamental':'native'))return;
-  let joinCode='';const jm=location.hash.match(/^#join=([^&]+)/);
-  if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
+  let joinCode='';const jm=route.hash.match(/^#join=([^&]+)/);
+  if(jm){try{joinCode=decodeURIComponent(jm[1]);}catch(x){}try{route.replace(route.pathname+route.search);}catch(x){}if(joinCode&&!BRANCH_PATH)try{localStorage.setItem(dripStorageKey('dp-shop'),joinCode.trim().toUpperCase());}catch(x){}}
   await Promise.all([D.load(),D.initCaps(),loadQrLib()]);
   if(BRANCH_PATH&&joinCode&&!D.cap&&!D.account)await D.join(joinCode);
   D.applyTheme();
@@ -4330,18 +4365,18 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='join-code'
   applyBeans();
   if(D.account){
     D.caps.isOwner=D.accountRole==='manager';document.body.dataset.accountRole=D.accountRole;
-    if((D.account||D.caps.isOwner)&&new URLSearchParams(location.search).get('settings')==='1')tab='admin';
+    if((D.account||D.caps.isOwner)&&new URLSearchParams(route.search).get('settings')==='1')tab='admin';
     if(D.accountRole!=='barista')scope.hs='all';
     scope.pr='all';
     if(D.caps.isOwner)stockOk=true;
   }else try{D.caps.isOwner=sessionStorage.getItem(dripStorageKey('dp-admin'))==='1';}catch(x){D.caps.isOwner=false;}
   await sync();
-  if(D.sync.bg)D.sync.bg.then(ch=>{if(!ch)return;applyBeans();D.applyTheme();if(location.hash.indexOf('#s=')===0||hashId())return;if(safeToRender())render();else pendingRender=true;});
-  if(D.cap){document.body.classList.add('cap');if(/[?&]card=1(&|$)/.test(location.search)){document.body.classList.add('card');D.cardPrep();}window.DPcap=D.capNow;return;}
+  if(D.sync.bg)D.sync.bg.then(ch=>{if(!ch)return;applyBeans();D.applyTheme();if(route.hash.indexOf('#s=')===0||hashId())return;if(safeToRender())render();else pendingRender=true;});
+  if(D.cap){document.body.classList.add('cap');if(/[?&]card=1(&|$)/.test(route.search)){document.body.classList.add('card');D.cardPrep();}window.DPcap=D.capNow;return;}
   window.addEventListener('hashchange',sync);
   D.rt.onChange=()=>{lastPull=0;refreshShared();};D.rt.start();
   setInterval(()=>{if(!D.rt.ws&&D.sync.code)D.rt.start();refreshShared();},20000);
-  if(!D.account)window.addEventListener('hashchange',async()=>{const m=location.hash.match(/^#join=([^&]+)/);if(!m)return;try{history.replaceState(null,'',location.pathname+location.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
+  if(!D.account)window.addEventListener('hashchange',async()=>{const m=route.hash.match(/^#join=([^&]+)/);if(!m)return;try{route.replace(route.pathname+route.search);}catch(x){}if(decodeURIComponent(m[1]).toUpperCase()===D.sync.code)return;const r=await D.join(decodeURIComponent(m[1]));applyBeans();D.applyTheme();render();toast(D.T(r==='ok'?'jn.ok':r==='offline'?'jn.off':'jn.bad'));});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshShared();});
   window.addEventListener('focus',refreshShared);
   window.addEventListener('online',()=>{D.flush().catch(()=>{}).then(refreshShared);});

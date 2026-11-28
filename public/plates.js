@@ -2,7 +2,7 @@
   'use strict';
   const number = slot => String(slot).padStart(2, '0');
   const list = D => D.rpc('drip_list_plates', {p_code: D.sync.code});
-  const branchName = () => location.pathname.startsWith('/fundamental') ? 'Fundamental' : 'Native Onsen Hotel';
+  const branchName = () => window.DripRoute.pathname.startsWith('/fundamental') ? 'Fundamental' : 'Native Onsen Hotel';
 
   function download(D, plate) {
     const qr = document.createElement('canvas');
@@ -28,10 +28,16 @@
 
   window.DripPlates = {
     async mountAdmin(D, mount) {
-      mount.innerHTML = '<button class="btn" type="button">Generate QR plate</button><p class="cap" role="status"></p><div class="acts"></div>';
-      const create = mount.querySelector('button');
+      mount.innerHTML = '<form class="plate-duration"><div class="f"><label class="lbl" for="plate-minutes">QR use time (minutes)</label>' +
+        '<input id="plate-minutes" type="number" min="1" max="1440" step="1" required></div>' +
+        '<p class="cap">Applies to new links in this branch.</p><div class="acts"><button class="btn ghost" type="submit">Save time</button></div></form>' +
+        '<button class="btn" type="button">Generate QR plate</button><p class="cap" role="status"></p><div class="acts"></div>';
+      const duration = mount.querySelector('form');
+      const minutes = duration.querySelector('input');
+      const save = duration.querySelector('button');
+      const create = mount.querySelector(':scope > button');
       const status = mount.querySelector('[role=status]');
-      const buttons = mount.querySelector('.acts');
+      const buttons = mount.querySelector(':scope > .acts');
       const add = plate => {
         const button = document.createElement('button');
         button.type = 'button';
@@ -43,15 +49,30 @@
         };
         buttons.append(button);
       };
-      create.disabled = true;
+      create.disabled = save.disabled = true;
       try {
-        const {generated} = await list(D);
-        generated.forEach(add);
+        const plates = await list(D);
+        minutes.value = plates.minutes;
+        save.disabled = false;
+        plates.generated.forEach(add);
       } catch {
         status.textContent = 'Could not load saved plates. Reopen Settings to retry.';
       } finally {
         create.disabled = false;
       }
+      duration.onsubmit = async event => {
+        event.preventDefault();
+        save.disabled = true;
+        try {
+          const result = await D.rpc('drip_set_plate_duration', {p_minutes: minutes.valueAsNumber});
+          minutes.value = result.minutes;
+          status.textContent = 'QR use time saved.';
+        } catch {
+          status.textContent = 'Could not save the QR use time.';
+        } finally {
+          save.disabled = false;
+        }
+      };
       create.onclick = async () => {
         create.disabled = true;
         try {
@@ -102,12 +123,18 @@
             p_slot: selected,
             p_ref: ref,
           });
-          status.textContent = 'Plate ' + number(result.slot) + ' linked. Hand it to your customer to scan within 30 minutes.';
+          status.textContent = 'Plate ' + number(result.slot) + ' linked. Hand it to your customer to scan within ' + result.minutes + (result.minutes === 1 ? ' minute.' : ' minutes.');
           link.textContent = 'Linked';
           close.textContent = 'Done';
           close.focus();
         } catch (error) {
-          status.textContent = error.code === 'invalid_plate' ? 'This plate is unavailable in this branch.' :
+          if (error.code === 'plate_busy') {
+            const option = slot.selectedOptions[0];
+            option.textContent += ' · In use';
+            option.disabled = true;
+            slot.value = '';
+            status.textContent = 'This plate was just linked. Choose another plate or reopen when it is available.';
+          } else status.textContent = error.code === 'invalid_plate' ? 'This plate is unavailable in this branch.' :
             'Could not link the plate. Check your connection and permissions.';
         } finally {
           if (link.textContent !== 'Linked') slot.disabled = link.disabled = false;
@@ -117,10 +144,18 @@
       status.textContent = 'Loading plates…';
       dialog.showModal();
       try {
-        const {slots} = await list(D);
-        for (const value of slots) slot.add(new Option('Plate ' + number(value), value));
-        status.textContent = slots.length ? '' : 'No plates are available in this branch.';
-        slot.disabled = link.disabled = !slots.length;
+        const {slots, busy = {}} = await list(D);
+        let available = false;
+        for (const value of slots) {
+          const expiry = busy[value];
+          const option = new Option('Plate ' + number(value) + (expiry ?
+            ' · In use until ' + new Date(expiry).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : ''), value);
+          option.disabled = !!expiry;
+          slot.add(option);
+          if (!expiry) available = true;
+        }
+        status.textContent = available ? '' : 'All plates are in use. Reopen when a plate becomes available.';
+        slot.disabled = link.disabled = !available;
       } catch {
         status.textContent = 'Could not load plates. Close this window and try again.';
       }
