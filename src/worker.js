@@ -355,6 +355,37 @@ const F = {
       .bind(shop.id,token,shop.id).first();
     return platePath(shop,row);
   },
+  // Saves a printed plate link only when it matches the check already stored for that plate.
+  // A link that already matches is left as it is.
+  async drip_keep_printed_plates(env,a,shop,req) {
+    const {user}=await branchAccount(env,req,shop.id,true);
+    if(!user.admin)fail('not_allowed',403);
+    const paths=a.p_paths;
+    if(!Array.isArray(paths)||paths.length<1||paths.length>10||paths.some(path=>typeof path!=='string'))fail('invalid_plate',400);
+    const hashes=env.QR_PLATE_HASHES?.[shop.id]||[];
+    await plateTokenSchema(env);
+    const kept=[],already=[],rejected=[];
+    for(const raw of paths){
+      let path=raw;
+      try{if(path.includes('://'))path=new URL(path).pathname;}catch{rejected.push(0);continue;}
+      const match=plateRoute.exec(path);
+      const slot=match?Number(match[2]):0;
+      const token=match?match[3]:'';
+      const sameBranch=!!match&&(match[1]?shop===FUNDAMENTAL:shop===NATIVE);
+      if(!sameBranch||slot<1||slot>10||hashes[slot-1]!==await sha256(token)){rejected.push(slot);continue;}
+      const existing=await env.DB.prepare('SELECT token FROM drip_plate_tokens WHERE branch=? AND slot=?').bind(shop.id,slot).first();
+      if(!existing){
+        await env.DB.prepare('INSERT INTO drip_plate_tokens(branch,slot,token) VALUES (?,?,?)').bind(shop.id,slot,token).run();
+        kept.push(slot);
+      }else if(existing.token===token||hashes[slot-1]===await sha256(existing.token)){
+        already.push(slot);
+      }else{
+        await env.DB.prepare('UPDATE drip_plate_tokens SET token=? WHERE branch=? AND slot=? AND token=?').bind(token,shop.id,slot,existing.token).run();
+        kept.push(slot);
+      }
+    }
+    return {kept,already,rejected};
+  },
   async drip_bind_plate(env,a,shop,req) {
     const account=await access(env,shop,a,req,true);
     const plate=a.p_plate?await validPlate(env,String(a.p_plate)):{shop,slot:a.p_slot};

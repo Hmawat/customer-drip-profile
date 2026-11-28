@@ -380,6 +380,7 @@
         status.textContent = 'Could not load saved plates. Reopen Settings to retry.';
       } finally {
         create.disabled = false;
+        downloadAll.disabled = downloadSingle.disabled = false;
       }
       duration.onsubmit = async event => {
         event.preventDefault();

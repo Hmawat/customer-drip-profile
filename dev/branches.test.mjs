@@ -211,6 +211,17 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal(seenPlate.status, 410);
   const listedAgain = await request('rpc/drip_list_plates', {p_account: true}, owner.cookie);
   assert.equal(listedAgain.data.printable.find(plate => plate.slot === 2).path, '/t/2/' + nativeTokens[1]);
+  const keep=(branch,cookie,paths)=>request(branch+'rpc/drip_keep_printed_plates',{p_account:true,p_paths:paths},cookie);
+  assert.equal((await keep('',null,['/t/1/'+nativeTokens[0]])).status,401);
+  const kept=await keep('',owner.cookie,['/t/2/'+nativeTokens[1],'/t/3/'+nativeTokens[2],'/fundamental/t/1/'+fundamentalTokens[0],'/t/2/'+'f'.repeat(32)]);
+  assert.equal(kept.status,200);
+  assert.deepEqual(kept.data.kept,[3]);
+  assert.deepEqual(kept.data.already,[2]);
+  assert.deepEqual(kept.data.rejected,[1,2]);
+  const keptAgain=await keep('',owner.cookie,['/t/3/'+nativeTokens[2]]);
+  assert.deepEqual(keptAgain.data.already,[3]);
+  assert.equal((await request('rpc/drip_list_plates',{p_account:true},owner.cookie)).data.printable.find(plate=>plate.slot===2).path,'/t/2/'+nativeTokens[1]);
+  assert.equal((await request('rpc/drip_list_plates',{p_account:true},owner.cookie)).data.printable.find(plate=>plate.slot===3).path,'/t/3/'+nativeTokens[2]);
   const fundamentalPlates = await request(fundamental + 'rpc/drip_list_plates', {p_account: true}, owner.cookie);
   assert.deepEqual(fundamentalPlates.data.printable.map(plate => plate.slot), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
   assert.equal(fundamentalPlates.data.printable.every(plate => plate.path === '/fundamental/t/' + plate.slot + '/' + fundamentalTokens[plate.slot - 1]), true);
@@ -234,6 +245,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert(memberPlates.data.slots.includes(11));
   assert.deepEqual(memberPlates.data.generated,[]);
   assert.deepEqual(memberPlates.data.printable,[]);
+  assert.equal((await keep('',member.cookie,['/t/1/'+nativeTokens[0]])).status,403);
   assert.equal((await request(fundamental+'rpc/drip_list_plates',{p_account:true},member.cookie)).status,403);
   const read = (branch, cookie) => request(branch + 'rpc/drip_pull', {p_account:true}, cookie);
   assert.equal((await read('', member.cookie)).status, 200);
