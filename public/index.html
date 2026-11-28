@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dafJCt/GRkVihK/HtiqGGIjUIMRsDq/pPp1EEtClLOQ=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-sufG5qypgHzhAyt29EEgQhRqZrnMRwqHcxGvQp13yPY=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-wBKkprHpyHCaWaHPqbX18du23s6oj05+KGmA5gYLY+o=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
+<!doctype html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="script-src 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-dafJCt/GRkVihK/HtiqGGIjUIMRsDq/pPp1EEtClLOQ=' 'sha256-tlRfBlxksvpguxc3D9s/6h7lgPKO1kwdMOX3837lUrY=' 'sha256-2P+a9Vx4ryKGYtsT7qjXjr/2bueTLUT9QZycKwDYwD0=' 'sha256-CQCczxxLxai929YJieFXmf5EqmoyfNi1pwRHB83XP5A=' 'sha256-TY2in/xdyKgoGi33QN0ksX/8sKzOZjtVZ/v8q0YtuT8=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' 'sha256-Cav6sRd3MYAL9jmvC8k8bIMWQsuYxjMwWC6wMxFq7jA=' 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/; script-src-attr 'none'; worker-src blob:; frame-src 'self'; object-src 'none'; base-uri 'none'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Drip Profile</title>
 <link id="drip-manifest" rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/svg+xml" href="/icons/icon.svg"><meta name="apple-mobile-web-app-title" content="Drip Profile"><script src="/route.js"></script><script>
 const route=window.DripRoute;
 const BRANCH_PATH=/^\/fundamental(?:\/?$|\/customer\/)/.test(route.pathname)?'/fundamental/':'';
@@ -1053,6 +1053,13 @@ body.card .cv-pr .n .pb{flex:1}
 body.cap .cv-review,body.cap .cv-rv-lead{display:none!important}
 .bean .bn-farmer{display:flex;flex-direction:column;gap:1px;margin-top:8px;padding-top:10px;border-top:1px solid var(--ci-fill,#e8e8ed);font:600 15px/1.3 var(--font-b);color:var(--ink)}
 .bean .bn-farmer .lbl{font:400 12px/1.3 var(--font-b);color:var(--mute)}
+.bean .bn-price,.sc-price,.cv-price{display:flex;flex-wrap:wrap;gap:6px 10px}
+.bean .bn-price{margin:2px 0 0}
+.bean .bn-price b,.sc-price b,.cv-price b{font:600 15px/1.25 var(--font-s);letter-spacing:-.01em;color:var(--ink);font-weight:600}
+.sc-price{margin:12px 0 0}
+.sc-price b{font-size:17px}
+.cv-price{justify-content:center;margin:16px 0 0}
+.cv-price b{font-size:19px;letter-spacing:.01em}
 
 /* ===== Coffee showcase ===== */
 html.sc-open,html.sc-open body{overflow:hidden}
@@ -2819,6 +2826,7 @@ D.TXT=[
   ['ac.h.add','Add Green Coffee'],['ac.h.edit','Edit Coffee'],
   ['ac.f.name','Coffee name *'],['ac.f.country','Country *'],['ac.f.region','Region'],['ac.f.farm','Farm'],['ac.f.farmer','Farmer'],
   ['ac.f.variety','Variety'],['ac.f.process','Process *'],['ac.f.roast','Roast level'],['ac.f.altitude','Altitude'],['ac.f.harvest','Harvest'],
+  ['ac.f.cupPrice','Cup price (฿)'],['ac.f.beanPrice','Bean price per 100g (฿)'],['ac.f.pricehelp','Optional. Leave a price blank if this coffee has no price.'],['ac.price.bad','Enter each price as a number, or leave it blank.'],
   ['ac.f.folder','Folder'],['ac.f.flavors','Taste Notes'],['ac.tn.help','Pick from the flavor wheel or type your own. Notes are saved with this coffee and appear automatically in Recipe and on the customer page.'],['ac.tn.sel','Selected notes'],['ac.tn.none','No notes selected yet.'],['ac.tn.addph','Add your own note (comma separated)'],['ac.tn.addbtn','Add note'],['ac.tn.wheel','Pick from flavor wheel'],['ac.tn.more','More flavor notes (beyond SCA wheel)'],['ac.tn.dup','This note is already selected.'],['ac.f.note','Description'],
   ['ac.lbl.h','Coffee label image'],['ac.lbl.help','Shown on the Coffee Label with the lot details, and on the customer page when they scan the QR code. JPEG or PNG; it is resized automatically.'],['ac.lbl.add','Upload image'],['ac.lbl.change','Change image'],['ac.lbl.remove','Remove image'],['ac.lbl.prev','Label preview'],['ac.lbl.untitled','Coffee name'],
   
@@ -2852,6 +2860,7 @@ D.TXT=[
   ['cp.kicker','Specialty Coffee Profile'],['cp.brewed','Brewed for'],['cp.barista','Barista'],['cp.by','Prepared by'],
   ['cp.coffee','Coffee Profile'],['sc.title','Our coffees'],['sc.choose','Choose this coffee'],['sc.grown','Grown by'],['sc.at','at'],['sc.close','Close'],['sc.prev','Previous coffee'],['sc.next','Next coffee'],['sc.hint','Tap a coffee to see its story. Swipe to compare.'],['sc.photos','From the farm'],['cp.l.country','Country'],['cp.l.region','Region'],['cp.l.farm','Farm'],['cp.l.farmer','Farmer'],['cp.l.process','Process'],
   ['cp.l.variety','Variety'],['cp.l.altitude','Altitude'],['cp.l.harvest','Harvest'],['cp.l.roast','Roast'],
+  ['cp.l.cupPrice','Cup price'],['cp.l.beanPrice','Bean price'],['cp.px.cup','฿ / cup'],['cp.px.bean','฿ / 100g'],
   ['cp.lbl.h','Coffee Label'],
   ['cp.recipe','Brew Log'],['cp.pourchart','Pour schedule'],['cp.cum','Cumulative water'],['cp.coffeeword','Coffee'],['cp.waterword','Water'],['cp.brewres','Brew result'],['cp.res.tds','TDS'],['cp.res.yield','Yield OUT'],['cp.res.ext','Extraction'],['cp.dose','Coffee dose'],['cp.ratio','Brew ratio'],['cp.tw','Total water'],['cp.temp','Temperature'],['cp.tds','Water TDS'],
   ['cp.grind','Grind size'],['cp.time','Total time'],['cp.step','Step'],['cp.t','Time'],['cp.w','Water'],['cp.total','Total'],['cp.bloom','Blooming'],['cp.pour','Pour'],
@@ -3126,6 +3135,10 @@ D.flavorHtml=s=>{
 };
 D.grind=v=>/^\d+(\.\d+)?$/.test(String(v))?v+' µm':String(v==null?'':v);
 D.num=v=>{const x=Math.round(v*10)/10;return String(x);};
+/* Optional prices in Thai baht. A blank price is left out. Shown as 450฿ / cup and 1,300฿ / 100g. */
+D.baht=n=>{if(n==null)return '';const s=String(n).trim().replace(/,/g,'');if(!/^\d+(\.\d+)?$/.test(s))return '';const x=Number(s);return isFinite(x)?x.toLocaleString('en-US',{maximumFractionDigits:2}):'';};
+D.priceText=(b,kind)=>{const n=D.baht(b&&b[kind==='bean'?'beanPrice':'cupPrice']);return n?n+D.T(kind==='bean'?'cp.px.bean':'cp.px.cup'):'';};
+D.priceBits=b=>['cup','bean'].map(k=>D.priceText(b,k)).filter(Boolean);
 
 D.qr=(text,canvas,px,label)=>{
   let q=null,lvl='M';
@@ -3169,7 +3182,7 @@ D.labelHtml=(b,src,T,o)=>{
   return '<article class="clabel"><div class="ci"><img alt="'+esc(b.name||'')+'" src="'+esc(img)+'">'+(b.process?'<span class="tag">'+esc(b.process)+'</span>':'')+'</div>'+
    '<div class="cb">'+(o.noName?'':'<div class="lbl">'+esc(T('cp.lbl.h'))+'</div><h3>'+esc(b.name||D.T('ac.lbl.untitled'))+'</h3>')+
    '<p class="org">'+esc([b.country,b.region].filter(Boolean).join(' · '))+'</p>'+
-   '<div class="specs">'+S(T('cp.l.farm'),b.farm)+S(T('cp.l.farmer'),b.farmer)+S(T('cp.l.process'),b.process)+S(T('cp.l.variety'),b.variety)+S(T('cp.l.altitude'),b.altitude)+S(T('cp.l.harvest'),b.harvest)+S(T('cp.l.roast'),b.roast)+'</div>'+
+   '<div class="specs">'+S(T('cp.l.farm'),b.farm)+S(T('cp.l.farmer'),b.farmer)+S(T('cp.l.process'),b.process)+S(T('cp.l.variety'),b.variety)+S(T('cp.l.altitude'),b.altitude)+S(T('cp.l.harvest'),b.harvest)+S(T('cp.l.roast'),b.roast)+S(T('cp.l.cupPrice'),D.priceText(b,'cup'))+S(T('cp.l.beanPrice'),D.priceText(b,'bean'))+'</div>'+
    (b.note?'<p class="nt">'+esc(b.note)+'</p>':'')+'</div></article>';
 };
 /* Barista display name: the name typed when the recipe was saved. Never an e-mail address. */
@@ -3266,13 +3279,14 @@ D.profileHtml=s=>{
   const rv=D.reviewUrl();
   const b=s.bean,T=D.tt,dripper=D.dName(s.dripper),by=D.person(s.barista);
   const src=D.coffeeImg(s)||D.heroSrc(s);
-  const spec=[['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast]]
+  const spec=[['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['cupPrice',D.priceText(b,'cup')],['beanPrice',D.priceText(b,'bean')]]
     .filter(a=>a[1]!==''&&a[1]!=null).map(a=>'<div><dt>'+esc(T('cp.l.'+a[0]))+'</dt><dd>'+esc(a[1])+'</dd></div>').join('');
   const org=[b.country,b.region].filter(Boolean).join(' · ');
+  const prices=D.priceBits(b);
   const meta=[by?esc(D.T('cp.by'))+' <b>'+esc(by)+'</b>':'',s.customer?esc(D.T('cp.brewed'))+' <b>'+esc(s.customer)+'</b>':'',esc(D.fmtDate(s.createdAt))].filter(Boolean).join('<i aria-hidden="true">·</i>');
   /* Section titles only (the small taglines after them were removed). */
   const head=(t,tag,extra)=>'<div class="cv-sh"><h2>'+t+'</h2>'+(extra||'')+'</div>';
-  const hero='<header class="cv-hero"><div class="cv-in cv-hc"><p class="cv-kick">'+T('cp.kicker')+'</p><h1 class="cv-name">'+esc(b.name)+'</h1>'+(org?'<p class="cv-org">'+esc(org)+'</p>':'')+'<p class="cv-meta">'+meta+'</p></div>'+
+  const hero='<header class="cv-hero"><div class="cv-in cv-hc"><p class="cv-kick">'+T('cp.kicker')+'</p><h1 class="cv-name">'+esc(b.name)+'</h1>'+(org?'<p class="cv-org">'+esc(org)+'</p>':'')+(prices.length?'<p class="cv-price">'+prices.map(p=>'<b>'+esc(p)+'</b>').join('')+'</p>':'')+'<p class="cv-meta">'+meta+'</p></div>'+
     '<div class="cv-in"><figure class="cv-ph"><img alt="'+esc(b.name||'')+'" src="'+esc(src)+'">'+(b.process?'<figcaption class="cv-proc">'+esc(b.process)+'</figcaption>':'')+'</figure></div></header>';
   const specs=(spec||b.note)?'<section class="cv-specs"><div class="cv-in">'+head(T('cp.coffee'),T('cp.coffee.tag'))+(spec?'<dl class="cv-spec">'+spec+'</dl>':'')+(b.note?'<p class="cv-note">'+esc(b.note)+'</p>':'')+'</div></section>':'';
   const fl=D.flavorHtml(s),nN=(s.notes||[]).filter(Boolean).length;
@@ -3342,7 +3356,7 @@ D.renderJpegCanvas=async s=>{
     txt([D.person(s.barista)?T('cp.by')+' '+D.person(s.barista):'',s.customer?T('cp.brewed')+' '+s.customer:''].filter(Boolean).join('  ·  '),P,y,bold,INK);y+=10;
     head(T('cp.coffee'));
     if(limg){const lh=Math.round(IW*0.62);if(!dry)cover(c,limg,P,y-10,IW,lh);y+=lh+36;}
-    [['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast]].forEach(a=>row(T('cp.l.'+a[0]),a[1]));
+    [['farm',b.farm],['farmer',b.farmer],['process',b.process],['variety',b.variety],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['cupPrice',D.priceText(b,'cup')],['beanPrice',D.priceText(b,'bean')]].forEach(a=>row(T('cp.l.'+a[0]),a[1]));
     if(b.note){y+=8;y=wrap(b.note,P,y,IW,36,body,MUTE);}
     head(T('cp.recipe'));
     const on=k=>D.showOn(s,k);
@@ -3619,7 +3633,7 @@ const viewBeans=()=>{
    (BEANS.some(b=>b.sample)?'<div class="banner">'+T('sb.sample')+'</div>':'')+
    '<div class="row" style="margin-bottom:14px"><div class="f"><label class="lbl" for="q">'+T('sb.search')+'</label><input id="q" type="search" value="'+esc(filt.q)+'" placeholder="'+T('sb.searchph')+'"></div>'+
    '<div class="f"><span class="lbl">'+T('sb.process')+'</span><div class="chips">'+['',...procs].map(p=>'<button class="chip" data-act="proc" data-p="'+esc(p)+'" aria-pressed="'+(filt.p===p)+'">'+(p?esc(p):T('sb.all'))+'</button>').join('')+'</div></div></div>'+
-   folderChips()+pickBar()+'<div class="grid'+(selMode?' selecting':'')+'">'+list.map(b=>'<button class="bean'+(b.oos?' oos':'')+(selMode&&myPicks().includes(b.id)?' picked':'')+'" data-act="showbean" data-id="'+b.id+'"'+(selMode?' aria-pressed="'+myPicks().includes(b.id)+'"':'')+' aria-label="'+esc(b.name)+(b.oos?' ('+esc(D.T('st.out'))+')':'')+'">'+(selMode?'<span class="pk-tick" aria-hidden="true">✓</span>':'')+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'<img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span><span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>').join('')+'</div>'+
+   folderChips()+pickBar()+'<div class="grid'+(selMode?' selecting':'')+'">'+list.map(b=>{const px=D.priceBits(b);return '<button class="bean'+(b.oos?' oos':'')+(selMode&&myPicks().includes(b.id)?' picked':'')+'" data-act="showbean" data-id="'+b.id+'"'+(selMode?' aria-pressed="'+myPicks().includes(b.id)+'"':'')+' aria-label="'+esc(b.name)+(px.length?' '+esc(px.join(', ')):'')+(b.oos?' ('+esc(D.T('st.out'))+')':'')+'">'+(selMode?'<span class="pk-tick" aria-hidden="true">✓</span>':'')+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'<img alt="" src="'+esc(beanImg(b))+'"><div class="b"><span class="n">'+esc(b.name)+'</span>'+(px.length?'<span class="bn-price">'+px.map(p=>'<b>'+esc(p)+'</b>').join('')+'</span>':'')+'<span class="cap">'+esc(b.region)+' · '+esc(b.process)+'</span>'+(b.farm?'<span class="cap">'+esc(b.farm)+'</span>':'')+(b.farmer?'<span class="bn-farmer"><span class="lbl">'+T('ac.f.farmer').replace(/\s*\*\s*$/,'')+'</span>'+esc(b.farmer)+'</span>':'')+'</div></button>';}).join('')+'</div>'+
    (list.length?'':(BEANS.length?'<p class="cap">'+T('sb.none')+'</p>':'<p class="cap">'+T('sb.empty')+'</p><button class="btn" data-act="tab" data-t="addcoffee">'+T('addcoffee')+'</button>'))+
    '';
 };
@@ -3646,8 +3660,10 @@ const viewAdd=()=>{
      '<div class="acts"><button class="btn" data-act="cuse" data-id="'+b.id+'">'+T('ac.done.use')+'</button><button class="btn ghost" data-act="cmore">'+T('ac.done.more')+'</button><button class="btn ghost" data-act="tab" data-t="beans">'+T('ac.done.list')+'</button></div></section>';}
   const procs=[...new Set(BEANS.map(b=>b.process).concat(['Washed','Natural','Honey']))];
   const auto=CD.auto||[];
+  const priceField=k=>'<div class="f"><label class="lbl" for="cf-'+k+'">'+T('ac.f.'+k)+'</label><input id="cf-'+k+'" data-cf="'+k+'" type="number" min="0" step="0.01" inputmode="decimal" value="'+esc(v[k]??'')+'" autocomplete="off"></div>';
   return '<section class="sec" style="max-width:720px"><h2>'+(ed?T('ac.h.edit'):T('ac.h.add'))+'</h2>'+scanCard()+'<div class="row">'+
    CF.map(k=>'<div class="f"><label class="lbl" for="cf-'+k+'">'+T('ac.f.'+k)+'</label><input id="cf-'+k+'" data-cf="'+k+'"'+(auto.includes(k)?' class="filled"':'')+' value="'+esc(v[k]||'')+'"'+(k==='process'?' list="proclist"':'')+' autocomplete="off"></div>').join('')+'</div>'+
+   '<div class="row" style="margin-top:12px">'+['cupPrice','beanPrice'].map(priceField).join('')+'</div><span class="u">'+T('ac.f.pricehelp')+'</span>'+
    '<datalist id="proclist">'+procs.map(p=>'<option value="'+esc(p)+'">').join('')+'</datalist>'+
    (D.S.folders.length?'<div class="f" style="margin-top:12px"><label class="lbl" for="cf-folder">'+T('ac.f.folder')+'</label><select id="cf-folder" data-cf="folder"><option value="">'+T('sb.unfiled')+'</option>'+D.S.folders.map(f=>'<option value="'+f.id+'"'+(v.folder===f.id?' selected':'')+'>'+esc(f.name)+'</option>').join('')+'</select></div>':'')+
    '<div class="f" style="margin-top:16px"><span class="lbl">'+T('ac.f.flavors')+'</span><span class="u">'+T('ac.tn.help')+'</span>'+
@@ -3740,7 +3756,7 @@ const ov=h=>{const d=document.createElement('div');d.className='overlay';d.setAt
 const ask=(msg,ok)=>new Promise(res=>{const d=ov('<div class="sec" style="max-width:420px"><p>'+msg+'</p><div class="acts"><button class="btn" data-y>'+ok+'</button><button class="btn ghost" data-n>Cancel</button></div></div>');d.onclick=e=>{const y=e.target.dataset.y!==undefined;if(y||e.target.dataset.n!==undefined||e.target===d){d.remove();res(y);}};});
 const mutate=async(fn,msg)=>{const bb=clone(BEANS),bf=clone(D.S.folders),bp=clone(D.S.photos);fn();D.S.beans=clone(BEANS);const ok=await doSave(msg,()=>{BEANS.splice(0,BEANS.length,...bb);D.S.folders=bf;D.S.photos=bp;D.S.beans=bb;});render();return ok;};
 const loginHtml=()=>'<section class="sec" style="max-width:420px"><h2>'+T('ad.login.h')+'</h2><div class="f"><label class="lbl" for="pin">'+(D.S.adminPin?T('ad.pin'):T('ad.pinnew'))+'</label><input id="pin" type="password" autocomplete="current-password"></div><div class="acts" style="margin-top:12px"><button class="btn" data-act="login">'+(D.S.adminPin?T('ad.loginbtn'):T('ad.createbtn'))+'</button></div></section>';
-const coffeeRow=b=>'<tr><td>'+esc(b.name)+'<div class="cap">'+esc(b.country)+' · '+esc(b.process)+'</div></td><td><div class="f"><select data-mv="'+b.id+'" aria-label="'+esc(D.T('ac.f.folder'))+': '+esc(b.name)+'"><option value="">'+T('sb.unfiled')+'</option>'+D.S.folders.map(f=>'<option value="'+f.id+'"'+(b.folder===f.id?' selected':'')+'>'+esc(f.name)+'</option>').join('')+'</select></div></td><td><div class="acts"><button class="chip" data-act="cedit" data-id="'+b.id+'">'+T('ad.edit')+'</button><button class="chip" data-act="cdel" data-id="'+b.id+'">'+T('ad.delete')+'</button></div></td></tr>';
+const coffeeRow=b=>{const px=D.priceBits(b);return '<tr><td>'+esc(b.name)+'<div class="cap">'+esc(b.country)+' · '+esc(b.process)+(px.length?' · '+esc(px.join(' · ')):'')+'</div></td><td><div class="f"><select data-mv="'+b.id+'" aria-label="'+esc(D.T('ac.f.folder'))+': '+esc(b.name)+'"><option value="">'+T('sb.unfiled')+'</option>'+D.S.folders.map(f=>'<option value="'+f.id+'"'+(b.folder===f.id?' selected':'')+'>'+esc(f.name)+'</option>').join('')+'</select></div></td><td><div class="acts"><button class="chip" data-act="cedit" data-id="'+b.id+'">'+T('ad.edit')+'</button><button class="chip" data-act="cdel" data-id="'+b.id+'">'+T('ad.delete')+'</button></div></td></tr>';};
 const adminTop=()=>{
   const F=D.S.folders,q=aq.trim().toLowerCase(),hit=b=>!q||(b.name+b.country+b.region+b.farm).toLowerCase().includes(q);
   const frows=F.map((f,i)=>'<div class="acts" style="margin-bottom:8px;align-items:center"><div class="f" style="flex:1;min-width:150px"><input data-fn="'+f.id+'" value="'+esc(f.name)+'" aria-label="'+esc(D.T('ad.fo.h'))+'"></div><span class="cap">'+BEANS.filter(b=>b.folder===f.id).length+' coffees</span><button class="chip" data-act="fup" data-id="'+f.id+'" aria-label="Move up"'+(i===0?' disabled':'')+'>&#9650;</button><button class="chip" data-act="fdown" data-id="'+f.id+'" aria-label="Move down"'+(i===F.length-1?' disabled':'')+'>&#9660;</button><button class="chip" data-act="fdel" data-id="'+f.id+'">'+T('ad.delete')+'</button></div>').join('')||'<p class="cap">'+T('ad.fo.none')+'</p>';
@@ -3929,7 +3945,8 @@ app.addEventListener('change',async e=>{
 });
 app.addEventListener('click',e=>{const sm=e.target.closest('details.grp>summary');if(!sm)return;const d=sm.parentElement;if(d.open)openG.delete(d.dataset.g);else openG.add(d.dataset.g);});
 const showImage=url=>{const d=document.createElement('div');d.className='overlay dark';d.innerHTML='<p style="color:#fff;margin:0;text-align:center">Long-press the image to save it</p><img alt="Coffee drip profile" style="max-width:min(100%,540px);height:auto;background:#fff" src="'+url+'"><button class="btn light">Close</button>';d.querySelector('button').onclick=()=>d.remove();document.body.appendChild(d);};
-const emptyFields=()=>({name:'',country:'',region:'',farm:'',farmer:'',variety:'',process:'',roast:'',altitude:'',harvest:'',folder:'',flavors:'',note:''});
+const emptyFields=()=>({name:'',country:'',region:'',farm:'',farmer:'',variety:'',process:'',roast:'',altitude:'',harvest:'',cupPrice:'',beanPrice:'',folder:'',flavors:'',note:''});
+const priceOf=raw=>{const s=String(raw==null?'':raw).trim().replace(/,/g,'').replace(/^\+/,'');if(!s)return '';if(!/^\d+(\.\d+)?$/.test(s))return null;const n=Math.round(Number(s)*100)/100;return isFinite(n)?String(n):null;};
 app.addEventListener('click',async e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id;
@@ -3961,15 +3978,20 @@ app.addEventListener('click',async e=>{
    case 'cuse':{const b=bean(id);if(!b)break;W=newWork(b);CD=null;tab='recipe';render();window.scrollTo(0,0);break;}
    case 'cfsave':{
      if(busy||!CD)return;
+     app.querySelectorAll('[data-cf]').forEach(el=>{CD.v[el.dataset.cf]=el.value;});
      const v={};Object.keys(CD.v).forEach(k=>v[k]=String(CD.v[k]==null?'':CD.v[k]).trim());
      const ed=CD.id?bean(CD.id):null,err=m=>{const n=$('#cferr');if(n)n.textContent=m;toast(m);};
      if(CD.id&&!D.caps.isOwner){toast('Admin login required');return;}
      if(!v.name||!v.country||!v.process)return err(D.T('ac.req'));
+     const cup=priceOf(v.cupPrice),beanP=priceOf(v.beanPrice);
+     if(cup===null||beanP===null)return err(D.T('ac.price.bad'));
+     v.cupPrice=cup;v.beanPrice=beanP;
      const pend=$('#cn-new');if(pend&&pend.value.trim())pend.value.split(',').forEach(x=>addNote(CD.notes,x));const flavors=uniqNotes(CD.notes),oldF=ed?(ed.flavors||[]).slice():null;
      const rec=Object.assign(emptyFields(),v,{flavors}),nid=ed?ed.id:'g-'+Date.now().toString(36),photo=CD.label.slice(0,1);
+     const dropBlankPrice=o=>['cupPrice','beanPrice'].forEach(k=>{if(!o[k])delete o[k];});
      const ok=await mutate(()=>{
-       if(ed){Object.assign(ed,rec);if(!rec.folder)delete ed.folder;delete ed.sample;}
-       else{const o=Object.assign({id:nid,hue:Math.floor(Math.random()*360)},rec);if(!o.folder)delete o.folder;BEANS.push(o);}
+       if(ed){Object.assign(ed,rec);if(!rec.folder)delete ed.folder;dropBlankPrice(ed);delete ed.sample;}
+       else{const o=Object.assign({id:nid,hue:Math.floor(Math.random()*360)},rec);if(!o.folder)delete o.folder;dropBlankPrice(o);BEANS.push(o);}
        const p=D.S.photos[nid]=D.S.photos[nid]||{};p.label=photo;
      },ed?'Coffee updated':'Coffee added');
      if(ok){if(ed){if(W&&W.beanId===ed.id)W.notes=syncNotes(W.notes,oldF,flavors);CD=null;tab='admin';}else CD={id:null,v:{},notes:[],label:[],done:nid};render();window.scrollTo(0,0);}
@@ -4141,11 +4163,12 @@ app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='ba-new'){c
 /* ---------- Stock: staff mark coffees out of stock with the stock PIN (default 123456, admin can change it) ---------- */
 let stockOk=false;try{stockOk=sessionStorage.getItem(dripStorageKey('dp-stock'))==='1';}catch(e){}
 const stockPinOk=async v=>{const h=await hp(String(v||''));return h===(D.S.stockPin||await hp('123456'));};
-const stockList=()=>'<p class="cap">'+D.tt('st.help')+'</p><ul class="st-list">'+BEANS.map(b=>'<li class="st-row'+(b.oos?' is-out':'')+'"><img class="st-img" src="'+esc(beanImg(b))+'" alt=""><span class="st-info"><span class="st-title">'+esc(b.name)+'</span>'+
+const stockList=()=>'<p class="cap">'+D.tt('st.help')+'</p><ul class="st-list">'+BEANS.map(b=>{const px=D.priceBits(b);return '<li class="st-row'+(b.oos?' is-out':'')+'"><img class="st-img" src="'+esc(beanImg(b))+'" alt=""><span class="st-info"><span class="st-title">'+esc(b.name)+'</span>'+
   '<span class="st-meta">'+esc([b.country,b.region].filter(Boolean).join(' · '))+(b.process?' · '+esc(b.process):'')+'</span>'+
+  (px.length?'<span class="st-meta">'+esc(px.join(' · '))+'</span>':'')+
   ((b.farm||b.farmer)?'<span class="st-meta">'+(b.farm?esc(b.farm):'')+(b.farm&&b.farmer?' · ':'')+(b.farmer?esc(D.T('cp.l.farmer'))+' '+esc(b.farmer):'')+'</span>':'')+
   '<span class="st-state">● '+D.tt(b.oos?'st.s.out':'st.s.in')+'</span></span>'+
-  '<button class="st-act" data-st="'+esc(b.id)+'" aria-label="'+esc(D.T(b.oos?'st.a.in':'st.a.out'))+': '+esc(b.name)+'">'+D.tt(b.oos?'st.a.in':'st.a.out')+'</button></li>').join('')+'</ul>';
+  '<button class="st-act" data-st="'+esc(b.id)+'" aria-label="'+esc(D.T(b.oos?'st.a.in':'st.a.out'))+': '+esc(b.name)+'">'+D.tt(b.oos?'st.a.in':'st.a.out')+'</button></li>';}).join('')+'</ul>';
 const openStock=()=>{
   const d=ov('<div class="sec st-dlg" style="max-width:520px"><h2>'+D.tt('st.h')+'</h2><div class="st-body"></div><div class="acts" style="margin-top:14px"><button class="btn ghost" data-n>'+D.tt('st.done')+'</button></div></div>');
   const body=d.querySelector('.st-body');
@@ -4169,12 +4192,13 @@ app.addEventListener('click',async e=>{const b=e.target.closest('[data-act="stoc
   const old=D.S.stockPin;D.S.stockPin=await hp(v);if(await doSave(D.T('st.ad.ok'),()=>{D.S.stockPin=old;})){stockOk=false;try{sessionStorage.removeItem(dripStorageKey('dp-stock'));}catch(x){}render();}},true);
 /* ---------- Coffee showcase: full-screen profiles the customer swipes through before choosing ---------- */
 const chooseBean=id=>{const b=bean(id);if(!b)return;W=newWork(b);const p=presets().find(x=>x.id===activePreset);if(p)applyPreset(W,p);tab='recipe';resultId=null;render();window.scrollTo(0,0);};
-const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.flavors);
+const showPage=b=>{const ph=photosOf(b.id),hero=beanImg(b),notes=uniqNotes(b.flavors),px=D.priceBits(b);
   const spec=[['variety',b.variety],['process',b.process],['altitude',b.altitude],['harvest',b.harvest],['roast',b.roast],['region',b.region]].filter(x=>x[1]).map(x=>'<div><dt>'+T('cp.l.'+x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>').join('');
   const gal=ph.farm.concat(ph.origin).filter(u=>u&&u!==hero).slice(0,4);
   return '<article class="sc-page" data-id="'+esc(b.id)+'" aria-roledescription="slide" aria-label="'+esc(b.name)+'"><div class="sc-scroll">'+
    '<figure class="sc-hero'+(b.oos?' oos':'')+'"><img src="'+esc(hero)+'" alt="">'+(b.process?'<figcaption>'+esc(b.process)+'</figcaption>':'')+(b.oos?'<span class="oos-tag">'+T('st.out')+'</span>':'')+'</figure>'+
    '<div class="sc-body"><p class="sc-kick">'+esc([b.country,b.region].filter(Boolean).join(' · '))+'</p><h2 class="sc-name">'+esc(b.name)+'</h2>'+
+   (px.length?'<p class="sc-price">'+px.map(p=>'<b>'+esc(p)+'</b>').join('')+'</p>':'')+
    (b.farmer||b.farm?'<p class="sc-grown">'+(b.farmer?T('sc.grown')+' <b>'+esc(b.farmer)+'</b>':'')+(b.farm?(b.farmer?' '+T('sc.at')+' ':'')+'<b>'+esc(b.farm)+'</b>':'')+'</p>':'')+
    (notes.length?'<ul class="sc-notes">'+notes.map(n=>'<li><span aria-hidden="true">'+D.noteIcon(n)+'</span>'+esc(n)+'</li>').join('')+'</ul>':'')+
    (spec?'<dl class="sc-spec">'+spec+'</dl>':'')+(b.note?'<p class="sc-note">'+esc(b.note)+'</p>':'')+
