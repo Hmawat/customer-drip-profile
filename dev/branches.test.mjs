@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { createHash } from 'node:crypto';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
@@ -11,7 +15,9 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const fundamentalCode = 'TESTFUNDAMENTAL';
   const ownerPassword = 'Test owner password, not production';
   const recovery = 'Test owner recovery secret, not production';
-  const server = spawn(process.execPath, ['--no-warnings', 'dev/serve.mjs', '.', '0'], {
+  const scratch = mkdtempSync(join(tmpdir(), 'drip-lib-'));
+  const dbfile = join(scratch, 'drip.db');
+  const server = spawn(process.execPath, ['--no-warnings', 'dev/serve.mjs', '.', '0', dbfile], {
     cwd: repo,
     env: {
       ...process.env,
@@ -22,7 +28,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
     },
     stdio: ['ignore', 'pipe', 'inherit'],
   });
-  t.after(() => server.kill());
+  t.after(() => { server.kill(); rmSync(scratch, { recursive: true, force: true }); });
   const [startup] = await Promise.race([
     once(server.stdout, 'data'),
     once(server, 'exit').then(([code]) => { throw new Error('Local server exited with ' + code); }),
@@ -104,6 +110,44 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await photo(fundamental)).data, null);
   assert.equal((await photo(fundamental, 'aaaaaaaaaaaaaaaa')).data, null);
   assert.deepEqual((await photo(fundamental, 'bbbbbbbbbbbbbbbb')).data.label, ['fundamental-photo']);
+  const dataImage = (mark) => 'data:image/jpeg;base64,' + Buffer.from(String(mark).padEnd(48, '0')).toString('base64');
+  const nativeShot = dataImage('native-library-photo');
+  const nativeFarm = dataImage('native-farm-photo');
+  const nativeSnap = dataImage('native-snap-photo');
+  const fundShot = dataImage('fundamental-library-photo');
+  const library = (branch, data, cookie = '') => request(branch + 'rpc/drip_library', data, cookie);
+  assert.equal((await push('', nativeCode, [
+    { k: 'bean', i: 'lib-bean', d: { o: 1, v: { id: 'lib-bean', name: 'Library Lot', country: 'Ethiopia', process: 'Washed' } } },
+    { k: 'photo', i: 'lib-bean', d: { label: [nativeShot], farm: [nativeFarm, 'not-a-photo'], origin: [] } },
+    { k: 'snap', i: 'lib-snap', d: { v: { photos: { label: [], farm: [nativeSnap], origin: [] } } } },
+  ])).status, 200);
+  assert.equal((await push(fundamental, fundamentalCode, [
+    { k: 'photo', i: 'lib-bean', d: { label: [fundShot], farm: [nativeShot], origin: [] } },
+  ])).status, 200);
+  const backfillOnly = dataImage('backfill-only-native-photo');
+  const sql = new DatabaseSync(dbfile);
+  sql.prepare('INSERT INTO drip_items(kind, id, data, deleted, updated_ms) VALUES (?,?,?,0,?)')
+    .run('photo', 'backfill-bean', JSON.stringify({ label: [backfillOnly], farm: [], origin: [] }), Date.now());
+  sql.close();
+  const nativeLib = await library('', { p_code: nativeCode, p_branch: 'fundamental' });
+  assert.equal(nativeLib.status, 200);
+  assert.deepEqual(nativeLib.data.images.map((img) => img.data).sort(), [backfillOnly, nativeFarm, nativeShot, nativeSnap].sort());
+  const fundLib = await library(fundamental, { p_code: fundamentalCode });
+  assert.equal(fundLib.status, 200);
+  assert.deepEqual(fundLib.data.images.map((img) => img.data).sort(), [fundShot, nativeShot].sort());
+  assert.equal(fundLib.data.images.some((img) => img.data === nativeFarm), false);
+  assert.equal((await library(fundamental, { p_code: nativeCode })).status, 403);
+  assert.equal((await library('', {})).status, 403);
+  const extra = dataImage('native-picker-upload');
+  const added = await request('rpc/drip_library_add', { p_code: nativeCode, p_data: extra });
+  assert.equal(added.status, 200);
+  assert.match(added.data.id, /^[0-9a-f-]{36}$/);
+  assert.equal((await request('rpc/drip_library_add', { p_code: nativeCode, p_data: extra })).data.id, added.data.id);
+  assert.equal((await request('rpc/drip_library_add', { p_code: nativeCode, p_data: 'not-a-photo' })).status, 400);
+  assert.equal((await request('fundamental/rpc/drip_library_add', { p_code: nativeCode, p_data: extra })).status, 403);
+  const nativeAfter = await library('', { p_code: nativeCode });
+  assert.equal(nativeAfter.data.images.some((img) => img.id === added.data.id && img.data === extra), true);
+  assert.equal((await library(fundamental, { p_code: fundamentalCode })).data.images.some((img) => img.data === extra), false);
   assert.equal((await rpc('', 'drip_theme', {})).data.ci, 'native-mica');
   assert.equal((await rpc('', 'drip_theme', {})).data.colors, undefined);
   assert.equal((await push('', nativeCode, [{ k: 'setting', i: 'theme', d: { ci: 'custom', cvb: 'light', colors: { bg: '#F0EEE9', ink: '40312F', accent: 'abc', accentH: '#864C24', link: 'nope', extra: '#ffffff' } } }])).status, 200);
@@ -176,6 +220,12 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const read = (branch, cookie) => request(branch + 'rpc/drip_pull', {p_account:true}, cookie);
   assert.equal((await read('', member.cookie)).status, 200);
   assert.equal((await read(fundamental, member.cookie)).status, 403);
+  assert.equal((await request('rpc/drip_library', { p_account: true }, owner.cookie)).status, 200);
+  assert.equal((await request('fundamental/rpc/drip_library', { p_account: true }, owner.cookie)).data.images.some((img) => img.data === fundShot), true);
+  assert.equal((await request('rpc/drip_library', { p_account: true }, owner.cookie)).data.images.some((img) => img.data === fundShot), false);
+  assert.equal((await request('rpc/drip_library', { p_account: true }, member.cookie)).status, 403);
+  assert.equal((await request('rpc/drip_library_add', { p_account: true, p_data: 'data:image/jpeg;base64,' + 'A'.repeat(64) }, member.cookie)).status, 403);
+  assert.equal((await request('fundamental/rpc/drip_library', { p_account: true }, member.cookie)).status, 403);
   assert.equal((await accounts('users', {}, member.cookie)).status, 403);
   const write = (branch, rows, cookie) => request(branch + 'rpc/drip_push', {p_account:true,p_rows:rows}, cookie);
   assert.equal((await write('', [{k:'setting',i:'baristas',d:['Changed']}], member.cookie)).status, 403);
@@ -189,6 +239,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal((await read('', member.cookie)).status, 403);
   assert.equal((await read(fundamental, member.cookie)).status, 200);
   assert.equal((await write(fundamental, [], member.cookie)).status, 403);
+  assert.equal((await request('fundamental/rpc/drip_library', { p_account: true }, member.cookie)).status, 403);
   assert.equal((await accounts('logout', {}, member.cookie)).status, 200);
   assert.equal((await read(fundamental, member.cookie)).status, 401);
   assert.equal((await accounts('mode', {enforced:false}, owner.cookie)).status, 200);

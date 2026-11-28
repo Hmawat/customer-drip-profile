@@ -1,7 +1,7 @@
 import { AccountError, accountEndpoint, accountOnly, branchAccount } from './accounts.js';
 
 // Customer Drip Profile backend on Cloudflare.
-// POST /api/rpc/<name> answers like the old Supabase functions (drip_pull, drip_push, drip_photo, drip_snap, drip_set_code).
+// POST /api/rpc/<name> answers like the old Supabase functions (drip_pull, drip_push, drip_photo, drip_snap, drip_set_code, drip_library, drip_library_add).
 // GET  /api/rt?t=<topic> is a WebSocket: a device sends "changed" after saving and every other device on the topic is told at once.
 // Data lives in D1 (binding DB); the WebSocket hub is a Durable Object (binding RT).
 
@@ -62,6 +62,96 @@ async function upsert(env, shop, rows, keepTime, author = null) {
     if (size > 900000 || batch.length >= 50) await flush();
   }
   await flush();
+  const images = [];
+  for (const r of rows) {
+    const del = r.x === true || r.x === 'true';
+    if (del || !r.d || typeof r.d !== 'object') continue;
+    if (r.k === 'photo') collectImages(r.d, images);
+    else if (r.k === 'snap') collectImages(r.d.v && r.d.v.photos, images);
+  }
+  if (images.length) await rememberImages(env, shop, images);
+}
+
+// One library per branch. The table is shared, and every query binds shop.id.
+// Created on the first request after deploy (CREATE TABLE IF NOT EXISTS). Existing coffee rows are copied in once.
+const LIBRARY_BACKFILL = '1';
+const MAX_IMAGE = 1800000;
+let libraryReady = null;
+function librarySchema(env) {
+  if (!libraryReady) {
+    libraryReady = env.DB.batch([
+      env.DB.prepare(`CREATE TABLE IF NOT EXISTS drip_image_library(
+        branch TEXT NOT NULL,
+        id TEXT NOT NULL,
+        hash TEXT NOT NULL,
+        data TEXT NOT NULL,
+        created_ms INTEGER NOT NULL,
+        PRIMARY KEY (branch, id))`),
+      env.DB.prepare('CREATE UNIQUE INDEX IF NOT EXISTS drip_image_library_branch_hash ON drip_image_library(branch, hash)'),
+    ]).catch((e) => { libraryReady = null; throw e; });
+  }
+  return libraryReady;
+}
+
+function validImage(src) {
+  if (typeof src !== 'string' || src.length < 80 || src.length > MAX_IMAGE) return false;
+  const m = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(src);
+  return !!m && m[2].length >= 32 && m[2].length % 4 === 0;
+}
+
+function collectImages(node, out) {
+  if (!node || typeof node !== 'object') return;
+  for (const key of ['label', 'farm', 'origin']) {
+    const list = node[key];
+    if (!Array.isArray(list)) continue;
+    for (const src of list) if (validImage(src)) out.push(src);
+  }
+}
+
+function imagesInRow(kind, dataText) {
+  if (!dataText) return [];
+  let data;
+  try { data = JSON.parse(dataText); } catch (e) { return []; }
+  const out = [];
+  if (kind === 'photo') collectImages(data, out);
+  else if (kind === 'snap') collectImages((data && data.v && data.v.photos) || (data && data.photos), out);
+  return out;
+}
+
+async function rememberImages(env, shop, images, created) {
+  await librarySchema(env);
+  const when = created || Date.now();
+  const seen = new Set();
+  let batch = [], size = 0;
+  const flush = async () => { if (batch.length) { await env.DB.batch(batch); batch = []; size = 0; } };
+  for (const src of images) {
+    if (seen.has(src)) continue;
+    seen.add(src);
+    batch.push(env.DB.prepare('INSERT OR IGNORE INTO drip_image_library(branch, id, hash, data, created_ms) VALUES (?,?,?,?,?)')
+      .bind(shop.id, crypto.randomUUID(), await sha256(src), src, when));
+    size += src.length + 120;
+    if (size > 900000 || batch.length >= 8) await flush();
+  }
+  await flush();
+}
+
+async function backfillLibrary(env, shop) {
+  await librarySchema(env);
+  const mark = await env.DB.prepare(`SELECT value FROM ${shop.config} WHERE key='library_backfill'`).first();
+  if (mark && mark.value === LIBRARY_BACKFILL) return;
+  const { results } = await env.DB.prepare(`SELECT kind, data, updated_ms FROM ${shop.items} WHERE deleted=0 AND kind IN ('photo','snap') AND data LIKE '%data:image/%'`).all();
+  for (const row of results) {
+    const images = imagesInRow(row.kind, row.data);
+    if (images.length) await rememberImages(env, shop, images, row.updated_ms);
+  }
+  await env.DB.prepare(`INSERT INTO ${shop.config}(key, value) VALUES ('library_backfill', ?)
+    ON CONFLICT(key) DO UPDATE SET value=excluded.value`).bind(LIBRARY_BACKFILL).run();
+}
+
+async function libraryUser(env, shop, body, req) {
+  const account = await access(env, shop, body, req);
+  if (account && !account.user.admin && account.role !== 'manager') fail('not_allowed', 403);
+  return account;
 }
 
 async function access(env, shop, body, req, write = false) {
@@ -224,6 +314,23 @@ const F = {
       .bind(shop.id,plate.slot,ref,expires,now).first();
     if(!bound)fail('plate_busy',409);
     return {...bound,minutes};
+  },
+  async drip_library(env, a, shop, req) {
+    await libraryUser(env, shop, a, req);
+    await backfillLibrary(env, shop);
+    const { results } = await env.DB.prepare(
+      'SELECT id, data, created_ms FROM drip_image_library WHERE branch=? ORDER BY created_ms DESC, id DESC LIMIT 100'
+    ).bind(shop.id).all();
+    return { images: results.map((r) => ({ id: r.id, data: r.data, created: r.created_ms })) };
+  },
+  async drip_library_add(env, a, shop, req) {
+    await libraryUser(env, shop, a, req);
+    const src = String(a.p_data ?? '');
+    if (!validImage(src)) fail('bad_image');
+    await rememberImages(env, shop, [src]);
+    const row = await env.DB.prepare('SELECT id, created_ms FROM drip_image_library WHERE branch=? AND hash=?')
+      .bind(shop.id, await sha256(src)).first();
+    return { id: row.id, created: row.created_ms };
   },
   async drip_pull(env, a, shop, req) {
     const account=await access(env, shop, a, req);
