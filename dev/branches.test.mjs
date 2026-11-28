@@ -15,6 +15,10 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const fundamentalCode = 'TESTFUNDAMENTAL';
   const ownerPassword = 'Test owner password, not production';
   const recovery = 'Test owner recovery secret, not production';
+  const nativeTokens = Array.from({length: 10}, (_, i) => i === 0 ? '0123456789abcdef0123456789abcdef' : String(i + 1).padStart(32, '0'));
+  const fundamentalTokens = Array.from({length: 10}, (_, i) => ('ab' + String(i + 1)).padEnd(32, 'c'));
+  const nativeConfigured = nativeTokens.map((token, i) => i === 1 ? '' : token);
+  const fundamentalConfigured = fundamentalTokens.map((token, i) => i === 9 ? 'b'.repeat(32) : token);
   const scratch = mkdtempSync(join(tmpdir(), 'drip-lib-'));
   const dbfile = join(scratch, 'drip.db');
   const server = spawn(process.execPath, ['--no-warnings', 'dev/serve.mjs', '.', '0', dbfile], {
@@ -23,7 +27,11 @@ test('Native and Fundamental authenticate, store and share profiles separately',
       ...process.env,
       ACCOUNT_OWNER_RECOVERY_HASH: createHash('sha256').update(recovery).digest('hex'),
       ACCOUNT_OWNER_PASSWORD_HASH: createHash('sha256').update(ownerPassword).digest('hex'),
-      QR_PLATE_HASHES: JSON.stringify({native:Array(10).fill(null).map((_,i)=>createHash('sha256').update(i===0?'0123456789abcdef0123456789abcdef':String(i+1).padStart(32,'0')).digest('hex'))}),
+      QR_PLATE_HASHES: JSON.stringify({
+        native: nativeTokens.map(token => createHash('sha256').update(token).digest('hex')),
+        fundamental: fundamentalTokens.map(token => createHash('sha256').update(token).digest('hex')),
+      }),
+      QR_PLATE_TOKENS: JSON.stringify({native: nativeConfigured, fundamental: fundamentalConfigured}),
       FUNDAMENTAL_SETUP_SHA256: createHash('sha256').update(fundamentalCode).digest('hex'),
     },
     stdio: ['ignore', 'pipe', 'inherit'],
@@ -198,6 +206,15 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   assert.equal(listPlates.data.minutes,12);
   assert.equal(listPlates.data.busy['1'],byNumber.data.expires);
   assert(listPlates.data.generated.some(x=>x.path===generatedPlate.path));
+  assert.deepEqual(listPlates.data.printable.map(plate => plate.path), nativeTokens.flatMap((token, index) => index === 1 ? [] : ['/t/' + (index + 1) + '/' + token]));
+  const seenPlate = await fetch('http://127.0.0.1:' + port + '/t/2/' + nativeTokens[1], {redirect: 'manual'});
+  assert.equal(seenPlate.status, 410);
+  const listedAgain = await request('rpc/drip_list_plates', {p_account: true}, owner.cookie);
+  assert.equal(listedAgain.data.printable.find(plate => plate.slot === 2).path, '/t/2/' + nativeTokens[1]);
+  const fundamentalPlates = await request(fundamental + 'rpc/drip_list_plates', {p_account: true}, owner.cookie);
+  assert.deepEqual(fundamentalPlates.data.printable.map(plate => plate.slot), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  assert.equal(fundamentalPlates.data.printable.every(plate => plate.path === '/fundamental/t/' + plate.slot + '/' + fundamentalTokens[plate.slot - 1]), true);
+  assert.equal(JSON.stringify(fundamentalPlates.data).includes('b'.repeat(32)), false);
   const linkedPlate=await request('rpc/drip_bind_plate',{p_account:true,p_slot:11,p_ref:'same-recipe.aaaaaaaaaaaaaaaa'},owner.cookie);
   assert.equal(linkedPlate.status,200);
   assert.equal(linkedPlate.data.minutes,12);
@@ -216,6 +233,7 @@ test('Native and Fundamental authenticate, store and share profiles separately',
   const memberPlates=await request('rpc/drip_list_plates',{p_account:true},member.cookie);
   assert(memberPlates.data.slots.includes(11));
   assert.deepEqual(memberPlates.data.generated,[]);
+  assert.deepEqual(memberPlates.data.printable,[]);
   assert.equal((await request(fundamental+'rpc/drip_list_plates',{p_account:true},member.cookie)).status,403);
   const read = (branch, cookie) => request(branch + 'rpc/drip_pull', {p_account:true}, cookie);
   assert.equal((await read('', member.cookie)).status, 200);
